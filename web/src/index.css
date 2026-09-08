@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import 'tailwindcss';
+
+/* ── Dark theme (default) ─────────────────────────────────── */
+:root {
+  color-scheme: dark;
+  --color-bg:           #0D0C1A;
+  --color-surface:      #15132A;
+  --color-panel:        #1F1C36;
+  --color-panel-hover:  #272340;
+  --color-text:         #EDE9FF;
+  --color-text-muted:   #6B688A;
+  --color-border:       #2A2742;
+  --color-accent:       #8B5CF6;
+  --color-accent-soft:  rgba(139,92,246,0.15);
+  --color-seen:         #60A5FA;
+  --color-seen-soft:    rgba(96,165,250,0.15);
+  --color-owned:        #FBBF24;
+  --color-owned-soft:   rgba(251,191,36,0.15);
+  --color-sos:          #F472B6;
+  --color-sos-rare:     #F87171;
+  --color-melemele:     #4ADE80;
+  --color-akala:        #FB923C;
+  --color-ulaula:       #A78BFA;
+  --color-poni:         #38BDF8;
+  --color-silhouette:   #2A2742;
+  --font-game: 'Nunito', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ── Light theme ──────────────────────────────────────────── */
+[data-theme="light"] {
+  color-scheme: light;
+  --color-bg:           #FDF6E8;
+  --color-surface:      #FFFDF5;
+  --color-panel:        #F5EDD6;
+  --color-panel-hover:  #EDE3C8;
+  --color-text:         #1E1B4B;
+  --color-text-muted:   #9CA3AF;
+  --color-border:       #E8DFC8;
+  --color-accent:       #7C3AED;
+  --color-accent-soft:  rgba(124,58,237,0.10);
+  --color-seen:         #3B82F6;
+  --color-seen-soft:    rgba(59,130,246,0.12);
+  --color-owned:        #F59E0B;
+  --color-owned-soft:   rgba(245,158,11,0.12);
+  --color-sos:          #EC4899;
+  --color-sos-rare:     #EF4444;
+  --color-melemele:     #16A34A;
+  --color-akala:        #EA580C;
+  --color-ulaula:       #7C3AED;
+  --color-poni:         #0284C7;
+  --color-silhouette:   #1E1B4B;
+}
+
+button, [role="button"], a, label, select, summary {
+  cursor: pointer;
+}
+
+html, body, #root {
+  height: 100%;
+  font-family: var(--font-game);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 4px; }
