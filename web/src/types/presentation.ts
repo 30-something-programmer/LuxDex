@@ -5,6 +5,7 @@ export type TimeOfDay = "day" | "night"
 export interface IslandOption {
   id: string
   name: string
+  shortLabel: string
   fullName: string
   color: string
   groupType: "island" | "other" | "special"

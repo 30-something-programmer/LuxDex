@@ -18,12 +18,17 @@ import type {
   PokemonDetailModel,
   PokemonSearchResultModel,
 } from "../types/presentation"
-import { islandColor } from "./islandMaps"
+import { islandColor, islandShortLabel } from "./islandMaps"
 
 export function toIslandOptions(groups: AreaGroupResponse[]): IslandOption[] {
   return groups.map((group) => ({
     id: group.group_key,
     name: group.display_name,
+    shortLabel: islandShortLabel(
+      group.group_key,
+      group.group_type,
+      group.display_name,
+    ),
     fullName: group.display_name,
     color: islandColor(group.group_key),
     groupType: group.group_type,

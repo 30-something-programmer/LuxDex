@@ -56,6 +56,7 @@ describe("screen resource states", () => {
           {
             id: "island",
             name: "Island",
+            shortLabel: "Island",
             fullName: "Island",
             color: "red",
             groupType: "island",

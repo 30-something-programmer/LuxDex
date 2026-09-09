@@ -63,14 +63,30 @@ const layouts: Record<string, IslandLayout> = {
   },
 }
 
+// Compact tab-label presentation for each canonical area-group key, recovered
+// from the approved Figma donor (web/src/data/islands.ts as of commit
+// d50c86d). Purely visual: a group key maps to a short label and an accent
+// token, never to locations, routes, encounters, or Pokémon — those stay
+// backend-owned. The backend's own display_name (e.g. "Melemele Island")
+// is untouched and still used for the fuller navigator heading.
+const ISLAND_PRESENTATION: Record<string, { shortLabel: string; color: string }> = {
+  melemele: { shortLabel: "Melemele", color: "var(--color-melemele)" },
+  akala: { shortLabel: "Akala", color: "var(--color-akala)" },
+  ulaula: { shortLabel: "Ula'ula", color: "var(--color-ulaula)" },
+  poni: { shortLabel: "Poni", color: "var(--color-poni)" },
+}
+
 export function islandColor(groupKey: string): string {
-  const colors: Record<string, string> = {
-    melemele: "var(--color-melemele)",
-    akala: "var(--color-akala)",
-    ulaula: "var(--color-ulaula)",
-    poni: "var(--color-poni)",
-  }
-  return colors[groupKey] ?? "var(--color-text-muted)"
+  return ISLAND_PRESENTATION[groupKey]?.color ?? "var(--color-text-muted)"
+}
+
+export function islandShortLabel(
+  groupKey: string,
+  groupType: "island" | "other" | "special",
+  fallbackName: string,
+): string {
+  if (groupType !== "island") return "Other"
+  return ISLAND_PRESENTATION[groupKey]?.shortLabel ?? fallbackName
 }
 
 export function buildIslandMap(
