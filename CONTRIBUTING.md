@@ -17,4 +17,4 @@ Keep the repository contract intact:
 - `build/VERSION` is the single application version source. Build metadata stays under `build/`.
 - Python virtual environments belong under `.venvs/`, with the backend environment at `.venvs/app/`.
 
-Before submitting a change, run the backend tests, build the frontend, validate Compose configuration, and verify that no remote runtime asset URLs or frontend-owned canonical data were introduced.
+Before submitting a change, run the complete backend and frontend tests, build the production frontend, validate Compose configuration, and verify that no remote runtime asset URLs or frontend-owned canonical data were introduced. For release changes, also run a Full Blowaway and confirm the clean stack reconstructs all canonical data from preserved sources; this deliberately resets local Seen/Owned state.

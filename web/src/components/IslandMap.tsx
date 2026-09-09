@@ -91,6 +91,8 @@ export default function IslandMap({
         viewBox={`0 0 ${map.width} ${map.height}`}
         className="h-auto w-full"
         style={{ maxHeight: "260px" }}
+        role="img"
+        aria-label="Island location map"
       >
         <polygon
           points={map.outline}
@@ -149,7 +151,11 @@ export default function IslandMap({
           return (
             <g
               key={node.id}
-              className={node.locationId ? "cursor-pointer" : ""}
+              className={
+                node.locationId
+                  ? "cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--color-accent)]"
+                  : ""
+              }
               onClick={() =>
                 node.locationId && onSelectLocation(node.locationId)
               }

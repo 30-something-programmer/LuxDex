@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import type {
   AreaCompletionModel,
   EncounterZoneModel,
@@ -37,6 +37,8 @@ interface AreasViewProps {
   onNextLocation?: () => void
   onPokemonSelect?: (pokemon: PokemonCardModel) => void
   onStatusAction?: (canonicalKey: string, status: PokemonStatus) => void
+  mappingInProgress?: boolean
+  onRetry?: () => void
 }
 
 function ArrowIcon({ direction }: { direction: "left" | "right" }) {
@@ -75,6 +77,8 @@ export default function AreasView({
   onNextLocation,
   onPokemonSelect,
   onStatusAction,
+  mappingInProgress = false,
+  onRetry,
 }: AreasViewProps) {
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false)
   const activeIsland =
@@ -83,6 +87,15 @@ export default function AreasView({
     locations.find((location) => location.id === selectedLocationId) ?? null
   const accentColor = activeIsland?.color ?? "var(--color-accent)"
   const sidebarTitle = activeIsland?.fullName ?? "Island navigation"
+
+  useEffect(() => {
+    if (!mobileNavigationOpen) return
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileNavigationOpen(false)
+    }
+    window.addEventListener("keydown", closeOnEscape)
+    return () => window.removeEventListener("keydown", closeOnEscape)
+  }, [mobileNavigationOpen])
 
   const sidebar = (
     <Sidebar
@@ -94,6 +107,11 @@ export default function AreasView({
       state={state}
       onSelectLocation={onSelectLocation}
       onClose={() => setMobileNavigationOpen(false)}
+      emptyMessage={
+        mappingInProgress
+          ? "Locations will appear as mapping is verified."
+          : undefined
+      }
     />
   )
 
@@ -241,7 +259,7 @@ export default function AreasView({
               {zones.map((zone) => (
                 <button
                   key={zone.id}
-                  className={`flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-black transition-colors ${
+                  className={`min-h-9 flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-black transition-colors ${
                     zone.id === selectedZoneId
                       ? "bg-[var(--color-accent)] text-white"
                       : "bg-[var(--color-panel)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
@@ -263,6 +281,12 @@ export default function AreasView({
               state={state}
               onPokemonSelect={onPokemonSelect}
               onStatusAction={onStatusAction}
+              onRetry={onRetry}
+              emptyMessage={
+                mappingInProgress
+                  ? `Some encounter areas on ${activeIsland?.fullName ?? "this island"} are still being mapped. Verified locations will appear here without placeholder data.`
+                  : undefined
+              }
             />
           </div>
         </main>

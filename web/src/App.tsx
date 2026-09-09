@@ -131,6 +131,7 @@ export default function App() {
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null)
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("day")
   const [sosMode, setSosMode] = useState(false)
+  const [areasReloadKey, setAreasReloadKey] = useState(0)
 
   const [searchQuery, setSearchQuery] = useState("")
   const [searchResults, setSearchResults] =
@@ -212,7 +213,7 @@ export default function App() {
         if (!isAbort(error)) setGroupsState("error")
       })
     return () => controller.abort()
-  }, [])
+  }, [areasReloadKey])
 
   useEffect(() => {
     if (route.view !== "areas" || groupsState !== "ready") return
@@ -251,7 +252,11 @@ export default function App() {
         if (!isAbort(error)) setLocationsState("error")
       })
     return () => controller.abort()
-  }, [route.view, route.view === "areas" ? route.groupKey : null])
+  }, [
+    areasReloadKey,
+    route.view,
+    route.view === "areas" ? route.groupKey : null,
+  ])
 
   useEffect(() => {
     if (
@@ -300,6 +305,7 @@ export default function App() {
       })
     return () => controller.abort()
   }, [
+    areasReloadKey,
     route.view,
     route.view === "areas" ? route.groupKey : null,
     route.view === "areas" ? route.locationKey : null,
@@ -382,6 +388,11 @@ export default function App() {
   }, [pokedexGeneration, pokedexQuery, pokedexSort, route.view])
 
   const islands = useMemo(() => toIslandOptions(groups), [groups])
+  const activeAreaGroup =
+    route.view === "areas"
+      ? groups.find((group) => group.group_key === route.groupKey)
+      : undefined
+  const mappingInProgress = activeAreaGroup?.location_count === 0
   const locationOptions = useMemo(
     () => toLocationOptions(locations),
     [locations],
@@ -622,6 +633,8 @@ export default function App() {
               navigate({ view: "pokemon", canonicalKey: pokemon.canonicalKey })
             }
             onStatusAction={advanceStatus}
+            mappingInProgress={mappingInProgress}
+            onRetry={() => setAreasReloadKey((current) => current + 1)}
           />
         )}
         {route.view === "pokemon" && (

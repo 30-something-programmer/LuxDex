@@ -15,6 +15,7 @@ interface SidebarProps {
   state: ResourceState
   onSelectLocation: (locationId: string) => void
   onClose?: () => void
+  emptyMessage?: string
 }
 
 export default function Sidebar({
@@ -26,6 +27,7 @@ export default function Sidebar({
   state,
   onSelectLocation,
   onClose,
+  emptyMessage,
 }: SidebarProps) {
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden bg-[var(--color-surface)]">
@@ -72,6 +74,7 @@ export default function Sidebar({
           state={state}
           onSelect={onSelectLocation}
           onClose={onClose}
+          emptyMessage={emptyMessage}
         />
       </div>
     </div>

@@ -6,6 +6,16 @@ LuxDex is a LuxForge application whose backend publishes authoritative Penumbra 
 
 The web application does not read, parse, or own canonical encounter data.
 
+## MVP 0.1.0
+
+The local-first MVP provides three player-facing workflows:
+
+- **Areas** browses verified Penumbra locations, switches Day/Night and normal/SOS pools, and presents encounter rates, levels, and local sprites.
+- **Pokémon Finder** searches canonical species and forms, then links each result to its grouped Penumbra occurrences.
+- **Pokédex** browses the National or USUM Alola ordering with generation and collection filters.
+
+Seen and Owned progress is persisted in PostgreSQL for the local profile and remains consistent across all three views. Canonical geography is intentionally partial: researched Melemele locations are available now, while islands without verified mappings display a mapping-in-progress state rather than fabricated places.
+
 ## Repository layout
 
 - `app/` — FastAPI backend, ingestion and identity pipelines, repositories, services, and API routes.
@@ -141,3 +151,7 @@ pnpm test
 The Vite development server proxies `/api` to the local API. Use `VITE_API_BASE_URL` only when an explicit alternative API base is required. The workspace at `.vscode/luxdex.code-workspace` includes equivalent tasks.
 
 The committed web fonts can be refreshed reproducibly from their pinned upstream revision with `.\scripts\pull-assets.ps1`. Normal UI rendering uses only local static assets.
+
+## Release verification
+
+Version `0.1.0` is sourced from `build/VERSION`. Before packaging a release, run the complete backend suite, frontend suite and production build, validate the Compose model, then perform a Full Blowaway to prove that schema creation and all canonical loaders remain replayable from the preserved source files. Full Blowaway intentionally resets the local collection profile.

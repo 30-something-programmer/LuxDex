@@ -39,6 +39,15 @@ export default function PokeTile({
         onSelect ? "cursor-pointer" : ""
       }`}
       onClick={() => onSelect?.(pokemon)}
+      role={onSelect ? "button" : undefined}
+      tabIndex={onSelect ? 0 : undefined}
+      aria-label={onSelect ? `Open ${pokemon.name} details` : undefined}
+      onKeyDown={(event) => {
+        if (onSelect && (event.key === "Enter" || event.key === " ")) {
+          event.preventDefault()
+          onSelect(pokemon)
+        }
+      }}
     >
       {pokemon.isRare && (
         <span className="absolute -right-1 -top-1 z-10 rounded-full bg-[var(--color-sos-rare)] px-1 py-0.5 text-[8px] font-black leading-none text-white">
@@ -118,7 +127,7 @@ export default function PokeTile({
 
       {onStatusAction && (
         <button
-          className={`mt-1 w-full rounded-lg py-0.5 text-[9px] font-bold transition-opacity hover:opacity-80 ${
+          className={`mt-1 min-h-8 w-full rounded-lg py-1 text-[9px] font-bold transition-opacity hover:opacity-80 ${
             isOwned
               ? "bg-[var(--color-owned-soft)] text-[var(--color-owned)]"
               : isSeen

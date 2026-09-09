@@ -13,6 +13,8 @@ interface EncounterZoneCardsProps {
   state: ResourceState
   onPokemonSelect?: (pokemon: PokemonCardModel) => void
   onStatusAction?: (canonicalKey: string, status: PokemonStatus) => void
+  onRetry?: () => void
+  emptyMessage?: string
 }
 export default function EncounterZoneCards({
   zones,
@@ -20,6 +22,8 @@ export default function EncounterZoneCards({
   state,
   onPokemonSelect,
   onStatusAction,
+  onRetry,
+  emptyMessage,
 }: EncounterZoneCardsProps) {
   if (state === "loading" && zones.length === 0) {
     return (
@@ -59,8 +63,18 @@ export default function EncounterZoneCards({
           <div className="mt-1 text-xs font-semibold text-[var(--color-text-muted)]">
             {state === "error"
               ? "Unable to load location data."
-              : "No verified encounter places are currently mapped for this location."}
+              : (emptyMessage ??
+                "No verified encounter places are currently mapped for this location.")}
           </div>
+          {state === "error" && onRetry && (
+            <button
+              className="mt-4 min-h-9 rounded-xl bg-[var(--color-accent)] px-4 py-2 text-xs font-black text-white"
+              type="button"
+              onClick={onRetry}
+            >
+              Try again
+            </button>
+          )}
         </div>
       </div>
     )

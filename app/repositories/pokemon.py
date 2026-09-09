@@ -125,8 +125,11 @@ class PokemonRepository:
                 return list(cursor.fetchall())
 
     def search_forms(self, query: str, limit: int) -> list[dict[str, Any]]:
+        normalized_query = query.replace("’", "'").replace("‘", "'")
         escaped_query = (
-            query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            normalized_query.replace("\\", "\\\\")
+            .replace("%", "\\%")
+            .replace("_", "\\_")
         )
         pattern = f"%{escaped_query}%"
         with connect_database(self.database_url) as connection:
@@ -171,13 +174,15 @@ class PokemonRepository:
                      )
                     WHERE dataset.source_name = %s
                       AND (
-                          lower(form.display_name) LIKE lower(%s) ESCAPE '\\'
-                          OR lower(species.display_name) LIKE lower(%s) ESCAPE '\\'
+                          replace(replace(lower(form.display_name), '’', ''''), '‘', '''')
+                              LIKE lower(%s) ESCAPE '\\'
+                          OR replace(replace(lower(species.display_name), '’', ''''), '‘', '''')
+                              LIKE lower(%s) ESCAPE '\\'
                       )
                     ORDER BY
                         CASE
-                            WHEN lower(form.display_name) = lower(%s) THEN 0
-                            WHEN lower(species.display_name) = lower(%s) THEN 1
+                            WHEN replace(replace(lower(form.display_name), '’', ''''), '‘', '''') = lower(%s) THEN 0
+                            WHEN replace(replace(lower(species.display_name), '’', ''''), '‘', '''') = lower(%s) THEN 1
                             ELSE 2
                         END,
                         lower(form.display_name),
@@ -185,7 +190,14 @@ class PokemonRepository:
                         form.form_order
                     LIMIT %s
                     """,
-                    (SOURCE_NAME, pattern, pattern, query, query, limit),
+                    (
+                        SOURCE_NAME,
+                        pattern,
+                        pattern,
+                        normalized_query,
+                        normalized_query,
+                        limit,
+                    ),
                 )
                 return list(cursor.fetchall())
 

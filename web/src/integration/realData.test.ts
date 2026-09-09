@@ -54,7 +54,14 @@ describe("live LuxDex frontend data flow", () => {
       expect(pikachu.encounters.some((encounter) => encounter.pool_type === "sos")).toBe(true)
       expect(absent.encounters).toEqual([])
 
-      for (const name of ["Pichu", "Pikachu", "Rattata", "Type: Null", "Mr. Mime"]) {
+      for (const name of [
+        "Pichu",
+        "Pikachu",
+        "Rattata",
+        "Type: Null",
+        "Mr. Mime",
+        "Farfetch'd",
+      ]) {
         expect(await searchPokemon(name)).not.toHaveLength(0)
       }
 

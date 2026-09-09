@@ -3,6 +3,7 @@ import type {
   PokemonStatus,
   ResourceState,
 } from "../types/presentation"
+import { useEffect } from "react"
 import { formatLevelRange, formatSlots } from "../lib/format"
 import PokemonArtwork from "./PokemonArtwork"
 
@@ -27,6 +28,15 @@ export default function PokePanel({
   onSetStatus,
   mutationPending = false,
 }: PokePanelProps) {
+  useEffect(() => {
+    if (!open) return
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose()
+    }
+    window.addEventListener("keydown", closeOnEscape)
+    return () => window.removeEventListener("keydown", closeOnEscape)
+  }, [onClose, open])
+
   if (!open) return null
 
   return (
@@ -39,6 +49,8 @@ export default function PokePanel({
         className="relative z-10 max-h-[92vh] w-full overflow-y-auto rounded-t-3xl border border-[var(--color-border)] bg-[var(--color-surface)] p-5 shadow-2xl sm:mx-4 sm:max-w-2xl sm:rounded-2xl"
         onClick={(event) => event.stopPropagation()}
         aria-label="Pokémon details"
+        role="dialog"
+        aria-modal="true"
       >
         <button
           className="absolute right-4 top-4 z-10 grid h-8 w-8 place-items-center rounded-full bg-[var(--color-panel)] hover:bg-[var(--color-panel-hover)]"

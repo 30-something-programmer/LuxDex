@@ -7,6 +7,7 @@ interface AreaNavProps {
   state: ResourceState
   onSelect: (locationId: string) => void
   onClose?: () => void
+  emptyMessage?: string
 }
 export default function AreaNav({
   locations,
@@ -14,6 +15,7 @@ export default function AreaNav({
   state,
   onSelect,
   onClose,
+  emptyMessage = "No locations loaded",
 }: AreaNavProps) {
   const [query, setQuery] = useState("")
   const normalizedQuery = query.trim().toLocaleLowerCase()
@@ -68,7 +70,7 @@ export default function AreaNav({
 
         {state !== "loading" && filteredLocations.length === 0 && (
           <div className="px-2.5 py-5 text-center text-xs font-semibold text-[var(--color-text-muted)]">
-            {query ? "No matching locations" : "No locations loaded"}
+            {query ? "No matching locations" : emptyMessage}
           </div>
         )}
 

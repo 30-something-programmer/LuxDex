@@ -56,7 +56,7 @@ services:
     ports:
       - "52030:80"
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--output-document=/dev/null", "http://127.0.0.1/"]
+      test: ["CMD", "wget", "--quiet", "--output-document=/dev/null", "http://127.0.0.1/healthz"]
       interval: 5s
       timeout: 3s
       retries: 12

@@ -23,7 +23,7 @@
   --color-panel: #1f1c36;
   --color-panel-hover: #272340;
   --color-text: #ede9ff;
-  --color-text-muted: #6b688a;
+  --color-text-muted: #9994b8;
   --color-border: #2a2742;
   --color-accent: #8b5cf6;
   --color-accent-soft: rgb(139 92 246 / 15%);
@@ -96,6 +96,22 @@ summary {
 button:disabled,
 select:disabled {
   cursor: not-allowed;
+}
+
+:where(button, [role='button'], a, input, select, summary):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 ::-webkit-scrollbar {

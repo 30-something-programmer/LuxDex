@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react"
-import { describe, expect, it, vi } from "vitest"
+import { describe, expect, it } from "vitest"
 import PokemonArtwork from "./PokemonArtwork"
 
 describe("PokemonArtwork", () => {
@@ -15,10 +15,13 @@ describe("PokemonArtwork", () => {
       "src",
       "/assets/pokemon/sprites/pichu.png",
     )
+    expect(screen.getByRole("img", { name: "Pichu" })).toHaveAttribute(
+      "loading",
+      "lazy",
+    )
   })
 
-  it("renders and reports a deliberate missing-sprite placeholder", () => {
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined)
+  it("renders a quiet deliberate missing-sprite placeholder", () => {
     render(
       <PokemonArtwork
         name="Missing Form"
@@ -29,13 +32,9 @@ describe("PokemonArtwork", () => {
     expect(
       screen.getByText("No local sprite available for Missing Form"),
     ).toBeInTheDocument()
-    expect(warn).toHaveBeenCalledWith(
-      "[LuxDex] Missing local sprite for Missing Form.",
-    )
   })
 
   it("rejects external sprite URLs", () => {
-    const warn = vi.spyOn(console, "warn").mockImplementation(() => undefined)
     render(
       <PokemonArtwork
         name="Remote"
@@ -44,6 +43,5 @@ describe("PokemonArtwork", () => {
       />,
     )
     expect(screen.queryByRole("img")).not.toBeInTheDocument()
-    expect(warn).toHaveBeenCalled()
   })
 })

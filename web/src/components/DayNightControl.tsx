@@ -14,7 +14,7 @@ export default function DayNightControl({
   return (
     <div className="flex overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)]">
       <button
-        className={`flex items-center gap-1 px-3 py-1.5 text-xs font-bold transition-colors ${
+        className={`flex min-h-9 items-center gap-1 px-3 py-1.5 text-xs font-bold transition-colors ${
           value === "day"
             ? "bg-[var(--color-owned)] text-[var(--color-bg)]"
             : "text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
@@ -27,7 +27,7 @@ export default function DayNightControl({
         <span aria-hidden="true">☀</span> Day
       </button>
       <button
-        className={`flex items-center gap-1 px-3 py-1.5 text-xs font-bold transition-colors ${
+        className={`flex min-h-9 items-center gap-1 px-3 py-1.5 text-xs font-bold transition-colors ${
           value === "night"
             ? "bg-[var(--color-night)] text-white"
             : "text-[var(--color-text-muted)] hover:text-[var(--color-text)]"

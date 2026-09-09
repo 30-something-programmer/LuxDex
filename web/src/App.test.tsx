@@ -381,7 +381,12 @@ describe("real-data application binding", () => {
 
     await user.click(screen.getByRole("button", { name: "Akala" }))
     await waitFor(() => expect(window.location.pathname).toBe("/areas/akala"))
-    expect(await screen.findByText("No locations loaded")).toBeInTheDocument()
+    expect(
+      await screen.findByText("Locations will appear as mapping is verified."),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText(/Some encounter areas on Akala are still being mapped/),
+    ).toBeInTheDocument()
   })
 
   it("searches canonical forms and opens grouped Find in Penumbra details", async () => {
@@ -403,6 +408,22 @@ describe("real-data application binding", () => {
     expect(screen.getByText("USUM Alola")).toBeInTheDocument()
     expect(screen.getByText(/Grass Overlooking the Bay/)).toBeInTheDocument()
     expect(window.location.pathname).toBe("/pokemon/pichu")
+
+    await user.keyboard("{Escape}")
+    await waitFor(() => expect(window.location.pathname).toBe("/pokemon"))
+  })
+
+  it("restores routed views on browser history navigation", async () => {
+    const user = userEvent.setup()
+    installApi()
+    render(<App />)
+
+    await user.click(screen.getByRole("button", { name: /Pokédex/ }))
+    await waitFor(() => expect(window.location.pathname).toBe("/pokedex"))
+
+    window.history.replaceState(null, "", "/areas/melemele/route-1")
+    window.dispatchEvent(new PopStateEvent("popstate"))
+    expect(await screen.findByText("Grass Overlooking the Bay")).toBeInTheDocument()
   })
 
   it("shows clear empty and error states", async () => {

@@ -13,8 +13,21 @@ from app.ingestion.pokemon.loader import ensure_pokemon_dataset
 from app.schema import ensure_runtime_schema
 
 
+class _HealthAccessFilter(logging.Filter):
+    """Keep frequent container probes out of otherwise useful access logs."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        arguments = record.args
+        return not (
+            isinstance(arguments, tuple)
+            and len(arguments) >= 3
+            and arguments[2] in {"/health", "/api/health"}
+        )
+
+
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s %(message)s")
+    logging.getLogger("uvicorn.access").addFilter(_HealthAccessFilter())
     ensure_runtime_schema()
     ensure_penumbra_dataset()
     ensure_pokemon_dataset()

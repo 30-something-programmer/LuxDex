@@ -63,8 +63,7 @@ export default function PokemonArtwork({
 
   useEffect(() => {
     setFailed(false)
-    if (!spritePath) console.warn(`[LuxDex] Missing local sprite for ${name}.`)
-  }, [name, spritePath])
+  }, [spritePath])
   const filter =
     status === "unseen"
       ? "brightness(0) opacity(0.55)"
@@ -87,12 +86,13 @@ export default function PokemonArtwork({
         <img
           src={spritePath}
           alt={name}
+          loading="lazy"
+          decoding="async"
           className="relative z-[1] h-full w-full object-contain transition-all duration-200"
           style={{ imageRendering: "pixelated", filter }}
           onError={(event) => {
             event.currentTarget.hidden = true
             setFailed(true)
-            console.warn(`[LuxDex] Local sprite failed to load for ${name}.`)
           }}
         />
       )}

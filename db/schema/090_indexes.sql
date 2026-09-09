@@ -28,6 +28,9 @@ CREATE INDEX IF NOT EXISTS penumbra_pokemon_source_identity_build_idx
 CREATE INDEX IF NOT EXISTS penumbra_pokemon_identity_map_form_idx
     ON luxdex.penumbra_pokemon_identity_map (pokemon_form_id, source_identity_id);
 
+CREATE INDEX IF NOT EXISTS penumbra_pokemon_identity_build_pokemon_dataset_idx
+    ON luxdex.penumbra_pokemon_identity_build (pokemon_dataset_id);
+
 COMMENT ON INDEX luxdex.penumbra_map_location_name_prefix_idx IS
     'Supports case-insensitive prefix lookup without requiring a fuzzy-search extension.';
 COMMENT ON INDEX luxdex.penumbra_encounter_pokemon_name_prefix_idx IS
