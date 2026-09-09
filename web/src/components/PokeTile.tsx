@@ -1,6 +1,10 @@
 import type { PokemonCardModel, PokemonStatus } from "../types/presentation"
-import { formatLevelRange, formatSlots } from "../lib/format"
-import PokemonArtwork, { EyeClosedIcon, PokeBallIcon, SeenIcon } from "./PokemonArtwork"
+import { formatLevelRange } from "../lib/format"
+import PokemonArtwork, {
+  EyeClosedIcon,
+  PokeBallIcon,
+  SeenIcon,
+} from "./PokemonArtwork"
 
 interface PokeTileProps {
   pokemon: PokemonCardModel
@@ -17,12 +21,10 @@ export default function PokeTile({
   const isOwned = pokemon.status === "owned"
   const isSeen = pokemon.status === "seen"
   const isUnseen = pokemon.status === "unseen"
-  const slotLabel = formatSlots(pokemon.sosSlots)
   const levelLabel = formatLevelRange(
     pokemon.minLevel ?? undefined,
     pokemon.maxLevel ?? undefined,
   )
-  const topCenterLabel = pokemon.contextLabel ?? (slotLabel ? `SOS ${slotLabel}` : null)
 
   const tileRing = isOwned
     ? "ring-2 ring-[var(--color-owned)]"
@@ -38,7 +40,7 @@ export default function PokeTile({
       : "bg-[var(--color-surface)]"
 
   const badgeClass =
-    "absolute z-10 rounded-md bg-[var(--color-bg)]/70 px-1 py-0.5 text-[8px] font-black leading-none backdrop-blur-[1px]"
+    "absolute z-10 rounded-md bg-[var(--color-bg)]/80 px-1.5 py-1 text-[10px] font-black leading-none backdrop-blur-[1px]"
   const controlButtonClass =
     "grid h-5 w-5 place-items-center rounded-md bg-[var(--color-bg)]/70 backdrop-blur-[1px] transition-opacity hover:opacity-80 disabled:cursor-default disabled:hover:opacity-100"
 
@@ -58,7 +60,7 @@ export default function PokeTile({
         }
       }}
     >
-      <div className="absolute inset-1.5">
+      <div className="absolute -inset-1">
         <PokemonArtwork
           name={pokemon.name}
           spritePath={pokemon.spritePath}
@@ -70,23 +72,28 @@ export default function PokeTile({
         <span
           className={`${badgeClass} left-1 top-1 text-[var(--color-text)] [font-family:var(--font-mono)]`}
         >
-          {levelLabel}
+          {levelLabel.replace("Lv ", "Lv. ")}
         </span>
       )}
 
-      {topCenterLabel && (
+      {pokemon.genderMarker && (
         <span
-          className={`${badgeClass} left-1/2 top-1 -translate-x-1/2 whitespace-nowrap ${
-            pokemon.isRare ? "text-[var(--color-sos-rare)]" : "text-[var(--color-sos)]"
-          }`}
+          className={`${badgeClass} right-1 top-1 text-[var(--color-accent)]`}
+          aria-label={
+            pokemon.genderMarker === "♀"
+              ? "Female encounter form"
+              : "Male encounter form"
+          }
         >
-          {topCenterLabel}
+          {pokemon.genderMarker}
         </span>
       )}
 
       <span
-        className={`${badgeClass} right-1 top-1 max-w-[60%] truncate ${
-          isUnseen ? "text-[var(--color-text-muted)]" : "text-[var(--color-text)]"
+        className={`absolute bottom-7 left-1/2 z-10 max-w-[90%] -translate-x-1/2 truncate rounded-md bg-[var(--color-bg)]/80 px-1.5 py-0.5 text-[12px] font-black leading-tight backdrop-blur-[1px] ${
+          isUnseen
+            ? "text-[var(--color-text-muted)]"
+            : "text-[var(--color-text)]"
         }`}
       >
         {pokemon.name}
@@ -94,7 +101,7 @@ export default function PokeTile({
 
       {pokemon.rate != null && (
         <span
-          className={`${badgeClass} bottom-1 left-1 text-[var(--color-text-muted)] [font-family:var(--font-mono)]`}
+          className={`${badgeClass} bottom-1 left-1 text-[var(--color-text)] [font-family:var(--font-mono)]`}
         >
           {pokemon.rate}%
         </span>
@@ -106,10 +113,14 @@ export default function PokeTile({
           className={controlButtonClass}
           disabled={!isUnseen || !onMarkSeen}
           aria-label={
-            isUnseen ? `Mark ${pokemon.name} as seen` : `${pokemon.name} has been seen`
+            isUnseen
+              ? `Mark ${pokemon.name} as seen`
+              : `${pokemon.name} has been seen`
           }
           title={
-            isUnseen ? `Mark ${pokemon.name} as seen` : `${pokemon.name} has been seen`
+            isUnseen
+              ? `Mark ${pokemon.name} as seen`
+              : `${pokemon.name} has been seen`
           }
           onClick={(event) => {
             event.stopPropagation()
@@ -122,19 +133,29 @@ export default function PokeTile({
             <SeenIcon className="h-3 w-3 text-[var(--color-seen)]" />
           )}
         </button>
-        <button
-          type="button"
-          className={controlButtonClass}
-          disabled={isOwned || !onMarkOwned}
-          aria-label={isOwned ? `${pokemon.name} is owned` : `Mark ${pokemon.name} as owned`}
-          title={isOwned ? `${pokemon.name} is owned` : `Mark ${pokemon.name} as owned`}
-          onClick={(event) => {
-            event.stopPropagation()
-            if (!isOwned) onMarkOwned?.(pokemon.canonicalKey, pokemon.status)
-          }}
-        >
-          <PokeBallIcon className="h-3.5 w-3.5" muted={!isOwned} />
-        </button>
+        {!isUnseen && (
+          <button
+            type="button"
+            className={controlButtonClass}
+            disabled={isOwned || !onMarkOwned}
+            aria-label={
+              isOwned
+                ? `${pokemon.name} is captured`
+                : `Mark ${pokemon.name} as captured`
+            }
+            title={
+              isOwned
+                ? `${pokemon.name} is captured`
+                : `Mark ${pokemon.name} as captured`
+            }
+            onClick={(event) => {
+              event.stopPropagation()
+              if (!isOwned) onMarkOwned?.(pokemon.canonicalKey, pokemon.status)
+            }}
+          >
+            <PokeBallIcon className="h-3.5 w-3.5" muted={!isOwned} />
+          </button>
+        )}
       </div>
     </div>
   )

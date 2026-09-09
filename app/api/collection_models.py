@@ -14,6 +14,12 @@ class CollectionStateUpdate(BaseModel):
     state: CollectionState
 
 
+class CollectionBulkUpdate(BaseModel):
+    canonical_keys: list[str]
+    state: CollectionState
+    preserve_owned: bool = False
+
+
 class CollectionStateResponse(BaseModel):
     canonical_key: str
     display_name: str
@@ -35,4 +41,3 @@ class CollectionSummaryResponse(BaseModel):
     form_counts: CollectionCountResponse
     national_species_counts: CollectionCountResponse
     alola_species_counts: CollectionCountResponse
-

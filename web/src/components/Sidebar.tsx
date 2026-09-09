@@ -6,6 +6,7 @@ import type {
 import AreaNav from "./AreaNav"
 import IslandMap from "./IslandMap"
 import MelemeleMap from "./maps/MelemeleMap"
+import type { MapRegion } from "./maps/MelemeleMap"
 
 interface SidebarProps {
   title: string
@@ -18,6 +19,7 @@ interface SidebarProps {
   onSelectLocation: (locationId: string) => void
   onClose?: () => void
   emptyMessage?: string
+  mapRegions?: MapRegion[]
 }
 
 // A real image + SVG overlay map only exists for Melemele so far (see
@@ -32,6 +34,7 @@ function IslandMapForGroup({
   selectedLocationId,
   state,
   onSelectLocation,
+  mapRegions = [],
 }: {
   groupKey: string | null
   map: IslandMapModel | null
@@ -40,11 +43,13 @@ function IslandMapForGroup({
   selectedLocationId: string | null
   state: ResourceState
   onSelectLocation: (locationId: string) => void
+  mapRegions?: MapRegion[]
 }) {
   if (groupKey === "melemele") {
     return (
       <MelemeleMap
         locations={locations}
+        regions={mapRegions}
         selectedLocationId={selectedLocationId}
         onSelectLocation={onSelectLocation}
       />
@@ -73,6 +78,7 @@ export default function Sidebar({
   onSelectLocation,
   onClose,
   emptyMessage,
+  mapRegions,
 }: SidebarProps) {
   return (
     <div className="flex h-full min-h-0 flex-col overflow-hidden bg-[var(--color-surface)]">
@@ -112,6 +118,7 @@ export default function Sidebar({
           selectedLocationId={selectedLocationId}
           state={state}
           onSelectLocation={onSelectLocation}
+          mapRegions={mapRegions}
         />
       </div>
       <div className="min-h-0 flex-1 overflow-hidden">

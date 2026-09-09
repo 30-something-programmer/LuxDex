@@ -12,9 +12,8 @@ import type {
 } from "../types/presentation"
 import DayNightControl from "./DayNightControl"
 import EncounterZoneCards from "./EncounterZoneCards"
-import IslandTabs from "./IslandTabs"
 import Sidebar from "./Sidebar"
-import SOSControl from "./SOSControl"
+import type { MapRegion } from "./maps/MelemeleMap"
 
 interface AreasViewProps {
   islands: IslandOption[]
@@ -26,11 +25,9 @@ interface AreasViewProps {
   completion?: AreaCompletionModel
   state: ResourceState
   timeOfDay: TimeOfDay
-  sosMode: boolean
-  onSelectIsland: (islandId: string) => void
+  mapRegions?: MapRegion[]
   onSelectLocation: (locationId: string) => void
   onTimeOfDayChange: (timeOfDay: TimeOfDay) => void
-  onSosModeChange: (active: boolean) => void
   onPreviousLocation?: () => void
   onNextLocation?: () => void
   onPokemonSelect?: (pokemon: PokemonCardModel) => void
@@ -38,6 +35,11 @@ interface AreasViewProps {
   onMarkOwned?: (canonicalKey: string, status: PokemonStatus) => void
   mappingInProgress?: boolean
   onRetry?: () => void
+  onBulk?: (
+    canonicalKeys: string[],
+    state: PokemonStatus,
+    preserveOwned?: boolean,
+  ) => void
 }
 
 function ArrowIcon({ direction }: { direction: "left" | "right" }) {
@@ -65,11 +67,9 @@ export default function AreasView({
   completion,
   state,
   timeOfDay,
-  sosMode,
-  onSelectIsland,
+  mapRegions = [],
   onSelectLocation,
   onTimeOfDayChange,
-  onSosModeChange,
   onPreviousLocation,
   onNextLocation,
   onPokemonSelect,
@@ -77,6 +77,7 @@ export default function AreasView({
   onMarkOwned,
   mappingInProgress = false,
   onRetry,
+  onBulk,
 }: AreasViewProps) {
   const [mobileNavigationOpen, setMobileNavigationOpen] = useState(false)
   const activeIsland =
@@ -111,18 +112,12 @@ export default function AreasView({
           ? "Locations will appear as mapping is verified."
           : undefined
       }
+      mapRegions={mapRegions}
     />
   )
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <IslandTabs
-        islands={islands}
-        activeIslandId={activeIslandId}
-        state={state}
-        onSelect={onSelectIsland}
-      />
-
       <div className="flex min-h-0 flex-1">
         <aside className="hidden w-64 flex-shrink-0 border-r border-[var(--color-border)] lg:block">
           {sidebar}
@@ -206,11 +201,81 @@ export default function AreasView({
 
           <div className="flex flex-shrink-0 flex-wrap items-center gap-2 border-b border-[var(--color-border)] bg-[var(--color-panel)]/45 px-3 py-2 sm:px-4">
             <DayNightControl value={timeOfDay} onChange={onTimeOfDayChange} />
-            <SOSControl active={sosMode} onChange={onSosModeChange} />
+            {onBulk && zones.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                <button
+                  className="rounded-lg bg-[var(--color-panel)] px-2 py-1 text-[10px] font-bold"
+                  onClick={() =>
+                    onBulk(
+                      [
+                        ...new Set(
+                          zones
+                            .flatMap((zone) => [
+                              ...zone.encounters,
+                              ...zone.sosEncounters,
+                              ...zone.additionalSosEncounters,
+                            ])
+                            .map((pokemon) => pokemon.canonicalKey),
+                        ),
+                      ],
+                      "seen",
+                      true,
+                    )
+                  }
+                >
+                  Location Seen All
+                </button>
+                <button
+                  className="rounded-lg bg-[var(--color-panel)] px-2 py-1 text-[10px] font-bold"
+                  onClick={() =>
+                    onBulk(
+                      [
+                        ...new Set(
+                          zones
+                            .flatMap((zone) => [
+                              ...zone.encounters,
+                              ...zone.sosEncounters,
+                              ...zone.additionalSosEncounters,
+                            ])
+                            .map((pokemon) => pokemon.canonicalKey),
+                        ),
+                      ],
+                      "owned",
+                    )
+                  }
+                >
+                  Location Captured All
+                </button>
+                <button
+                  className="rounded-lg bg-[var(--color-panel)] px-2 py-1 text-[10px] font-bold text-[var(--color-danger)]"
+                  onClick={() =>
+                    window.confirm(
+                      "Reset all Pokémon in this location to Unseen?",
+                    ) &&
+                    onBulk(
+                      [
+                        ...new Set(
+                          zones
+                            .flatMap((zone) => [
+                              ...zone.encounters,
+                              ...zone.sosEncounters,
+                              ...zone.additionalSosEncounters,
+                            ])
+                            .map((pokemon) => pokemon.canonicalKey),
+                        ),
+                      ],
+                      "unseen",
+                    )
+                  }
+                >
+                  Location Reset
+                </button>
+              </div>
+            )}
             {completion && completion.total > 0 ? (
               <div
                 className="ml-auto flex items-center gap-2"
-                aria-label={`${completion.owned} owned, ${completion.seen + completion.owned} seen, ${completion.total} total`}
+                aria-label={`${completion.owned} captured, ${completion.seen + completion.owned} seen, ${completion.total} total`}
               >
                 <div
                   className="hidden max-w-28 flex-wrap gap-0.5 sm:flex"
@@ -234,7 +299,7 @@ export default function AreasView({
                 </div>
                 <span className="text-[10px] font-bold text-[var(--color-text-muted)]">
                   <span className="text-[var(--color-owned)]">
-                    {completion.owned} owned
+                    {completion.owned} captured
                   </span>
                   <span className="text-[var(--color-seen)]">
                     {" "}
@@ -253,7 +318,6 @@ export default function AreasView({
           <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">
             <EncounterZoneCards
               zones={zones}
-              sosMode={sosMode}
               state={state}
               onPokemonSelect={onPokemonSelect}
               onMarkSeen={onMarkSeen}
@@ -264,6 +328,7 @@ export default function AreasView({
                   ? `Some encounter areas on ${activeIsland?.fullName ?? "this island"} are still being mapped. Verified locations will appear here without placeholder data.`
                   : undefined
               }
+              onBulk={onBulk}
             />
           </div>
         </main>

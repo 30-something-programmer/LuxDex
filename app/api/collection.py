@@ -7,6 +7,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.api.collection_models import (
+    CollectionBulkUpdate,
     CollectionStateResponse,
     CollectionStateUpdate,
     CollectionSummaryResponse,
@@ -36,6 +37,13 @@ def list_collection(service: ServiceDependency) -> list[CollectionStateResponse]
 @router.get("/summary", response_model=CollectionSummaryResponse)
 def collection_summary(service: ServiceDependency) -> CollectionSummaryResponse:
     return service.summary()
+
+
+@router.put("/bulk", response_model=list[CollectionStateResponse])
+def set_collection_states(
+    update: CollectionBulkUpdate, service: ServiceDependency
+) -> list[CollectionStateResponse]:
+    return service.set_states(update)
 
 
 @router.get("/{canonical_key}", response_model=CollectionStateResponse)
@@ -68,4 +76,3 @@ def set_collection_state(
         return service.set_state(canonical_key, update.state)
     except CollectionNotFoundError as error:
         raise _not_found(error) from error
-

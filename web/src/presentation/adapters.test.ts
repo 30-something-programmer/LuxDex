@@ -97,4 +97,15 @@ describe("explore presentation adapters", () => {
       rate: null,
     })
   })
+
+  it("marks only explicit canonical gender forms, not species ratios", () => {
+    const genderLocation = structuredClone(location)
+    genderLocation.places[0].pools[0].normal = [
+      pokemon("meowstic:female", "Female Meowstic"),
+      pokemon("pichu", "Pichu"),
+    ]
+    const encounters = toEncounterZones(genderLocation, "day")[0].encounters
+    expect(encounters[0].genderMarker).toBe("♀")
+    expect(encounters[1].genderMarker).toBeUndefined()
+  })
 })

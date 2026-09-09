@@ -16,4 +16,9 @@ describe("URL routing", () => {
       canonicalKey: "rattata:alola",
     })
   })
+
+  it("routes Map Studio to its dedicated authoring view", () => {
+    expect(parseRoute("/map-studio")).toEqual({ view: "studio" })
+    expect(routePath({ view: "studio" })).toBe("/map-studio")
+  })
 })

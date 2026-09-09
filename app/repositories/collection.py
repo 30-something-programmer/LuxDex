@@ -109,6 +109,30 @@ class CollectionRepository:
         with connect_database(self.database_url) as connection:
             return self._mutate(connection, canonical_key, target_state)
 
+    def set_states(
+        self,
+        canonical_keys: list[str],
+        target_state: CollectionState,
+        preserve_owned: bool,
+    ) -> list[dict[str, Any]]:
+        unique_keys = list(dict.fromkeys(canonical_keys))
+        results: list[dict[str, Any]] = []
+        with connect_database(self.database_url) as connection:
+            for canonical_key in unique_keys:
+                with connection.cursor(row_factory=dict_row) as cursor:
+                    current = self._select_state(cursor, canonical_key)
+                if current is None:
+                    continue
+                effective = (
+                    "owned"
+                    if preserve_owned and target_state == "seen" and current["state"] == "owned"
+                    else target_state
+                )
+                result = self._mutate(connection, canonical_key, effective)
+                if result is not None:
+                    results.append(result)
+        return results
+
     @staticmethod
     def _select_state(cursor: Any, canonical_key: str) -> dict[str, Any] | None:
         cursor.execute(

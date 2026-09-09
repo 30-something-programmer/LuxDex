@@ -51,6 +51,15 @@ function toCard(
   identityPrefix: string,
   contextLabel?: string,
 ): PokemonCardModel {
+  const lowerName = pokemon.display_name.toLocaleLowerCase()
+  const genderMarker =
+    pokemon.canonical_key === "nidoran-f" ||
+    pokemon.canonical_key.endsWith(":female") ||
+    lowerName.startsWith("female ")
+      ? "♀"
+      : pokemon.canonical_key === "nidoran-m" || lowerName.startsWith("male ")
+        ? "♂"
+        : undefined
   return {
     id: [
       identityPrefix,
@@ -73,6 +82,7 @@ function toCard(
     maxLevel: pokemon.max_level,
     sosSlots: pokemon.sos_slots,
     contextLabel,
+    genderMarker,
   }
 }
 

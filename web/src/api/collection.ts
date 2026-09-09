@@ -31,3 +31,19 @@ export function setCollectionState(
     },
   )
 }
+
+export function setCollectionStates(
+  canonicalKeys: string[],
+  state: CollectionState,
+  preserveOwned = false,
+) {
+  return request<CollectionStateResponse[]>("/collection/bulk", undefined, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      canonical_keys: canonicalKeys,
+      state,
+      preserve_owned: preserveOwned,
+    }),
+  })
+}

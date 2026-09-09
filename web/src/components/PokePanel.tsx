@@ -123,7 +123,7 @@ export default function PokePanel({
                     Current status
                   </div>
                   <div className="font-black capitalize text-[var(--color-text)]">
-                    {pokemon.status}
+                    {pokemon.status === "owned" ? "captured" : pokemon.status}
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-1.5">
@@ -144,7 +144,7 @@ export default function PokePanel({
                       disabled={mutationPending}
                       onClick={() => onSetStatus(pokemon.canonicalKey, "owned")}
                     >
-                      Mark Owned
+                      Mark Captured
                     </button>
                   )}
                   {pokemon.status === "owned" && (

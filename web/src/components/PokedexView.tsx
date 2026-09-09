@@ -44,7 +44,7 @@ const filterOptions: FilterOption[] = [
   { value: "all", label: "All" },
   { value: "unseen", label: "Unseen" },
   { value: "seen", label: "Seen" },
-  { value: "owned", label: "Owned" },
+  { value: "owned", label: "Captured" },
 ]
 
 function displayNumber(entry: PokedexEntryModel, sort: PokedexSort) {
@@ -93,7 +93,7 @@ export default function PokedexView({
                     {seenCount} seen
                   </span>
                   <span className="text-[var(--color-owned)]">
-                    {ownedCount} owned
+                    {ownedCount} captured
                   </span>
                 </>
               )}

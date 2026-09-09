@@ -9,7 +9,7 @@ export function PokeBallIcon({
   className?: string
   muted?: boolean
 }) {
-  const color = muted ? "var(--color-text-muted)" : "var(--color-owned)"
+  const color = muted ? "#8b8b98" : "#ef4444"
   return (
     <svg
       className={className}
@@ -17,14 +17,22 @@ export function PokeBallIcon({
       fill="none"
       aria-hidden="true"
     >
-      <circle cx="10" cy="10" r="9" fill={color} stroke="white" strokeWidth="1.5" />
-      <path d="M1.5 10h17" stroke="white" strokeWidth="1.5" />
+      <circle
+        cx="10"
+        cy="10"
+        r="9"
+        fill="white"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
+      <path d="M1 10a9 9 0 0 1 18 0Z" fill={color} />
+      <path d="M1.5 10h17" stroke="currentColor" strokeWidth="1.5" />
       <circle
         cx="10"
         cy="10"
         r="3"
         fill="white"
-        stroke="white"
+        stroke="currentColor"
         strokeWidth="1"
       />
       <circle cx="10" cy="10" r="1.5" fill={color} />
@@ -57,7 +65,10 @@ export function EyeClosedIcon({ className }: { className?: string }) {
       strokeLinejoin="round"
       aria-hidden="true"
     >
-      <path d="M2.5 12S6 6 12 6s9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" opacity="0.35" />
+      <path
+        d="M2.5 12S6 6 12 6s9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+        opacity="0.35"
+      />
       <path d="M3 3l18 18" />
     </svg>
   )

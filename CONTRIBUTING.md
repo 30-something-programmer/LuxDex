@@ -9,6 +9,7 @@ Keep the repository contract intact:
 - `db/data/source/` preserves authoritative inputs unchanged. Derived or normalised canonical data belongs separately under `db/data/canonical/` and is republished on database rebuild.
 - Penumbra identity aliases belong only in `db/data/canonical/identity/`. Add an entry only when exact/benign-normalised matching is unsafe, name the canonical form key explicitly, and explain the evidence.
 - Researched geography belongs only in `db/data/canonical/geography/`. A verified raw-table mapping must cite the pinned structural donor and a source that supports its player-facing place or method. Leave unsupported tables unresolved; never canonicalise `Table N`, `Zone N`, or similar placeholders.
+- Map Studio geometry and sprite placement are presentation data under the `map_presentation_*` tables, seeded from `db/data/canonical/presentation/`. They may reference canonical keys but must never redefine encounter membership, rates, levels, time pools, or SOS truth.
 - Do not add fabricated or demo canonical data to the frontend to compensate for an API that has not been built.
 - Do not add Figma Make runtime dependencies, metadata, preview hooks, or generated mock persistence.
 - Normal rendering must not depend on third-party static-asset hosts. Commit redistributable assets locally and keep their acquisition reproducible under `scripts/`; document assets that cannot legally be bundled.

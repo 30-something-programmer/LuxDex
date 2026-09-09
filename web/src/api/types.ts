@@ -9,6 +9,39 @@ export type TimeOfDay = "day" | "night"
 export type EncounterPoolType = "normal" | "sos" | "additional_sos"
 export type CollectionState = "unseen" | "seen" | "owned"
 
+export interface StudioNodeResponse {
+  node_key: string
+  parent_key: string | null
+  layer: number
+  node_type: "world" | "island" | "location" | "zone"
+  canonical_key: string | null
+  display_name: string
+  asset_path: string | null
+  geometry: number[][] | null
+}
+
+export interface StudioPokemonResponse {
+  zone_node_key: string
+  canonical_key: string
+  display_name: string
+  sprite_path: string | null
+  collection_state: CollectionState
+}
+
+export interface StudioPlacementResponse {
+  zone_node_key: string
+  canonical_key: string
+  x: number
+  y: number
+  scale: number
+}
+
+export interface StudioDocumentResponse {
+  nodes: StudioNodeResponse[]
+  pokemon: StudioPokemonResponse[]
+  placements: StudioPlacementResponse[]
+}
+
 export interface AreaGroupResponse {
   group_key: string
   display_name: string

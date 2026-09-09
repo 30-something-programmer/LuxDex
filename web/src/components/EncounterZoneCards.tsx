@@ -4,30 +4,39 @@ import type {
   PokemonStatus,
   ResourceState,
 } from "../types/presentation"
+import { useState } from "react"
 import { formatLevelRange } from "../lib/format"
-import { environmentClassName, environmentStyleFor } from "../presentation/environments"
+import {
+  environmentClassName,
+  environmentStyleFor,
+} from "../presentation/environments"
 import PokeTile from "./PokeTile"
 
 interface EncounterZoneCardsProps {
   zones: EncounterZoneModel[]
-  sosMode: boolean
   state: ResourceState
   onPokemonSelect?: (pokemon: PokemonCardModel) => void
   onMarkSeen?: (canonicalKey: string, status: PokemonStatus) => void
   onMarkOwned?: (canonicalKey: string, status: PokemonStatus) => void
   onRetry?: () => void
   emptyMessage?: string
+  onBulk?: (
+    canonicalKeys: string[],
+    state: PokemonStatus,
+    preserveOwned?: boolean,
+  ) => void
 }
 export default function EncounterZoneCards({
   zones,
-  sosMode,
   state,
   onPokemonSelect,
   onMarkSeen,
   onMarkOwned,
   onRetry,
   emptyMessage,
+  onBulk,
 }: EncounterZoneCardsProps) {
+  const [sosZones, setSosZones] = useState<Record<string, boolean>>({})
   if (state === "loading" && zones.length === 0) {
     return (
       <div className="flex flex-col gap-3">
@@ -86,6 +95,7 @@ export default function EncounterZoneCards({
   return (
     <div className="flex flex-col gap-3">
       {zones.map((zone) => {
+        const sosMode = Boolean(sosZones[zone.id])
         const encounters = sosMode
           ? [...zone.sosEncounters, ...zone.additionalSosEncounters]
           : zone.encounters
@@ -93,6 +103,15 @@ export default function EncounterZoneCards({
         const environmentClass = environmentClassName(
           environmentStyleFor(zone.method, zone.label),
         )
+        const allKeys = [
+          ...new Set(
+            [
+              ...zone.encounters,
+              ...zone.sosEncounters,
+              ...zone.additionalSosEncounters,
+            ].map((pokemon) => pokemon.canonicalKey),
+          ),
+        ]
         return (
           <section
             key={zone.id}
@@ -111,15 +130,58 @@ export default function EncounterZoneCards({
                   {levelRange}
                 </span>
               )}
-              {sosMode ? (
-                <span className="ml-auto rounded-lg bg-[var(--color-sos)] px-2 py-0.5 text-[10px] font-black tracking-wide text-white">
-                  SOS
-                </span>
-              ) : zone.sosEncounters.length > 0 ? (
-                <span className="ml-auto text-[10px] font-semibold text-[var(--color-sos)] opacity-70">
-                  SOS available
-                </span>
-              ) : null}
+              <div className="ml-auto flex flex-wrap justify-end gap-1">
+                {zone.sosEncounters.length +
+                  zone.additionalSosEncounters.length >
+                  0 && (
+                  <button
+                    type="button"
+                    className={`rounded-lg px-2 py-1 text-[10px] font-black ${
+                      sosMode
+                        ? "bg-[var(--color-sos)] text-white"
+                        : "bg-[var(--color-surface)] text-[var(--color-sos)]"
+                    }`}
+                    aria-pressed={sosMode}
+                    onClick={() =>
+                      setSosZones((current) => ({
+                        ...current,
+                        [zone.id]: !sosMode,
+                      }))
+                    }
+                  >
+                    {sosMode ? "SOS" : "Normal · SOS"}
+                  </button>
+                )}
+                {onBulk && (
+                  <>
+                    <button
+                      type="button"
+                      className="rounded-lg bg-black/25 px-2 py-1 text-[10px] font-bold"
+                      onClick={() => onBulk(allKeys, "seen", true)}
+                    >
+                      Seen All
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-lg bg-black/25 px-2 py-1 text-[10px] font-bold"
+                      onClick={() => onBulk(allKeys, "owned")}
+                    >
+                      Captured All
+                    </button>
+                    <button
+                      type="button"
+                      className="rounded-lg bg-black/25 px-2 py-1 text-[10px] font-bold text-[var(--color-danger)]"
+                      onClick={() =>
+                        window.confirm(
+                          `Reset collection state for ${zone.label}?`,
+                        ) && onBulk(allKeys, "unseen")
+                      }
+                    >
+                      Reset
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
             <div className="p-2">
               {encounters.length === 0 ? (

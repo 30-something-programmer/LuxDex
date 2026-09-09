@@ -147,7 +147,9 @@ const pichuDetail: PokemonExploreResponse = {
   ],
 }
 
-function installApi(options: { failSearch?: boolean; failMutation?: boolean } = {}) {
+function installApi(
+  options: { failSearch?: boolean; failMutation?: boolean } = {},
+) {
   const requests: string[] = []
   let pichuState: "unseen" | "seen" | "owned" = "unseen"
   vi.stubGlobal(
@@ -171,9 +173,24 @@ function installApi(options: { failSearch?: boolean; failMutation?: boolean } = 
         const owned = pichuState === "owned" ? 1 : 0
         payload = {
           profile_key: "local",
-          form_counts: { total: 1127, unseen: 1127 - seen - owned, seen, owned },
-          national_species_counts: { total: 807, unseen: 807 - seen - owned, seen, owned },
-          alola_species_counts: { total: 403, unseen: 403 - seen - owned, seen, owned },
+          form_counts: {
+            total: 1127,
+            unseen: 1127 - seen - owned,
+            seen,
+            owned,
+          },
+          national_species_counts: {
+            total: 807,
+            unseen: 807 - seen - owned,
+            seen,
+            owned,
+          },
+          alola_species_counts: {
+            total: 403,
+            unseen: 403 - seen - owned,
+            seen,
+            owned,
+          },
         }
       } else if (
         url.pathname === "/api/collection/pichu/advance" &&
@@ -189,7 +206,8 @@ function installApi(options: { failSearch?: boolean; failMutation?: boolean } = 
             display_name: "Pichu",
             state: pichuState,
             first_seen_at: "2026-09-09T10:00:00Z",
-            first_owned_at: pichuState === "owned" ? "2026-09-09T10:01:00Z" : null,
+            first_owned_at:
+              pichuState === "owned" ? "2026-09-09T10:01:00Z" : null,
             updated_at: "2026-09-09T10:01:00Z",
           }
         }
@@ -197,7 +215,9 @@ function installApi(options: { failSearch?: boolean; failMutation?: boolean } = 
         url.pathname === "/api/collection/pichu" &&
         init?.method === "PUT"
       ) {
-        pichuState = (JSON.parse(String(init.body)) as { state: typeof pichuState }).state
+        pichuState = (JSON.parse(String(init.body)) as {
+          state: typeof pichuState
+        }).state
         payload = {
           canonical_key: "pichu",
           display_name: "Pichu",
@@ -256,8 +276,13 @@ function installApi(options: { failSearch?: boolean; failMutation?: boolean } = 
         )
         for (const place of (payload as ExploreLocationResponse).places)
           for (const pool of place.pools)
-            for (const pokemon of [...pool.normal, ...pool.sos, ...pool.additional_sos])
-              if (pokemon.canonical_key === "pichu") pokemon.collection_state = pichuState
+            for (const pokemon of [
+              ...pool.normal,
+              ...pool.sos,
+              ...pool.additional_sos,
+            ])
+              if (pokemon.canonical_key === "pichu")
+                pokemon.collection_state = pichuState
       } else if (url.pathname === "/api/pokemon/search") {
         if (options.failSearch) {
           payload = { detail: "Search unavailable" }
@@ -270,15 +295,24 @@ function installApi(options: { failSearch?: boolean; failMutation?: boolean } = 
               alola_usum_dex_number: 24,
               display_name: "Pichu",
               generation: 2,
-              selected_form: { ...pichuDetail.selected_form, collection_state: pichuState },
+              selected_form: {
+                ...pichuDetail.selected_form,
+                collection_state: pichuState,
+              },
             },
           ]
         }
       } else if (url.pathname === "/api/explore/pokemon/pichu") {
         payload = {
           ...pichuDetail,
-          selected_form: { ...pichuDetail.selected_form, collection_state: pichuState },
-          forms: pichuDetail.forms.map((form) => ({ ...form, collection_state: pichuState })),
+          selected_form: {
+            ...pichuDetail.selected_form,
+            collection_state: pichuState,
+          },
+          forms: pichuDetail.forms.map((form) => ({
+            ...form,
+            collection_state: pichuState,
+          })),
         }
       } else if (url.pathname === "/api/explore/pokemon/bulbasaur") {
         payload = {
@@ -362,13 +396,10 @@ describe("real-data application binding", () => {
     expect(await screen.findByText("Alolan Rattata")).toBeInTheDocument()
 
     await user.click(screen.getByRole("button", { name: /Day/ }))
-    await user.click(screen.getByRole("button", { name: "SOS" }))
-    // Normal/SOS is a global control: both stacked sections update together.
+    await user.click(screen.getByRole("button", { name: "Normal · SOS" }))
+    // SOS is scoped to the zone that exposes the control.
     expect(await screen.findByText("Pikachu")).toBeInTheDocument()
-    expect(screen.getByText("SOS 1–4")).toBeInTheDocument()
-    expect(
-      screen.getByText("No SOS encounters in this zone"),
-    ).toBeInTheDocument()
+    expect(screen.getByText("Path Behind the Rocks")).toBeInTheDocument()
 
     await user.click(screen.getAllByRole("button", { name: /Route 3/ })[0])
     await waitFor(() =>
@@ -388,19 +419,17 @@ describe("real-data application binding", () => {
     ).toBeInTheDocument()
   })
 
-  it("searches canonical forms and opens grouped Find in Penumbra details", async () => {
+  it("searches inside the Pokédex and opens grouped Find in Penumbra details", async () => {
     const user = userEvent.setup()
     installApi()
-    window.history.replaceState(null, "", "/pokemon")
+    window.history.replaceState(null, "", "/pokedex")
     render(<App />)
 
     await user.type(
-      screen.getByRole("searchbox", { name: "Search Pokémon" }),
+      screen.getByRole("searchbox", { name: "Search Pokédex" }),
       "Pichu",
     )
-    const result = await screen.findByRole("button", {
-      name: /Pichu.*Unseen/,
-    })
+    const result = await screen.findByRole("button", { name: /A-024.*\?\?\?/ })
     await user.click(result)
 
     expect(await screen.findByText("Find in Penumbra")).toBeInTheDocument()
@@ -409,7 +438,7 @@ describe("real-data application binding", () => {
     expect(window.location.pathname).toBe("/pokemon/pichu")
 
     await user.keyboard("{Escape}")
-    await waitFor(() => expect(window.location.pathname).toBe("/pokemon"))
+    await waitFor(() => expect(window.location.pathname).toBe("/pokedex"))
   })
 
   it("restores an areas view when history navigation returns to it", async () => {
@@ -423,7 +452,9 @@ describe("real-data application binding", () => {
 
     await user.click(screen.getByRole("button", { name: /Pokédex/ }))
     await waitFor(() => expect(window.location.pathname).toBe("/pokedex"))
-    expect(screen.queryByText("Grass Overlooking the Bay")).not.toBeInTheDocument()
+    expect(
+      screen.queryByText("Grass Overlooking the Bay"),
+    ).not.toBeInTheDocument()
 
     window.history.back()
     await waitFor(() =>
@@ -522,23 +553,19 @@ describe("real-data application binding", () => {
     expect(
       (await screen.findAllByText("Grass Overlooking the Bay")).length,
     ).toBeGreaterThan(0)
-    expect(screen.queryByText("Field South of the Bridge")).not.toBeInTheDocument()
+    expect(
+      screen.queryByText("Field South of the Bridge"),
+    ).not.toBeInTheDocument()
   })
 
-  it("shows clear empty and error states", async () => {
-    installApi({ failSearch: true })
-    window.history.replaceState(null, "", "/pokemon")
+  it("exposes the lightweight local profile shell", async () => {
+    installApi()
+    window.history.replaceState(null, "", "/pokedex")
     const user = userEvent.setup()
     render(<App />)
 
-    expect(await screen.findByText("Find a Pokémon")).toBeInTheDocument()
-    await user.type(
-      screen.getByRole("searchbox", { name: "Search Pokémon" }),
-      "Pichu",
-    )
-    expect(
-      await screen.findByText("Pokémon search is unavailable"),
-    ).toBeInTheDocument()
+    await user.click(screen.getByRole("button", { name: "Profile" }))
+    expect(await screen.findByText("Local Player")).toBeInTheDocument()
   })
 
   it("requests backend-owned Alola, National and A–Z Pokédex order", async () => {
@@ -586,7 +613,9 @@ describe("real-data application binding", () => {
     vi.spyOn(window, "confirm").mockReturnValue(true)
     render(<App />)
 
-    await user.click(await screen.findByRole("button", { name: "Mark Pichu as seen" }))
+    await user.click(
+      await screen.findByRole("button", { name: "Mark Pichu as seen" }),
+    )
     expect(
       await screen.findByRole("button", { name: "Pichu has been seen" }),
     ).toBeInTheDocument()
@@ -599,10 +628,16 @@ describe("real-data application binding", () => {
     expect(screen.queryByText("Bulbasaur")).not.toBeInTheDocument()
 
     await user.click(screen.getByRole("button", { name: /A-024.*Pichu/ }))
-    await user.click(await screen.findByRole("button", { name: "Mark Owned" }))
-    expect(screen.getByText("owned", { selector: ".capitalize" })).toBeInTheDocument()
+    await user.click(
+      await screen.findByRole("button", { name: "Mark Captured" }),
+    )
+    expect(
+      screen.getByText("captured", { selector: ".capitalize" }),
+    ).toBeInTheDocument()
     await user.click(screen.getByRole("button", { name: "Reset to Unseen" }))
-    expect(screen.getByText("unseen", { selector: ".capitalize" })).toBeInTheDocument()
+    expect(
+      screen.getByText("unseen", { selector: ".capitalize" }),
+    ).toBeInTheDocument()
   })
 
   it("rolls back an optimistic quick action when the API fails", async () => {
@@ -610,9 +645,13 @@ describe("real-data application binding", () => {
     installApi({ failMutation: true })
     render(<App />)
 
-    await user.click(await screen.findByRole("button", { name: "Mark Pichu as seen" }))
+    await user.click(
+      await screen.findByRole("button", { name: "Mark Pichu as seen" }),
+    )
     expect(
-      await screen.findByText("Collection update failed. Your previous status was restored."),
+      await screen.findByText(
+        "Collection update failed. Your previous status was restored.",
+      ),
     ).toBeInTheDocument()
     expect(
       screen.getByRole("button", { name: "Mark Pichu as seen" }),

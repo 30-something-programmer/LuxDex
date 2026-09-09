@@ -4,7 +4,7 @@
 !build/
 !build/**
 !db/schema/
-!db/schema/070_collection.sql
+!db/schema/**
 !db/data/source/penumbra/
 !db/data/source/penumbra/wild-encounters.txt
 !db/data/source/pokemon/
@@ -15,5 +15,7 @@
 !db/data/canonical/identity/**
 !db/data/canonical/geography/
 !db/data/canonical/geography/**
+!db/data/canonical/presentation/
+!db/data/canonical/presentation/**
 !web/public/assets/pokemon/
 !web/public/assets/pokemon/**

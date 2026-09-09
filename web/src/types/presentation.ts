@@ -64,6 +64,7 @@ export interface PokemonCardModel {
   isRare?: boolean
   sosSlots?: number[]
   contextLabel?: string
+  genderMarker?: "♂" | "♀"
 }
 
 export interface EncounterZoneModel {

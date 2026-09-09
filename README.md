@@ -8,13 +8,14 @@ The web application does not read, parse, or own canonical encounter data.
 
 ## MVP 0.1.0
 
-The local-first MVP provides three player-facing workflows:
+The local-first MVP provides two player-facing workflows:
 
-- **Areas** browses verified Penumbra locations, switches Day/Night and normal/SOS pools, and presents encounter rates, levels, and local sprites.
-- **Pokémon Finder** searches canonical species and forms, then links each result to its grouped Penumbra occurrences.
-- **Pokédex** browses the National or USUM Alola ordering with generation and collection filters.
+- **Areas** browses verified Penumbra locations, switches Day/Night globally and Normal/SOS per encounter zone, and presents encounter rates, levels, and local sprites.
+- **Pokédex** searches and browses the National or USUM Alola ordering with generation and collection filters, then opens grouped Penumbra occurrences.
 
-Seen and Owned progress is persisted in PostgreSQL for the local profile and remains consistent across all three views. Canonical geography is intentionally partial: researched Melemele locations are available now, while islands without verified mappings display a mapping-in-progress state rather than fabricated places.
+Seen and Captured progress is persisted in PostgreSQL for the local profile and remains consistent across the UI (`owned` remains the backend state name). Canonical geography is intentionally partial: researched Melemele locations are available now, while islands without verified mappings display a mapping-in-progress state rather than fabricated places.
+
+The internal **Map Studio** at `/map-studio` is a Melemele-first authoring experiment. Its PostgreSQL-backed World → Island → Location → Encounter Zone hierarchy stores parent-normalised presentation polygons and optional sprite placements separately from canonical geography and encounter truth.
 
 ## Repository layout
 
@@ -124,7 +125,7 @@ The frontend consumes two composed read models in addition to the proof endpoint
 - `GET /api/explore/areas/{group_key}/{location_key}` — verified places with Day/Night normal, SOS, and Additional SOS pools.
 - `GET /api/explore/pokemon/{canonical_key}` — canonical form details and grouped player-facing Penumbra locations.
 
-Areas, Pokémon Finder, and Pokédex use these APIs and the canonical Pokémon list directly. URL paths retain selected area/location or Pokémon form, sprites resolve only through backend-provided local asset paths, and loading/error/empty states never fall back to generated records.
+Areas and Pokédex use these APIs and the canonical Pokémon list directly. URL paths retain selected area/location or Pokémon form, sprites resolve only through backend-provided local asset paths, and loading/error/empty states never fall back to generated records.
 
 ## Local collection state
 
@@ -135,8 +136,13 @@ Seen/Owned progression is stored in PostgreSQL against the canonical Pokémon fo
 - `GET /api/collection/{canonical_key}` — one form's state and historical timestamps.
 - `POST /api/collection/{canonical_key}/advance` — forward-only quick progression.
 - `PUT /api/collection/{canonical_key}` — explicit `unseen`, `seen`, or `owned` detail action.
+- `PUT /api/collection/bulk` — transactional zone/location Seen, Captured, or Reset updates.
 
 Normal Stop, Start, Restart, and Rebuild operations preserve collection state because they retain `luxdex-db-data`. Full Blowaway intentionally deletes that volume, so it deletes mutable collection state and history while reconstructing canonical/reference datasets and the empty `local` profile. No Pokémon collection state is stored in browser storage.
+
+## Map presentation authoring
+
+`db/schema/080_map_presentation.sql` defines the presentation-only hierarchy and sprite placements. The initial Melemele geometry seed is preserved under `db/data/canonical/presentation/`; startup inserts missing seed nodes without overwriting later Studio edits. `GET /api/map-studio` returns the hierarchy, canonical zone palettes, and placements. Geometry and placement writes use the node endpoints beneath `/api/map-studio/nodes/`. Trial currently targets Melemele only.
 
 ## Local development
 

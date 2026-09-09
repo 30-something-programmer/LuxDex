@@ -1,133 +1,133 @@
-import { useState } from "react"
+import { useEffect, useId, useState } from "react"
 import type { LocationOption } from "../../types/presentation"
 
-// The supplied backdrop's native pixel size. The SVG overlay shares this
-// exact viewBox so image and hit areas scale together with no separate
-// positioning math to drift out of sync.
-const IMAGE_WIDTH = 1240
-const IMAGE_HEIGHT = 1090
-
-interface MelemeleRegion {
+export interface MapRegion {
   locationKey: string
-  points: string
+  points: number[][]
 }
-
-// Presentational hit-area geometry only: a canonical location key plus an
-// SVG polygon. These are approximate interaction regions hand-placed over
-// the backdrop image, not surveyed geography — see MelemeleMap's usage
-// notes in the LuxDex handoff for which regions are confident vs. best
-// effort. No encounter, Pokémon, or location data lives here; that stays
-// backend-owned and is only ever looked up by locationKey below.
-const REGIONS: MelemeleRegion[] = [
-  {
-    locationKey: "hauoli-outskirts",
-    points: "10,255 145,255 145,420 110,480 55,520 10,470",
-  },
-  {
-    locationKey: "trainers-school",
-    points: "145,270 255,270 255,345 145,345",
-  },
-  {
-    locationKey: "route-1",
-    points:
-      "145,100 330,90 430,190 400,300 330,340 255,345 255,270 300,220 270,170 200,140 145,180",
-  },
-  {
-    locationKey: "route-3",
-    points:
-      "480,300 600,260 680,300 720,380 800,420 900,460 950,520 900,580 800,560 700,520 620,480 550,440 480,380",
-  },
-  {
-    locationKey: "kalae-bay",
-    points: "650,180 760,170 820,230 830,300 780,340 700,320 650,270 630,220",
-  },
-  {
-    locationKey: "melemele-sea",
-    points:
-      "900,560 1050,560 1180,680 1220,880 1120,1020 900,1060 700,1010 600,900 580,750 620,650 750,590",
-  },
-]
-
-interface MelemeleMapProps {
+interface Props {
   locations: LocationOption[]
+  regions: MapRegion[]
   selectedLocationId: string | null
-  onSelectLocation: (locationId: string) => void
+  onSelectLocation: (id: string) => void
 }
 
-export default function MelemeleMap({
+export default function MelemeleMap(props: Props) {
+  const [expanded, setExpanded] = useState(false)
+  useEffect(() => {
+    if (!expanded) return
+    const close = (event: KeyboardEvent) =>
+      event.key === "Escape" && setExpanded(false)
+    window.addEventListener("keydown", close)
+    return () => window.removeEventListener("keydown", close)
+  }, [expanded])
+  return (
+    <>
+      <MapSurface
+        {...props}
+        expanded={false}
+        onExpand={() => setExpanded(true)}
+      />
+      {expanded && (
+        <div
+          className="fixed inset-0 z-50 grid place-items-center bg-black/80 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Expanded Melemele map"
+          onClick={() => setExpanded(false)}
+        >
+          <div
+            className="max-h-[94vh] w-full max-w-6xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <MapSurface
+              {...props}
+              expanded
+              onExpand={() => setExpanded(false)}
+            />
+          </div>
+        </div>
+      )}
+    </>
+  )
+}
+
+function MapSurface({
   locations,
+  regions,
   selectedLocationId,
   onSelectLocation,
-}: MelemeleMapProps) {
-  const [hoveredLocationId, setHoveredLocationId] = useState<string | null>(
-    null,
+  expanded,
+  onExpand,
+}: Props & { expanded: boolean; onExpand: () => void }) {
+  const [hovered, setHovered] = useState<string | null>(null)
+  const clipId = `selected-${useId().replace(/:/g, "")}`
+  const byKey = new Map(locations.map((location) => [location.id, location]))
+  const visible = regions.filter((region) => byKey.has(region.locationKey))
+  const selected = visible.find(
+    (region) => region.locationKey === selectedLocationId,
   )
-
-  const locationsByKey = new Map(
-    locations.map((location) => [location.id, location]),
-  )
-  // A region only renders when its canonical key is actually present in the
-  // backend-provided location list — geography that isn't verified/mapped
-  // yet stays absent rather than inventing a clickable area for it.
-  const visibleRegions = REGIONS.filter((region) =>
-    locationsByKey.has(region.locationKey),
-  )
-
-  const activeLocation =
-    locationsByKey.get(hoveredLocationId ?? "") ??
-    locationsByKey.get(selectedLocationId ?? "") ??
-    null
-
-  const clearHover = (locationKey: string) =>
-    setHoveredLocationId((current) =>
-      current === locationKey ? null : current,
-    )
-
+  const active = byKey.get(hovered ?? "") ?? byKey.get(selectedLocationId ?? "")
+  const points = (region: MapRegion) =>
+    region.points.map(([x, y]) => `${x},${y}`).join(" ")
   return (
-    <div className="relative w-full overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-panel)]">
-      <div className="relative w-full">
+    <div className="relative overflow-hidden rounded-xl border border-[var(--color-border)] bg-black shadow-xl">
+      <div className="relative aspect-[1240/1090] w-full">
         <img
           src="/assets/maps/melemele.png"
           alt="Melemele Island"
-          className="block h-auto w-full select-none"
           draggable={false}
+          className="h-full w-full select-none object-cover opacity-25 saturate-[.2] brightness-[.45]"
         />
+        {selected && (
+          <svg
+            viewBox="0 0 1 1"
+            preserveAspectRatio="none"
+            className="pointer-events-none absolute inset-0 h-full w-full"
+          >
+            <defs>
+              <clipPath id={clipId}>
+                <polygon points={points(selected)} />
+              </clipPath>
+            </defs>
+            <image
+              href="/assets/maps/melemele.png"
+              width="1"
+              height="1"
+              preserveAspectRatio="none"
+              clipPath={`url(#${clipId})`}
+              opacity=".82"
+            />
+          </svg>
+        )}
         <svg
-          viewBox={`0 0 ${IMAGE_WIDTH} ${IMAGE_HEIGHT}`}
+          viewBox="0 0 1 1"
+          preserveAspectRatio="none"
           className="absolute inset-0 h-full w-full"
           role="img"
           aria-label="Melemele Island interactive map"
         >
-          {visibleRegions.map((region) => {
-            const location = locationsByKey.get(region.locationKey)
-            if (!location) return null
+          {visible.map((region) => {
+            const location = byKey.get(region.locationKey)!
             const isSelected = region.locationKey === selectedLocationId
-            const isHovered = region.locationKey === hoveredLocationId
-            const fillOpacity = isHovered ? 0.38 : isSelected ? 0.2 : 0
-            const strokeWidth = isHovered ? 3 : isSelected ? 2 : 0
-
+            const isHovered = region.locationKey === hovered
             return (
               <polygon
                 key={region.locationKey}
-                points={region.points}
-                tabIndex={0}
+                points={points(region)}
+                vectorEffect="non-scaling-stroke"
                 role="button"
+                tabIndex={0}
                 aria-label={`Open ${location.name}`}
                 className="cursor-pointer outline-none"
                 fill="var(--color-melemele)"
-                fillOpacity={fillOpacity}
+                fillOpacity={isSelected ? 0.13 : isHovered ? 0.22 : 0.02}
                 stroke="var(--color-melemele)"
-                strokeWidth={strokeWidth}
-                style={{
-                  transition: "fill-opacity 120ms ease, stroke-width 120ms ease",
-                  filter: isHovered
-                    ? "drop-shadow(0 0 6px var(--color-melemele))"
-                    : undefined,
-                }}
-                onMouseEnter={() => setHoveredLocationId(region.locationKey)}
-                onMouseLeave={() => clearHover(region.locationKey)}
-                onFocus={() => setHoveredLocationId(region.locationKey)}
-                onBlur={() => clearHover(region.locationKey)}
+                strokeWidth={isSelected ? 7 : isHovered ? 3 : 1}
+                onMouseEnter={() => setHovered(region.locationKey)}
+                onMouseLeave={() => setHovered(null)}
+                onFocus={() => setHovered(region.locationKey)}
+                onBlur={() => setHovered(null)}
                 onClick={() => onSelectLocation(region.locationKey)}
                 onKeyDown={(event) => {
                   if (event.key === "Enter" || event.key === " ") {
@@ -140,14 +140,27 @@ export default function MelemeleMap({
           })}
         </svg>
       </div>
-
-      <div className="pointer-events-none absolute left-2 top-2 max-w-[75%]">
-        {activeLocation && (
-          <span className="inline-block rounded-md bg-[var(--color-surface)]/90 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[var(--color-melemele)] shadow">
-            {activeLocation.name}
-          </span>
-        )}
-      </div>
+      <button
+        type="button"
+        className="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-lg bg-black/75 text-white"
+        onClick={onExpand}
+        aria-label={expanded ? "Close expanded map" : "Expand map"}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          className="h-5 w-5"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M8 3H3v5M16 3h5v5M8 21H3v-5m13 5h5v-5" />
+        </svg>
+      </button>
+      {active && (
+        <span className="pointer-events-none absolute left-2 top-2 max-w-[70%] rounded-md bg-black/80 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[var(--color-melemele)]">
+          {active.name}
+        </span>
+      )}
     </div>
   )
 }

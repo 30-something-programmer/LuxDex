@@ -13,7 +13,11 @@ interface PokedexRoute {
   view: "pokedex"
 }
 
-export type AppRoute = AreasRoute | PokemonRoute | PokedexRoute
+interface StudioRoute {
+  view: "studio"
+}
+
+export type AppRoute = AreasRoute | PokemonRoute | PokedexRoute | StudioRoute
 
 function decode(segment: string | undefined): string | null {
   if (!segment) return null
@@ -29,6 +33,7 @@ export function parseRoute(pathname: string): AppRoute {
   if (view === "pokemon")
     return { view: "pokemon", canonicalKey: decode(first) }
   if (view === "pokedex") return { view: "pokedex" }
+  if (view === "map-studio") return { view: "studio" }
   if (view === "areas") {
     return {
       view: "areas",
@@ -40,6 +45,7 @@ export function parseRoute(pathname: string): AppRoute {
 }
 
 export function routePath(route: AppRoute): string {
+  if (route.view === "studio") return "/map-studio"
   if (route.view === "pokedex") return "/pokedex"
   if (route.view === "pokemon") {
     return route.canonicalKey

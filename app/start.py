@@ -11,6 +11,7 @@ from app.identity.penumbra import build_penumbra_pokemon_map
 from app.ingestion.penumbra.loader import ensure_penumbra_dataset
 from app.ingestion.pokemon.loader import ensure_pokemon_dataset
 from app.schema import ensure_runtime_schema
+from app.presentation.loader import ensure_map_presentation
 
 
 class _HealthAccessFilter(logging.Filter):
@@ -33,6 +34,7 @@ def main() -> None:
     ensure_pokemon_dataset()
     build_penumbra_pokemon_map()
     build_geography()
+    ensure_map_presentation()
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000)
 
 

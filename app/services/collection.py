@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from app.api.collection_models import (
+    CollectionBulkUpdate,
     CollectionCountResponse,
     CollectionState,
     CollectionStateResponse,
@@ -59,3 +60,8 @@ class CollectionService:
             raise CollectionNotFoundError(f"Pokémon/form key {canonical_key!r} was not found")
         return CollectionStateResponse.model_validate(row)
 
+    def set_states(self, update: CollectionBulkUpdate) -> list[CollectionStateResponse]:
+        rows = self.repository.set_states(
+            update.canonical_keys, update.state, update.preserve_owned
+        )
+        return [CollectionStateResponse.model_validate(row) for row in rows]
