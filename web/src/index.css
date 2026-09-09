@@ -37,6 +37,8 @@
   --color-silhouette: #2a2742;
   --color-success: #4ade80;
   --color-danger: #f87171;
+  --color-melemele: #34d399;
+  --color-melemele-soft: rgb(52 211 153 / 20%);
   --font-game: 'Nunito', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 }
@@ -62,6 +64,8 @@
   --color-silhouette: #1e1b4b;
   --color-success: #16a34a;
   --color-danger: #dc2626;
+  --color-melemele: #059669;
+  --color-melemele-soft: rgb(5 150 105 / 14%);
 }
 
 * {

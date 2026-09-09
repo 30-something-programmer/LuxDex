@@ -101,6 +101,7 @@ export default function AreasView({
     <Sidebar
       title={sidebarTitle}
       accentColor={accentColor}
+      groupKey={activeIslandId}
       map={map}
       locations={locations}
       selectedLocationId={selectedLocationId}

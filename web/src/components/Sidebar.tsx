@@ -5,10 +5,12 @@ import type {
 } from "../types/presentation"
 import AreaNav from "./AreaNav"
 import IslandMap from "./IslandMap"
+import MelemeleMap from "./maps/MelemeleMap"
 
 interface SidebarProps {
   title: string
   accentColor: string
+  groupKey: string | null
   map: IslandMapModel | null
   locations: LocationOption[]
   selectedLocationId: string | null
@@ -18,9 +20,52 @@ interface SidebarProps {
   emptyMessage?: string
 }
 
+// A real image + SVG overlay map only exists for Melemele so far (see
+// web/src/components/maps/). Every other island falls back to the generic
+// abstract IslandMap until its own backdrop is supplied — adding e.g.
+// AkalaMap later is just another branch here, not a rewrite of AreasView.
+function IslandMapForGroup({
+  groupKey,
+  map,
+  accentColor,
+  locations,
+  selectedLocationId,
+  state,
+  onSelectLocation,
+}: {
+  groupKey: string | null
+  map: IslandMapModel | null
+  accentColor: string
+  locations: LocationOption[]
+  selectedLocationId: string | null
+  state: ResourceState
+  onSelectLocation: (locationId: string) => void
+}) {
+  if (groupKey === "melemele") {
+    return (
+      <MelemeleMap
+        locations={locations}
+        selectedLocationId={selectedLocationId}
+        onSelectLocation={onSelectLocation}
+      />
+    )
+  }
+
+  return (
+    <IslandMap
+      map={map}
+      selectedLocationId={selectedLocationId}
+      accentColor={accentColor}
+      state={state}
+      onSelectLocation={onSelectLocation}
+    />
+  )
+}
+
 export default function Sidebar({
   title,
   accentColor,
+  groupKey,
   map,
   locations,
   selectedLocationId,
@@ -59,10 +104,12 @@ export default function Sidebar({
             </button>
           )}
         </div>
-        <IslandMap
+        <IslandMapForGroup
+          groupKey={groupKey}
           map={map}
-          selectedLocationId={selectedLocationId}
           accentColor={accentColor}
+          locations={locations}
+          selectedLocationId={selectedLocationId}
           state={state}
           onSelectLocation={onSelectLocation}
         />
