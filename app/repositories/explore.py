@@ -81,11 +81,17 @@ class ExploreRepository:
                         species.generation,
                         encounter.raw_map_group_sequence,
                         encounter.source_table_number
+                        , COALESCE(collection.state, 'unseen') AS collection_state
                     FROM luxdex.geography_encounter_full AS encounter
                     JOIN luxdex.pokemon_form AS form
                       ON form.form_key = encounter.canonical_key
                     JOIN luxdex.pokemon_species AS species
                       ON species.id = form.species_id
+                    LEFT JOIN luxdex.pokemon_collection_state AS collection
+                      ON collection.pokemon_form_id = form.id
+                     AND collection.profile_id = (
+                         SELECT id FROM luxdex.profile WHERE profile_key = 'local'
+                     )
                     WHERE encounter.location_key = %s
                       AND encounter.canonical_key IS NOT NULL
                     ORDER BY
@@ -151,4 +157,3 @@ class ExploreRepository:
                     (canonical_key,),
                 )
                 return list(cursor.fetchall())
-

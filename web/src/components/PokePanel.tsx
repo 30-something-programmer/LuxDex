@@ -1,4 +1,8 @@
-import type { PokemonDetailModel, ResourceState } from "../types/presentation"
+import type {
+  PokemonDetailModel,
+  PokemonStatus,
+  ResourceState,
+} from "../types/presentation"
 import { formatLevelRange, formatSlots } from "../lib/format"
 import PokemonArtwork from "./PokemonArtwork"
 
@@ -9,6 +13,8 @@ interface PokePanelProps {
   onClose: () => void
   onSelectForm: (canonicalKey: string) => void
   onGoToLocation: (groupKey: string, locationKey: string) => void
+  onSetStatus: (canonicalKey: string, status: PokemonStatus) => void
+  mutationPending?: boolean
 }
 
 export default function PokePanel({
@@ -18,6 +24,8 @@ export default function PokePanel({
   onClose,
   onSelectForm,
   onGoToLocation,
+  onSetStatus,
+  mutationPending = false,
 }: PokePanelProps) {
   if (!open) return null
 
@@ -77,7 +85,7 @@ export default function PokePanel({
                 <PokemonArtwork
                   name={pokemon.name}
                   spritePath={pokemon.spritePath}
-                  status="untracked"
+                  status={pokemon.status}
                   className="h-20 w-20"
                 />
               </div>
@@ -93,6 +101,64 @@ export default function PokePanel({
                     {pokemon.speciesName}
                   </p>
                 )}
+              </div>
+            </div>
+
+            <div className="mb-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)] p-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <div className="text-[9px] font-bold uppercase text-[var(--color-text-muted)]">
+                    Current status
+                  </div>
+                  <div className="font-black capitalize text-[var(--color-text)]">
+                    {pokemon.status}
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {pokemon.status === "unseen" && (
+                    <button
+                      className="rounded-lg bg-[var(--color-seen)] px-3 py-1.5 text-xs font-black text-white disabled:opacity-50"
+                      type="button"
+                      disabled={mutationPending}
+                      onClick={() => onSetStatus(pokemon.canonicalKey, "seen")}
+                    >
+                      Mark Seen
+                    </button>
+                  )}
+                  {pokemon.status !== "owned" && (
+                    <button
+                      className="rounded-lg bg-[var(--color-owned)] px-3 py-1.5 text-xs font-black text-white disabled:opacity-50"
+                      type="button"
+                      disabled={mutationPending}
+                      onClick={() => onSetStatus(pokemon.canonicalKey, "owned")}
+                    >
+                      Mark Owned
+                    </button>
+                  )}
+                  {pokemon.status === "owned" && (
+                    <button
+                      className="rounded-lg bg-[var(--color-surface)] px-3 py-1.5 text-xs font-black text-[var(--color-seen)] disabled:opacity-50"
+                      type="button"
+                      disabled={mutationPending}
+                      onClick={() => onSetStatus(pokemon.canonicalKey, "seen")}
+                    >
+                      Set to Seen
+                    </button>
+                  )}
+                  {pokemon.status !== "unseen" && (
+                    <button
+                      className="rounded-lg border border-[var(--color-danger)]/50 px-3 py-1.5 text-xs font-black text-[var(--color-danger)] disabled:opacity-50"
+                      type="button"
+                      disabled={mutationPending}
+                      onClick={() => {
+                        if (window.confirm(`Reset ${pokemon.name} to Unseen?`))
+                          onSetStatus(pokemon.canonicalKey, "unseen")
+                      }}
+                    >
+                      Reset to Unseen
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 

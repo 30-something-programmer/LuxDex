@@ -7,6 +7,8 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+from app.api.collection_models import CollectionState
+
 
 class PokemonSourceResponse(BaseModel):
     source_name: str
@@ -36,6 +38,7 @@ class PokemonSpeciesSummary(BaseModel):
     default_form_key: str
     default_sprite_key: str
     default_sprite_path: str | None
+    collection_state: CollectionState
 
 
 class PokemonSpeciesPage(BaseModel):
@@ -62,6 +65,7 @@ class PokemonFormResponse(BaseModel):
     regional_name: str | None
     sprite_key: str
     sprite_path: str | None
+    collection_state: CollectionState
 
 
 class PokemonSearchResultResponse(BaseModel):

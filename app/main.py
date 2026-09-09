@@ -11,6 +11,7 @@ from fastapi import FastAPI, Response, status
 from pydantic import BaseModel
 
 from app.api.encounters import router as encounters_router
+from app.api.collection import router as collection_router
 from app.api.explore import router as explore_router
 from app.api.geography import router as geography_router
 from app.api.identity import router as identity_router
@@ -25,6 +26,7 @@ def _read_version() -> str:
 VERSION = _read_version()
 app = FastAPI(title="LuxDex API", version=VERSION)
 app.include_router(encounters_router)
+app.include_router(collection_router)
 app.include_router(pokemon_router)
 app.include_router(identity_router)
 app.include_router(geography_router)

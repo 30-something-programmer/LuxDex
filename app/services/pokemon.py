@@ -79,6 +79,7 @@ class PokemonService:
                     regional_name=row["regional_name"],
                     sprite_key=row["sprite_key"],
                     sprite_path=row["sprite_path"],
+                    collection_state=row["collection_state"],
                 ),
             )
             for row in rows
@@ -101,6 +102,7 @@ class PokemonService:
             regional_name=row["selected_form_regional_name"],
             sprite_key=row["selected_form_sprite_key"],
             sprite_path=row["selected_form_sprite_path"],
+            collection_state=row["selected_form_collection_state"],
         )
         return PokemonDetailResponse(
             species_key=row["species_key"],

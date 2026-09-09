@@ -8,7 +8,7 @@ describe("PokemonArtwork", () => {
       <PokemonArtwork
         name="Pichu"
         spritePath="/assets/pokemon/sprites/pichu.png"
-        status="untracked"
+        status="owned"
       />,
     )
     expect(screen.getByRole("img", { name: "Pichu" })).toHaveAttribute(
@@ -23,7 +23,7 @@ describe("PokemonArtwork", () => {
       <PokemonArtwork
         name="Missing Form"
         spritePath={null}
-        status="untracked"
+        status="owned"
       />,
     )
     expect(
@@ -40,7 +40,7 @@ describe("PokemonArtwork", () => {
       <PokemonArtwork
         name="Remote"
         spritePath="https://example.com/remote.png"
-        status="untracked"
+        status="owned"
       />,
     )
     expect(screen.queryByRole("img")).not.toBeInTheDocument()

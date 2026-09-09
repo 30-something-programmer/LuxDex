@@ -7,6 +7,7 @@ export interface HealthResponse {
 
 export type TimeOfDay = "day" | "night"
 export type EncounterPoolType = "normal" | "sos" | "additional_sos"
+export type CollectionState = "unseen" | "seen" | "owned"
 
 export interface AreaGroupResponse {
   group_key: string
@@ -41,6 +42,7 @@ export interface PokemonFormResponse {
   regional_name: string | null
   sprite_key: string
   sprite_path: string | null
+  collection_state: CollectionState
 }
 
 export interface PokemonSpeciesSummaryResponse {
@@ -52,6 +54,7 @@ export interface PokemonSpeciesSummaryResponse {
   default_form_key: string
   default_sprite_key: string
   default_sprite_path: string | null
+  collection_state: CollectionState
 }
 
 export interface PokemonSpeciesPageResponse {
@@ -85,6 +88,7 @@ export interface ExplorePokemonResponse {
   max_level: number | null
   sos_slots: number[]
   source_table_count: number
+  collection_state: CollectionState
 }
 
 export interface ExploreTimePoolResponse {
@@ -142,4 +146,27 @@ export interface PokemonExploreResponse {
   selected_form: PokemonFormResponse
   forms: PokemonFormResponse[]
   encounters: PokemonEncounterOccurrenceResponse[]
+}
+
+export interface CollectionStateResponse {
+  canonical_key: string
+  display_name: string
+  state: CollectionState
+  first_seen_at: string | null
+  first_owned_at: string | null
+  updated_at: string | null
+}
+
+export interface CollectionCountResponse {
+  total: number
+  unseen: number
+  seen: number
+  owned: number
+}
+
+export interface CollectionSummaryResponse {
+  profile_key: string
+  form_counts: CollectionCountResponse
+  national_species_counts: CollectionCountResponse
+  alola_species_counts: CollectionCountResponse
 }

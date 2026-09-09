@@ -5,7 +5,7 @@ import PokemonArtwork, { PokeBallIcon, SeenIcon } from "./PokemonArtwork"
 interface PokeTileProps {
   pokemon: PokemonCardModel
   onSelect?: (pokemon: PokemonCardModel) => void
-  onStatusAction?: (pokemonId: string, status: PokemonStatus) => void
+  onStatusAction?: (canonicalKey: string, status: PokemonStatus) => void
   compact?: boolean
 }
 export default function PokeTile({
@@ -128,7 +128,7 @@ export default function PokeTile({
           type="button"
           onClick={(event) => {
             event.stopPropagation()
-            onStatusAction(pokemon.id, nextStatus)
+            onStatusAction(pokemon.canonicalKey, pokemon.status)
           }}
           disabled={isOwned}
         >

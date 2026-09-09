@@ -18,9 +18,11 @@ export class ApiError extends Error {
 export async function request<T>(
   path: string,
   signal?: AbortSignal,
+  init?: RequestInit,
 ): Promise<T> {
   const response = await fetch(`${apiBaseUrl}${path}`, {
-    headers: { Accept: "application/json" },
+    ...init,
+    headers: { Accept: "application/json", ...init?.headers },
     signal,
   })
 

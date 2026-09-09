@@ -1,5 +1,5 @@
 export type ResourceState = "loading" | "ready" | "empty" | "error"
-export type PokemonStatus = "untracked" | "unseen" | "seen" | "owned"
+export type PokemonStatus = "unseen" | "seen" | "owned"
 export type TimeOfDay = "day" | "night"
 
 export interface IslandOption {
@@ -106,6 +106,7 @@ export interface PokedexEntryModel extends PokemonCardModel {
 export interface PokemonFormOptionModel {
   key: string
   name: string
+  status: PokemonStatus
 }
 
 export interface PokemonDetailModel extends PokedexEntryModel {

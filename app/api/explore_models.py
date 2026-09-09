@@ -6,6 +6,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
+from app.api.collection_models import CollectionState
 from app.api.pokemon_models import PokemonFormResponse
 
 
@@ -25,6 +26,7 @@ class ExplorePokemonResponse(BaseModel):
     max_level: int | None
     sos_slots: list[int]
     source_table_count: int
+    collection_state: CollectionState
 
 
 class ExploreTimePoolResponse(BaseModel):
@@ -82,4 +84,3 @@ class PokemonExploreResponse(BaseModel):
     selected_form: PokemonFormResponse
     forms: list[PokemonFormResponse]
     encounters: list[PokemonEncounterOccurrenceResponse]
-

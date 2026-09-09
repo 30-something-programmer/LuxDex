@@ -106,7 +106,7 @@ export default function PokemonSearch({
                     <PokemonArtwork
                       name={pokemon.name}
                       spritePath={pokemon.spritePath}
-                      status="untracked"
+                      status={pokemon.status}
                       className="h-14 w-14"
                     />
                   </span>
@@ -128,7 +128,11 @@ export default function PokemonSearch({
                       {` · Gen ${generation}`}
                     </span>
                     <span className="mt-1 block text-[10px] font-black text-[var(--color-accent)]">
-                      Find in Penumbra →
+                      {pokemon.status === "unseen"
+                        ? "Unseen"
+                        : pokemon.status === "seen"
+                          ? "Seen · Find in Penumbra →"
+                          : "Owned ✓ · Find in Penumbra →"}
                     </span>
                   </span>
                 </button>

@@ -12,7 +12,7 @@ interface EncounterZoneCardsProps {
   sosMode: boolean
   state: ResourceState
   onPokemonSelect?: (pokemon: PokemonCardModel) => void
-  onStatusAction?: (pokemonId: string, status: PokemonStatus) => void
+  onStatusAction?: (canonicalKey: string, status: PokemonStatus) => void
 }
 export default function EncounterZoneCards({
   zones,

@@ -3,6 +3,8 @@
 !app/**
 !build/
 !build/**
+!db/schema/
+!db/schema/070_collection.sql
 !db/data/source/penumbra/
 !db/data/source/penumbra/wild-encounters.txt
 !db/data/source/pokemon/

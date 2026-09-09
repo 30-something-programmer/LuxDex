@@ -46,7 +46,7 @@ Running `.\docker\run.ps1` without arguments opens the lifecycle menu. The web U
 
 All services communicate on the private `luxdex-internal` Docker network. Ports `52032`–`52039` remain reserved for future LuxDex services.
 
-`Rebuild` rebuilds application images without Docker layer cache and restarts the stack while preserving the database volume. `Full Blowaway` removes only Compose resources belonging to LuxDex, including its database volume and service images, then rebuilds the schema, ingests both source datasets, builds their identity map, and publishes canonical geography before the API starts. Normal startup is offline: each loader compares versioned source fingerprints and skips unchanged work.
+`Rebuild` rebuilds application images without Docker layer cache and restarts the stack while preserving the database volume and player collection. `Full Blowaway` removes only Compose resources belonging to LuxDex, including its database volume and service images, then rebuilds the schema, ingests both source datasets, builds their identity map, and publishes canonical geography before the API starts. Because the volume is deliberately destroyed, Full Blowaway recreates the `local` profile with an empty collection; mutable Seen/Owned state and its audit history are not seeded back. Normal startup is offline: each loader compares versioned source fingerprints and skips unchanged work.
 
 ## Penumbra data commands
 
@@ -114,7 +114,19 @@ The frontend consumes two composed read models in addition to the proof endpoint
 - `GET /api/explore/areas/{group_key}/{location_key}` — verified places with Day/Night normal, SOS, and Additional SOS pools.
 - `GET /api/explore/pokemon/{canonical_key}` — canonical form details and grouped player-facing Penumbra locations.
 
-Areas, Pokémon Finder, and Pokédex now use these APIs and the canonical Pokémon list directly. URL paths retain selected area/location or Pokémon form, sprites resolve only through backend-provided local asset paths, and loading/error/empty states never fall back to generated records. Seen/Owned tracking remains deliberately unimplemented.
+Areas, Pokémon Finder, and Pokédex use these APIs and the canonical Pokémon list directly. URL paths retain selected area/location or Pokémon form, sprites resolve only through backend-provided local asset paths, and loading/error/empty states never fall back to generated records.
+
+## Local collection state
+
+Seen/Owned progression is stored in PostgreSQL against the canonical Pokémon form and the bootstrapped `local` profile. A never-touched form has no state row and is Unseen. Advancing is strictly `Unseen → Seen → Owned`; advancing Owned is idempotent. The Pokémon detail panel provides deliberate downgrade/reset actions, and every actual transition writes an audit event in the same transaction as current state.
+
+- `GET /api/collection` — all canonical forms with authoritative state.
+- `GET /api/collection/summary` — exact form counts plus National and USUM Alola species counts.
+- `GET /api/collection/{canonical_key}` — one form's state and historical timestamps.
+- `POST /api/collection/{canonical_key}/advance` — forward-only quick progression.
+- `PUT /api/collection/{canonical_key}` — explicit `unseen`, `seen`, or `owned` detail action.
+
+Normal Stop, Start, Restart, and Rebuild operations preserve collection state because they retain `luxdex-db-data`. Full Blowaway intentionally deletes that volume, so it deletes mutable collection state and history while reconstructing canonical/reference datasets and the empty `local` profile. No Pokémon collection state is stored in browser storage.
 
 ## Local development
 

@@ -95,6 +95,7 @@ class ExploreService:
                             max_level=item["max_level"],
                             sos_slots=sorted(item["sos_slots"]),
                             source_table_count=len(item["source_tables"]),
+                            collection_state=item["collection_state"],
                         )
                         for item in grouped.values()
                     ]
@@ -171,4 +172,3 @@ class ExploreService:
             forms=forms,
             encounters=occurrences,
         )
-

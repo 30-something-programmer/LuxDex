@@ -26,6 +26,7 @@ function pokemon(
     max_level: 6,
     sos_slots: [],
     source_table_count: 1,
+    collection_state: "unseen",
     ...overrides,
   }
 }

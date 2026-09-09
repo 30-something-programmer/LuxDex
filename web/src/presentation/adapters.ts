@@ -61,7 +61,7 @@ function toCard(
       pokemon.is_regional && pokemon.regional_name
         ? pokemon.regional_name
         : pokemon.display_name,
-    status: "untracked",
+    status: pokemon.collection_state,
     spritePath: pokemon.sprite_path,
     rate: pokemon.rate_percent,
     minLevel: pokemon.min_level,
@@ -121,7 +121,7 @@ export function toSearchResults(
       canonicalKey: result.selected_form.form_key,
       name: result.selected_form.display_name,
       formLabel: result.selected_form.display_name,
-      status: "untracked",
+      status: result.selected_form.collection_state,
       spritePath: result.selected_form.sprite_path,
     },
     nationalDexNumber: result.national_dex_number,
@@ -137,7 +137,7 @@ export function toPokedexEntries(
     id: entry.default_form_key,
     canonicalKey: entry.default_form_key,
     name: entry.display_name,
-    status: "untracked",
+    status: entry.collection_state,
     spritePath: entry.default_sprite_path,
     nationalDexNumber: entry.national_dex_number,
     alolaDexNumber: entry.alola_usum_dex_number ?? undefined,
@@ -184,7 +184,7 @@ export function toPokemonDetail(
     formLabel: pokemon.selected_form.display_name,
     isRegional: pokemon.selected_form.is_regional,
     regionalName: pokemon.selected_form.regional_name,
-    status: "untracked",
+    status: pokemon.selected_form.collection_state,
     spritePath: pokemon.selected_form.sprite_path,
     nationalDexNumber: pokemon.national_dex_number,
     alolaDexNumber: pokemon.alola_usum_dex_number ?? undefined,
@@ -192,6 +192,7 @@ export function toPokemonDetail(
     forms: pokemon.forms.map((form) => ({
       key: form.form_key,
       name: form.display_name,
+      status: form.collection_state,
     })),
     occurrences,
   }

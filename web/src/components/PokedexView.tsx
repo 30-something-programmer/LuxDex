@@ -62,7 +62,7 @@ export default function PokedexView({
   filter,
   query,
   generation,
-  trackingEnabled = false,
+  trackingEnabled = true,
   totalCount = entries.length,
   seenCount = entries.filter((entry) => entry.status !== "unseen").length,
   ownedCount = entries.filter((entry) => entry.status === "owned").length,
@@ -250,7 +250,7 @@ export default function PokedexView({
                   className="mx-auto aspect-square w-full max-w-16"
                 />
                 <div className="truncate text-[9px] font-black text-[var(--color-text)] sm:text-[10px]">
-                  {entry.name}
+                  {entry.status === "unseen" ? "???" : entry.name}
                 </div>
                 {entry.status === "owned" && (
                   <PokeBallIcon className="absolute right-1 top-1 h-4 w-4" />

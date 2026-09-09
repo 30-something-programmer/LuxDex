@@ -95,6 +95,7 @@ class PokemonRepository:
                         default_form.form_key AS default_form_key,
                         default_form.sprite_key AS default_sprite_key,
                         sprite.local_path AS default_sprite_path
+                        , COALESCE(collection.state, 'unseen') AS collection_state
                     FROM luxdex.pokemon_species AS species
                     JOIN luxdex.source_dataset AS dataset ON dataset.id = species.dataset_id
                     JOIN luxdex.pokemon_form AS default_form
@@ -102,6 +103,11 @@ class PokemonRepository:
                      AND default_form.is_default
                     LEFT JOIN luxdex.pokemon_sprite_asset AS sprite
                       ON sprite.form_id = default_form.id
+                    LEFT JOIN luxdex.pokemon_collection_state AS collection
+                      ON collection.pokemon_form_id = default_form.id
+                     AND collection.profile_id = (
+                         SELECT id FROM luxdex.profile WHERE profile_key = 'local'
+                     )
                     LEFT JOIN luxdex.pokemon_pokedex_number AS alola_number
                       ON alola_number.species_id = species.id
                      AND alola_number.pokedex_id = (
@@ -145,10 +151,16 @@ class PokemonRepository:
                         form.regional_name,
                         form.sprite_key,
                         sprite.local_path AS sprite_path
+                        , COALESCE(collection.state, 'unseen') AS collection_state
                     FROM luxdex.pokemon_form AS form
                     JOIN luxdex.pokemon_species AS species ON species.id = form.species_id
                     JOIN luxdex.source_dataset AS dataset ON dataset.id = species.dataset_id
                     LEFT JOIN luxdex.pokemon_sprite_asset AS sprite ON sprite.form_id = form.id
+                    LEFT JOIN luxdex.pokemon_collection_state AS collection
+                      ON collection.pokemon_form_id = form.id
+                     AND collection.profile_id = (
+                         SELECT id FROM luxdex.profile WHERE profile_key = 'local'
+                     )
                     LEFT JOIN luxdex.pokemon_pokedex_number AS alola_number
                       ON alola_number.species_id = species.id
                      AND alola_number.pokedex_id = (
@@ -200,6 +212,7 @@ class PokemonRepository:
                         selected_form.regional_name AS selected_form_regional_name,
                         selected_form.sprite_key AS selected_form_sprite_key,
                         sprite.local_path AS selected_form_sprite_path,
+                        COALESCE(collection.state, 'unseen') AS selected_form_collection_state,
                         COALESCE(
                             jsonb_object_agg(pokedex.dex_key, number.dex_number)
                                 FILTER (WHERE pokedex.id IS NOT NULL),
@@ -210,12 +223,17 @@ class PokemonRepository:
                     JOIN luxdex.source_dataset AS dataset ON dataset.id = species.dataset_id
                     LEFT JOIN luxdex.pokemon_sprite_asset AS sprite
                       ON sprite.form_id = selected_form.id
+                    LEFT JOIN luxdex.pokemon_collection_state AS collection
+                      ON collection.pokemon_form_id = selected_form.id
+                     AND collection.profile_id = (
+                         SELECT id FROM luxdex.profile WHERE profile_key = 'local'
+                     )
                     LEFT JOIN luxdex.pokemon_pokedex_number AS number
                       ON number.species_id = species.id
                     LEFT JOIN luxdex.pokemon_pokedex AS pokedex
                       ON pokedex.id = number.pokedex_id
                     WHERE dataset.source_name = %s AND selected_form.form_key = %s
-                    GROUP BY species.id, selected_form.id, sprite.local_path
+                    GROUP BY species.id, selected_form.id, sprite.local_path, collection.state
                     """,
                     (SOURCE_NAME, key),
                 )
@@ -252,8 +270,14 @@ class PokemonRepository:
                         form.regional_name,
                         form.sprite_key,
                         sprite.local_path AS sprite_path
+                        , COALESCE(collection.state, 'unseen') AS collection_state
                     FROM luxdex.pokemon_form AS form
                     LEFT JOIN luxdex.pokemon_sprite_asset AS sprite ON sprite.form_id = form.id
+                    LEFT JOIN luxdex.pokemon_collection_state AS collection
+                      ON collection.pokemon_form_id = form.id
+                     AND collection.profile_id = (
+                         SELECT id FROM luxdex.profile WHERE profile_key = 'local'
+                     )
                     WHERE form.species_id = %s
                     ORDER BY NOT form.is_default, form.form_order, form.id
                     """,

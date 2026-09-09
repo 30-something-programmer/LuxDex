@@ -1,10 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { getHealth } from "./api/client"
+import {
+  advanceCollection,
+  getCollectionSummary,
+  setCollectionState,
+} from "./api/collection"
 import { getLocationExplore, getPokemonExplore } from "./api/explore"
 import { getAreaGroups, getLocations } from "./api/geography"
 import { listPokemon, searchPokemon } from "./api/pokemon"
 import type {
   AreaGroupResponse,
+  CollectionState,
+  CollectionSummaryResponse,
   ExploreLocationResponse,
   HealthResponse,
   LocationResponse,
@@ -106,6 +113,10 @@ export default function App() {
   const [theme, setTheme] = useState<Theme>("dark")
   const [health, setHealth] = useState<HealthResponse | null>(null)
   const [healthError, setHealthError] = useState(false)
+  const [collectionSummary, setCollectionSummary] =
+    useState<CollectionSummaryResponse | null>(null)
+  const [collectionError, setCollectionError] = useState<string | null>(null)
+  const [mutatingKey, setMutatingKey] = useState<string | null>(null)
 
   const [groups, setGroups] = useState<AreaGroupResponse[]>([])
   const [groupsState, setGroupsState] = useState<ResourceState>("loading")
@@ -152,6 +163,20 @@ export default function App() {
     window.addEventListener("popstate", onPopState)
     return () => window.removeEventListener("popstate", onPopState)
   }, [])
+
+  const refreshCollectionSummary = useCallback((signal?: AbortSignal) => {
+    getCollectionSummary(signal)
+      .then(setCollectionSummary)
+      .catch((error: unknown) => {
+        if (!isAbort(error)) setCollectionError("Collection progress is unavailable.")
+      })
+  }, [])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    refreshCollectionSummary(controller.signal)
+    return () => controller.abort()
+  }, [refreshCollectionSummary])
 
   useEffect(() => {
     if (route.view === "areas") setLastAreaRoute(route)
@@ -376,6 +401,145 @@ export default function App() {
     [locationExplore, timeOfDay],
   )
 
+  const applyCollectionState = useCallback(
+    (canonicalKey: string, status: CollectionState) => {
+      setLocationExplore((current) =>
+        current
+          ? {
+              ...current,
+              places: current.places.map((place) => ({
+                ...place,
+                pools: place.pools.map((pool) => ({
+                  ...pool,
+                  normal: pool.normal.map((pokemon) =>
+                    pokemon.canonical_key === canonicalKey
+                      ? { ...pokemon, collection_state: status }
+                      : pokemon,
+                  ),
+                  sos: pool.sos.map((pokemon) =>
+                    pokemon.canonical_key === canonicalKey
+                      ? { ...pokemon, collection_state: status }
+                      : pokemon,
+                  ),
+                  additional_sos: pool.additional_sos.map((pokemon) =>
+                    pokemon.canonical_key === canonicalKey
+                      ? { ...pokemon, collection_state: status }
+                      : pokemon,
+                  ),
+                })),
+              })),
+            }
+          : current,
+      )
+      setSearchResults((current) =>
+        current.map((result) =>
+          result.pokemon.canonicalKey === canonicalKey
+            ? { ...result, pokemon: { ...result.pokemon, status } }
+            : result,
+        ),
+      )
+      setPokedexEntries((current) =>
+        current.map((entry) =>
+          entry.canonicalKey === canonicalKey ? { ...entry, status } : entry,
+        ),
+      )
+      setPokemonDetail((current) =>
+        current
+          ? {
+              ...current,
+              status:
+                current.canonicalKey === canonicalKey ? status : current.status,
+              forms: current.forms.map((form) =>
+                form.key === canonicalKey ? { ...form, status } : form,
+              ),
+            }
+          : current,
+      )
+    },
+    [],
+  )
+
+  const mutateCollection = useCallback(
+    async (
+      canonicalKey: string,
+      previousState: CollectionState,
+      targetState: CollectionState,
+      mutation: () => ReturnType<typeof advanceCollection>,
+    ) => {
+      if (mutatingKey === canonicalKey || previousState === targetState) return
+      setCollectionError(null)
+      setMutatingKey(canonicalKey)
+      applyCollectionState(canonicalKey, targetState)
+      try {
+        const authoritative = await mutation()
+        applyCollectionState(canonicalKey, authoritative.state)
+        refreshCollectionSummary()
+      } catch {
+        applyCollectionState(canonicalKey, previousState)
+        setCollectionError("Collection update failed. Your previous status was restored.")
+      } finally {
+        setMutatingKey(null)
+      }
+    },
+    [applyCollectionState, mutatingKey, refreshCollectionSummary],
+  )
+
+  const advanceStatus = useCallback(
+    (canonicalKey: string, currentState: CollectionState) => {
+      const targetState =
+        currentState === "unseen"
+          ? "seen"
+          : currentState === "seen"
+            ? "owned"
+            : "owned"
+      void mutateCollection(canonicalKey, currentState, targetState, () =>
+        advanceCollection(canonicalKey),
+      )
+    },
+    [mutateCollection],
+  )
+
+  const setStatus = useCallback(
+    (canonicalKey: string, targetState: CollectionState) => {
+      const previousState =
+        pokemonDetail?.canonicalKey === canonicalKey
+          ? pokemonDetail.status
+          : "unseen"
+      void mutateCollection(canonicalKey, previousState, targetState, () =>
+        setCollectionState(canonicalKey, targetState),
+      )
+    },
+    [mutateCollection, pokemonDetail],
+  )
+
+  const areaCompletion = useMemo(() => {
+    const selected = zones.find((zone) => zone.id === selectedPlaceId)
+    if (!selected) return undefined
+    const encounters = sosMode
+      ? [...selected.sosEncounters, ...selected.additionalSosEncounters]
+      : selected.encounters
+    const unique = new Map(encounters.map((pokemon) => [pokemon.canonicalKey, pokemon]))
+    const values = [...unique.values()]
+    return {
+      total: values.length,
+      seen: values.filter((pokemon) => pokemon.status === "seen").length,
+      owned: values.filter((pokemon) => pokemon.status === "owned").length,
+    }
+  }, [selectedPlaceId, sosMode, zones])
+
+  const visiblePokedexEntries = useMemo(
+    () =>
+      pokedexFilter === "all"
+        ? pokedexEntries
+        : pokedexEntries.filter((entry) => entry.status === pokedexFilter),
+    [pokedexEntries, pokedexFilter],
+  )
+
+  const pokedexCounts =
+    pokedexSort === "alola"
+      ? collectionSummary?.alola_species_counts
+      : collectionSummary?.national_species_counts
+
   const currentLocationIndex =
     route.view === "areas"
       ? locations.findIndex(
@@ -428,6 +592,7 @@ export default function App() {
             selectedLocationId={route.locationKey}
             map={islandMap}
             zones={zones}
+            completion={areaCompletion}
             selectedZoneId={selectedPlaceId}
             state={areasState}
             timeOfDay={timeOfDay}
@@ -456,6 +621,7 @@ export default function App() {
             onPokemonSelect={(pokemon) =>
               navigate({ view: "pokemon", canonicalKey: pokemon.canonicalKey })
             }
+            onStatusAction={advanceStatus}
           />
         )}
         {route.view === "pokemon" && (
@@ -471,13 +637,23 @@ export default function App() {
         )}
         {route.view === "pokedex" && (
           <PokedexView
-            entries={pokedexEntries}
+            entries={visiblePokedexEntries}
             state={pokedexState}
             sort={pokedexSort}
             filter={pokedexFilter}
             query={pokedexQuery}
             generation={pokedexGeneration}
-            totalCount={pokedexEntries.length}
+            trackingEnabled
+            totalCount={pokedexCounts?.total ?? pokedexEntries.length}
+            seenCount={
+              pokedexCounts
+                ? pokedexCounts.seen + pokedexCounts.owned
+                : pokedexEntries.filter((entry) => entry.status !== "unseen").length
+            }
+            ownedCount={
+              pokedexCounts?.owned ??
+              pokedexEntries.filter((entry) => entry.status === "owned").length
+            }
             onSortChange={setPokedexSort}
             onFilterChange={setPokedexFilter}
             onQueryChange={setPokedexQuery}
@@ -488,6 +664,15 @@ export default function App() {
           />
         )}
       </div>
+
+      {collectionError && (
+        <div
+          className="fixed bottom-16 left-1/2 z-[60] -translate-x-1/2 rounded-xl bg-[var(--color-danger)] px-4 py-2 text-xs font-black text-white shadow-xl"
+          role="alert"
+        >
+          {collectionError}
+        </div>
+      )}
 
       <nav
         className="flex flex-shrink-0 items-stretch border-t border-[var(--color-border)] bg-[var(--color-surface)]"
@@ -578,6 +763,8 @@ export default function App() {
         onGoToLocation={(groupKey, locationKey) =>
           navigate({ view: "areas", groupKey, locationKey })
         }
+        onSetStatus={setStatus}
+        mutationPending={mutatingKey === selectedCanonicalKey}
       />
     </div>
   )

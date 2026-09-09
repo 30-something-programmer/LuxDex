@@ -36,7 +36,7 @@ interface AreasViewProps {
   onPreviousLocation?: () => void
   onNextLocation?: () => void
   onPokemonSelect?: (pokemon: PokemonCardModel) => void
-  onStatusAction?: (pokemonId: string, status: PokemonStatus) => void
+  onStatusAction?: (canonicalKey: string, status: PokemonStatus) => void
 }
 
 function ArrowIcon({ direction }: { direction: "left" | "right" }) {
@@ -193,7 +193,7 @@ export default function AreasView({
             {completion && completion.total > 0 ? (
               <div
                 className="ml-auto flex items-center gap-2"
-                aria-label={`${completion.owned} owned, ${completion.seen} seen, ${completion.total} total`}
+                aria-label={`${completion.owned} owned, ${completion.seen + completion.owned} seen, ${completion.total} total`}
               >
                 <div
                   className="hidden max-w-28 flex-wrap gap-0.5 sm:flex"
@@ -217,15 +217,13 @@ export default function AreasView({
                 </div>
                 <span className="text-[10px] font-bold text-[var(--color-text-muted)]">
                   <span className="text-[var(--color-owned)]">
-                    {completion.owned}
+                    {completion.owned} owned
                   </span>
-                  {completion.seen > 0 && (
-                    <span className="text-[var(--color-seen)]">
-                      {" "}
-                      · {completion.seen} seen
-                    </span>
-                  )}
-                  <span> / {completion.total}</span>
+                  <span className="text-[var(--color-seen)]">
+                    {" "}
+                    · {completion.seen + completion.owned} seen
+                  </span>
+                  <span> / {completion.total} total</span>
                 </span>
               </div>
             ) : (
