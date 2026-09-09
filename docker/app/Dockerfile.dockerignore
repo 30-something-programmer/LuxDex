@@ -5,3 +5,7 @@
 !build/**
 !db/data/source/penumbra/
 !db/data/source/penumbra/wild-encounters.txt
+!db/data/source/pokemon/
+!db/data/source/pokemon/**
+!web/public/assets/pokemon/
+!web/public/assets/pokemon/**

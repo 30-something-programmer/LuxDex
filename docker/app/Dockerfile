@@ -10,6 +10,7 @@ RUN python -m pip install --no-cache-dir ./build
 
 COPY app/ ./app/
 COPY db/data/source/ ./db/data/source/
+COPY web/public/assets/pokemon/ ./web/public/assets/pokemon/
 
 EXPOSE 8000
 
