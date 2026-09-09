@@ -12,12 +12,15 @@ interface PokedexViewProps {
   sort: PokedexSort
   filter: StatusFilter
   query: string
+  generation: number | null
+  trackingEnabled?: boolean
   totalCount?: number
   seenCount?: number
   ownedCount?: number
   onSortChange: (sort: PokedexSort) => void
   onFilterChange: (filter: StatusFilter) => void
   onQueryChange: (query: string) => void
+  onGenerationChange: (generation: number | null) => void
   onPokemonSelect?: (pokemon: PokedexEntryModel) => void
 }
 
@@ -58,12 +61,15 @@ export default function PokedexView({
   sort,
   filter,
   query,
+  generation,
+  trackingEnabled = false,
   totalCount = entries.length,
   seenCount = entries.filter((entry) => entry.status !== "unseen").length,
   ownedCount = entries.filter((entry) => entry.status === "owned").length,
   onSortChange,
   onFilterChange,
   onQueryChange,
+  onGenerationChange,
   onPokemonSelect,
 }: PokedexViewProps) {
   return (
@@ -81,51 +87,84 @@ export default function PokedexView({
               <span className="text-[var(--color-text-muted)]">
                 {totalCount} total
               </span>
-              <span className="text-[var(--color-seen)]">{seenCount} seen</span>
-              <span className="text-[var(--color-owned)]">
-                {ownedCount} owned
-              </span>
+              {trackingEnabled && (
+                <>
+                  <span className="text-[var(--color-seen)]">
+                    {seenCount} seen
+                  </span>
+                  <span className="text-[var(--color-owned)]">
+                    {ownedCount} owned
+                  </span>
+                </>
+              )}
             </div>
           </div>
-          <label className="flex items-center gap-2 text-xs font-bold text-[var(--color-text-muted)]">
-            Sort
-            <select
-              className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)] px-3 py-2 font-bold text-[var(--color-text)] outline-none focus:border-[var(--color-accent)]"
-              value={sort}
-              onChange={(event) =>
-                onSortChange(event.target.value as PokedexSort)
-              }
-            >
-              {sortOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className="flex flex-wrap gap-2">
+            <label className="flex items-center gap-2 text-xs font-bold text-[var(--color-text-muted)]">
+              Sort
+              <select
+                aria-label="Pokédex order"
+                className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)] px-3 py-2 font-bold text-[var(--color-text)] outline-none focus:border-[var(--color-accent)]"
+                value={sort}
+                onChange={(event) =>
+                  onSortChange(event.target.value as PokedexSort)
+                }
+              >
+                {sortOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="flex items-center gap-2 text-xs font-bold text-[var(--color-text-muted)]">
+              Gen
+              <select
+                aria-label="Generation filter"
+                className="rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)] px-3 py-2 font-bold text-[var(--color-text)] outline-none focus:border-[var(--color-accent)]"
+                value={generation ?? "all"}
+                onChange={(event) =>
+                  onGenerationChange(
+                    event.target.value === "all"
+                      ? null
+                      : Number(event.target.value),
+                  )
+                }
+              >
+                <option value="all">All</option>
+                {[1, 2, 3, 4, 5, 6, 7].map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
         </div>
 
         <div className="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <div
-            className="flex gap-1 overflow-x-auto"
-            aria-label="Pokédex status filter"
-          >
-            {filterOptions.map((option) => (
-              <button
-                key={option.value}
-                className={`flex-shrink-0 rounded-xl px-3 py-2 text-xs font-black ${
-                  filter === option.value
-                    ? "bg-[var(--color-accent)] text-white"
-                    : "bg-[var(--color-panel)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-                }`}
-                type="button"
-                onClick={() => onFilterChange(option.value)}
-                aria-pressed={filter === option.value}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+          {trackingEnabled && (
+            <div
+              className="flex gap-1 overflow-x-auto"
+              aria-label="Pokédex status filter"
+            >
+              {filterOptions.map((option) => (
+                <button
+                  key={option.value}
+                  className={`flex-shrink-0 rounded-xl px-3 py-2 text-xs font-black ${
+                    filter === option.value
+                      ? "bg-[var(--color-accent)] text-white"
+                      : "bg-[var(--color-panel)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
+                  }`}
+                  type="button"
+                  onClick={() => onFilterChange(option.value)}
+                  aria-pressed={filter === option.value}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          )}
           <label className="relative min-w-0 flex-1 sm:ml-auto sm:max-w-xs">
             <svg
               className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--color-text-muted)]"
@@ -174,11 +213,14 @@ export default function PokedexView({
               <h3 className="font-black text-[var(--color-text)]">
                 {state === "error"
                   ? "Pokédex is unavailable"
-                  : "Pokédex shell ready"}
+                  : query
+                    ? "No matching Pokémon"
+                    : "No Pokédex entries"}
               </h3>
               <p className="mt-1 text-sm font-semibold text-[var(--color-text-muted)]">
-                Entries will populate from the API when canonical data is
-                available.
+                {state === "error"
+                  ? "Unable to load Pokédex data."
+                  : "Try another order, generation, or name."}
               </p>
             </div>
           </div>
@@ -203,7 +245,7 @@ export default function PokedexView({
                 </div>
                 <PokemonArtwork
                   name={entry.name}
-                  spriteAssetKey={entry.spriteAssetKey}
+                  spritePath={entry.spritePath}
                   status={entry.status}
                   className="mx-auto aspect-square w-full max-w-16"
                 />

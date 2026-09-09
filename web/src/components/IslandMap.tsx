@@ -155,6 +155,7 @@ export default function IslandMap({
               }
               style={{ opacity: node.locationId ? 1 : 0.35 }}
               role={node.locationId ? "button" : undefined}
+              aria-label={node.locationId ? node.label : undefined}
               tabIndex={node.locationId ? 0 : undefined}
               onKeyDown={(event) => {
                 if (

@@ -5,17 +5,48 @@ const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL || "/api").replace(
   "",
 )
 
-async function request<T>(path: string, signal?: AbortSignal): Promise<T> {
+export class ApiError extends Error {
+  readonly status: number
+
+  constructor(status: number, message: string) {
+    super(message)
+    this.name = "ApiError"
+    this.status = status
+  }
+}
+
+export async function request<T>(
+  path: string,
+  signal?: AbortSignal,
+): Promise<T> {
   const response = await fetch(`${apiBaseUrl}${path}`, {
     headers: { Accept: "application/json" },
     signal,
   })
 
   if (!response.ok) {
-    throw new Error(`LuxDex API returned ${response.status}.`)
+    let message = `LuxDex API returned ${response.status}.`
+    try {
+      const payload = (await response.json()) as { detail?: unknown }
+      if (typeof payload.detail === "string") message = payload.detail
+    } catch {
+      // The status is still useful when an upstream response has no JSON body.
+    }
+    throw new ApiError(response.status, message)
   }
 
   return (await response.json()) as T
+}
+
+export function queryString(
+  values: Record<string, string | number | boolean | null | undefined>,
+): string {
+  const parameters = new URLSearchParams()
+  for (const [key, value] of Object.entries(values)) {
+    if (value != null && value !== "") parameters.set(key, String(value))
+  }
+  const query = parameters.toString()
+  return query ? `?${query}` : ""
 }
 
 export function getHealth(signal?: AbortSignal): Promise<HealthResponse> {

@@ -1,5 +1,6 @@
+import { useEffect, useState } from "react"
 import type { PokemonStatus } from "../types/presentation"
-import { getLocalSpritePath } from "../lib/sprites"
+import { normalizeLocalSpritePath } from "../lib/sprites"
 
 export function PokeBallIcon({ className }: { className?: string }) {
   return (
@@ -46,18 +47,24 @@ export function SeenIcon({ className }: { className?: string }) {
 
 interface PokemonArtworkProps {
   name: string
-  spriteAssetKey?: string | null
+  spritePath?: string | null
   status: PokemonStatus
   className?: string
 }
 
 export default function PokemonArtwork({
   name,
-  spriteAssetKey,
+  spritePath: suppliedSpritePath,
   status,
   className = "h-full w-full",
 }: PokemonArtworkProps) {
-  const spritePath = getLocalSpritePath(spriteAssetKey)
+  const spritePath = normalizeLocalSpritePath(suppliedSpritePath)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    setFailed(false)
+    if (!spritePath) console.warn(`[LuxDex] Missing local sprite for ${name}.`)
+  }, [name, spritePath])
   const filter =
     status === "unseen"
       ? "brightness(0) opacity(0.55)"
@@ -76,7 +83,7 @@ export default function PokemonArtwork({
         <circle cx="32" cy="25" r="15" />
         <path d="M10 58c2-15 10-23 22-23s20 8 22 23H10Z" />
       </svg>
-      {spritePath && (
+      {spritePath && !failed && (
         <img
           src={spritePath}
           alt={name}
@@ -84,10 +91,12 @@ export default function PokemonArtwork({
           style={{ imageRendering: "pixelated", filter }}
           onError={(event) => {
             event.currentTarget.hidden = true
+            setFailed(true)
+            console.warn(`[LuxDex] Local sprite failed to load for ${name}.`)
           }}
         />
       )}
-      {!spritePath && (
+      {(!spritePath || failed) && (
         <span className="sr-only">No local sprite available for {name}</span>
       )}
     </div>

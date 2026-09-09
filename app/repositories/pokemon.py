@@ -56,6 +56,7 @@ class PokemonRepository:
         order: PokemonOrder,
         generation: int | None,
         in_alola_dex: bool | None,
+        search: str | None,
         offset: int,
         limit: int,
     ) -> list[dict[str, Any]]:
@@ -73,6 +74,12 @@ class PokemonRepository:
             conditions.append("alola_number.dex_number IS NOT NULL")
         elif in_alola_dex is False:
             conditions.append("alola_number.dex_number IS NULL")
+        if search:
+            escaped_search = (
+                search.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            )
+            conditions.append("lower(species.display_name) LIKE lower(%s) ESCAPE '\\'")
+            parameters.append(f"%{escaped_search}%")
         parameters.extend((limit, offset))
 
         with connect_database(self.database_url) as connection:
@@ -108,6 +115,65 @@ class PokemonRepository:
                     LIMIT %s OFFSET %s
                     """,
                     parameters,
+                )
+                return list(cursor.fetchall())
+
+    def search_forms(self, query: str, limit: int) -> list[dict[str, Any]]:
+        escaped_query = (
+            query.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+        )
+        pattern = f"%{escaped_query}%"
+        with connect_database(self.database_url) as connection:
+            with connection.cursor(row_factory=dict_row) as cursor:
+                cursor.execute(
+                    """
+                    SELECT
+                        species.identifier AS species_key,
+                        species.national_dex_number,
+                        alola_number.dex_number AS alola_usum_dex_number,
+                        species.display_name,
+                        species.generation,
+                        form.form_key,
+                        form.identifier,
+                        form.display_name AS form_display_name,
+                        form.display_name_source,
+                        form.is_default,
+                        form.form_order,
+                        form.is_battle_only,
+                        form.is_mega,
+                        form.is_regional,
+                        form.regional_name,
+                        form.sprite_key,
+                        sprite.local_path AS sprite_path
+                    FROM luxdex.pokemon_form AS form
+                    JOIN luxdex.pokemon_species AS species ON species.id = form.species_id
+                    JOIN luxdex.source_dataset AS dataset ON dataset.id = species.dataset_id
+                    LEFT JOIN luxdex.pokemon_sprite_asset AS sprite ON sprite.form_id = form.id
+                    LEFT JOIN luxdex.pokemon_pokedex_number AS alola_number
+                      ON alola_number.species_id = species.id
+                     AND alola_number.pokedex_id = (
+                         SELECT pokedex.id
+                         FROM luxdex.pokemon_pokedex AS pokedex
+                         WHERE pokedex.dataset_id = species.dataset_id
+                           AND pokedex.dex_key = 'alola-usum'
+                     )
+                    WHERE dataset.source_name = %s
+                      AND (
+                          lower(form.display_name) LIKE lower(%s) ESCAPE '\\'
+                          OR lower(species.display_name) LIKE lower(%s) ESCAPE '\\'
+                      )
+                    ORDER BY
+                        CASE
+                            WHEN lower(form.display_name) = lower(%s) THEN 0
+                            WHEN lower(species.display_name) = lower(%s) THEN 1
+                            ELSE 2
+                        END,
+                        lower(form.display_name),
+                        species.national_dex_number,
+                        form.form_order
+                    LIMIT %s
+                    """,
+                    (SOURCE_NAME, pattern, pattern, query, query, limit),
                 )
                 return list(cursor.fetchall())
 
@@ -194,4 +260,3 @@ class PokemonRepository:
                     (species_row["id"],),
                 )
                 return list(cursor.fetchall())
-

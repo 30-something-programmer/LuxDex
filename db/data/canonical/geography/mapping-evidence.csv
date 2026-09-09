@@ -1,0 +1,82 @@
+mapping_key,source_key,evidence_order,source_locator,evidence_note
+g001-t01,sciresm-usum-encounters,1,Map block 1 / Table 1,Establishes the raw table identity and original USUM pool.
+g001-t01,bulbapedia-route-1,2,USUM Route 1 proper — First two fields east of the player's house,Names the subarea and gives the matching pool method and levels.
+g001-t13,sciresm-usum-encounters,1,Map block 1 / Table 13,Establishes this duplicate raw table instance and original USUM pool.
+g001-t13,bulbapedia-route-1,2,USUM Route 1 proper — First two fields east of the player's house,Names the shared subarea and gives the matching pool method and levels.
+g001-t14,sciresm-usum-encounters,1,Map block 1 / Table 14,Establishes the raw table identity and distinct level 2-4 USUM pool.
+g001-t14,bulbapedia-route-1,2,USUM Route 1 proper — Field of grass overlooking the bay,Names the subarea and gives the uniquely matching pool and levels.
+g001-t02,sciresm-usum-encounters,1,Map block 1 / Table 2,Establishes the raw table identity and original three-species pool.
+g001-t02,bulbapedia-route-1,2,USUM Route 1 proper — Two fields nearest Iki Town and field on western path,Names the shared subarea and gives the matching pool method and levels.
+g001-t12,sciresm-usum-encounters,1,Map block 1 / Table 12,Establishes this duplicate raw table instance and original USUM pool.
+g001-t12,bulbapedia-route-1,2,USUM Route 1 proper — Two fields nearest Iki Town and field on western path,Names the shared subarea and gives the matching pool method and levels.
+g001-t15,sciresm-usum-encounters,1,Map block 1 / Table 15,Establishes this duplicate raw table instance and original USUM pool.
+g001-t15,bulbapedia-route-1,2,USUM Route 1 proper — Two fields nearest Iki Town and field on western path,Names the shared subarea and gives the matching pool method and levels.
+g002-t01,sciresm-usum-encounters,1,Map block 2 / Table 1,Establishes the separate raw Route 1 table identity and original USUM pool.
+g002-t01,bulbapedia-route-1,2,USUM Route 1 proper — Two fields nearest Iki Town and field on western path,Names the only documented Route 1 subarea with this matching pool and levels.
+g002-t02,sciresm-usum-encounters,1,Map block 2 / Table 2,Establishes the separate raw Route 1 table identity and original USUM pool.
+g002-t02,bulbapedia-route-1,2,USUM Route 1 proper — Two fields nearest Iki Town and field on western path,Names the only documented Route 1 subarea with this matching pool and levels.
+g002-t03,sciresm-usum-encounters,1,Map block 2 / Table 3,Establishes the separate raw Route 1 table identity and original USUM pool.
+g002-t03,bulbapedia-route-1,2,USUM Route 1 proper — Two fields nearest Iki Town and field on western path,Names the only documented Route 1 subarea with this matching pool and levels.
+g001-t09,sciresm-usum-encounters,1,Map block 1 / Table 9,Establishes the raw table identity and original level 11-14 USUM pool.
+g001-t09,bulbapedia-route-1,2,USUM Route 1 proper — Path south of Iki Town blocked by rocks,Names the subarea and gives the matching pool levels and Tauros access context.
+g001-t16,sciresm-usum-encounters,1,Map block 1 / Table 16,Establishes this duplicate raw table instance and original USUM pool.
+g001-t16,bulbapedia-route-1,2,USUM Route 1 proper — Path south of Iki Town blocked by rocks,Names the shared subarea and gives the matching pool levels and Tauros access context.
+g001-t17,sciresm-usum-encounters,1,Map block 1 / Table 17,Establishes this duplicate raw table instance and original USUM pool.
+g001-t17,bulbapedia-route-1,2,USUM Route 1 proper — Path south of Iki Town blocked by rocks,Names the shared subarea and gives the matching pool levels and Tauros access context.
+g001-t03,sciresm-usum-encounters,1,Map block 1 / Table 3,Establishes the raw table identity and original USUM pool.
+g001-t03,bulbapedia-route-1,2,USUM Hau'oli Outskirts encounter table,Documents the matching grass method pool and levels.
+g001-t10,sciresm-usum-encounters,1,Map block 1 / Table 10,Establishes this duplicate raw table instance and original USUM pool.
+g001-t10,bulbapedia-route-1,2,USUM Hau'oli Outskirts encounter table,Documents the matching grass method pool and levels.
+g001-t11,sciresm-usum-encounters,1,Map block 1 / Table 11,Establishes the raw table identity and original USUM pool.
+g001-t11,bulbapedia-route-1,2,USUM Hau'oli Outskirts — Surfing,Documents the matching surf method pool and levels.
+g001-t04,sciresm-usum-encounters,1,Map block 1 / Table 4,Establishes the raw table identity and original USUM pool.
+g001-t04,bulbapedia-melemele-sea,2,USUM Melemele Sea — Fishing,Documents the matching fishing method pool and levels.
+g001-t05,sciresm-usum-encounters,1,Map block 1 / Table 5,Establishes this duplicate raw fishing table instance and original USUM pool.
+g001-t05,bulbapedia-melemele-sea,2,USUM Melemele Sea — Fishing,Documents the shared fishing method pool and levels.
+g001-t06,sciresm-usum-encounters,1,Map block 1 / Table 6,Establishes this duplicate raw fishing table instance and original USUM pool.
+g001-t06,bulbapedia-melemele-sea,2,USUM Melemele Sea — Fishing,Documents the shared fishing method pool and levels.
+g001-t07,sciresm-usum-encounters,1,Map block 1 / Table 7,Establishes this duplicate raw fishing table instance and original USUM pool.
+g001-t07,bulbapedia-melemele-sea,2,USUM Melemele Sea — Fishing,Documents the shared fishing method pool and levels.
+g001-t08,sciresm-usum-encounters,1,Map block 1 / Table 8,Establishes the raw table identity and distinct original level 10-22 pool.
+g001-t08,bulbapedia-melemele-sea,2,USUM Melemele Sea — Fishing at a bubbling spot on the Route 1 side,Documents the matching bubbling-fishing method pool levels and side.
+g048-t01,sciresm-usum-encounters,1,Map block 48 / Table 1,Establishes the raw Trainers' School table identity and original USUM pool.
+g048-t01,gamefaqs-trainers-school,2,Route 1 Trainers' School encounter table,Documents the matching tall-grass pool and levels.
+g048-t02,sciresm-usum-encounters,1,Map block 48 / Table 2,Establishes this duplicate raw school table instance and original USUM pool.
+g048-t02,gamefaqs-trainers-school,2,Route 1 Trainers' School encounter table,Documents the shared tall-grass pool and levels.
+g048-t03,sciresm-usum-encounters,1,Map block 48 / Table 3,Establishes this duplicate raw school table instance and original USUM pool.
+g048-t03,gamefaqs-trainers-school,2,Route 1 Trainers' School encounter table,Documents the shared tall-grass pool and levels.
+g048-t04,sciresm-usum-encounters,1,Map block 48 / Table 4,Establishes this duplicate raw school table instance and original USUM pool.
+g048-t04,gamefaqs-trainers-school,2,Route 1 Trainers' School encounter table,Documents the shared tall-grass pool and levels.
+g005-t01,sciresm-usum-encounters,1,Map block 5 / Table 1,Establishes the raw table identity and original USUM pool.
+g005-t01,bulbapedia-route-3,2,USUM Route 3 — Two fields of grass north of bridge,Names the subarea and gives the matching pool method and levels.
+g005-t10,sciresm-usum-encounters,1,Map block 5 / Table 10,Establishes the second raw instance and original USUM pool.
+g005-t10,bulbapedia-route-3,2,USUM Route 3 — Two fields of grass north of bridge,Names the shared subarea and gives the matching pool method and levels.
+g005-t14,sciresm-usum-encounters,1,Map block 5 / Table 14,Establishes the raw table identity and original one-percent Bagon pool with Salamence SOS data.
+g005-t14,bulbapedia-route-3,2,USUM Route 3 — Field of grass south of bridge,Names the subarea and documents Bagon with Salamence as an ally.
+g005-t14,serebii-route-3,3,USUM Route 3 standard walking pool,Corroborates the one-percent Bagon initial slot and Salamence SOS slot.
+g005-t03,sciresm-usum-encounters,1,Map block 5 / Table 3,Establishes the raw table identity and original USUM pool.
+g005-t03,bulbapedia-route-3,2,USUM Route 3 — Ambush encounters,Documents the shadow method and matching Spearow and Rufflet pool.
+g005-t11,sciresm-usum-encounters,1,Map block 5 / Table 11,Establishes this duplicate raw ambush table instance and original USUM pool.
+g005-t11,bulbapedia-route-3,2,USUM Route 3 — Ambush encounters,Documents the shared shadow method and pool.
+g005-t12,sciresm-usum-encounters,1,Map block 5 / Table 12,Establishes this duplicate raw ambush table instance and original USUM pool.
+g005-t12,bulbapedia-route-3,2,USUM Route 3 — Ambush encounters,Documents the shared shadow method and pool.
+g005-t13,sciresm-usum-encounters,1,Map block 5 / Table 13,Establishes this duplicate raw ambush table instance and original USUM pool.
+g005-t13,bulbapedia-route-3,2,USUM Route 3 — Ambush encounters,Documents the shared shadow method and pool.
+g005-t04,sciresm-usum-encounters,1,Map block 5 / Table 4,Establishes the Crabrawler-only raw table and original USUM pool.
+g005-t04,bulbapedia-route-3,2,USUM Route 3 — Pile of Berries by Berry tree,Documents the berry-pile method and Crabrawler-only pool.
+g005-t02,sciresm-usum-encounters,1,Map block 5 / Table 2,Establishes the raw table identity and original USUM pool.
+g005-t02,bulbapedia-kalae-bay,2,USUM Kala'e Bay grass encounter table,Documents the matching grass pool and levels.
+g005-t05,sciresm-usum-encounters,1,Map block 5 / Table 5,Establishes the raw table identity and original USUM pool.
+g005-t05,bulbapedia-kalae-bay,2,USUM Kala'e Bay — Fishing,Documents the matching fishing method pool and levels.
+g005-t06,sciresm-usum-encounters,1,Map block 5 / Table 6,Establishes this duplicate raw fishing table instance and original USUM pool.
+g005-t06,bulbapedia-kalae-bay,2,USUM Kala'e Bay — Fishing,Documents the shared fishing method pool and levels.
+g005-t07,sciresm-usum-encounters,1,Map block 5 / Table 7,Establishes this duplicate raw fishing table instance and original USUM pool.
+g005-t07,bulbapedia-kalae-bay,2,USUM Kala'e Bay — Fishing,Documents the shared fishing method pool and levels.
+g005-t08,sciresm-usum-encounters,1,Map block 5 / Table 8,Establishes this duplicate raw fishing table instance and original USUM pool.
+g005-t08,bulbapedia-kalae-bay,2,USUM Kala'e Bay — Fishing,Documents the shared fishing method pool and levels.
+g005-t09,sciresm-usum-encounters,1,Map block 5 / Table 9,Establishes the raw table identity and distinct original level 10-22 pool.
+g005-t09,bulbapedia-kalae-bay,2,USUM Kala'e Bay — Fishing at the bubbling spot,Documents the matching bubbling-fishing method pool and levels.
+g005-t09,serebii-kalae-bay,3,USUM Kala'e Bay — Fishing bubbling spots,Corroborates the method and level 10-22 pool.
+g005-t15,sciresm-usum-encounters,1,Map block 5 / Table 15,Establishes the raw table identity and original USUM pool.
+g005-t15,bulbapedia-kalae-bay,2,USUM Kala'e Bay — Surfing,Documents the matching surf method pool and levels.
+g005-t15,serebii-kalae-bay,3,USUM Kala'e Bay — Surfing,Corroborates the surf method and pool.

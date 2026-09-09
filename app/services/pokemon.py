@@ -8,6 +8,7 @@ from app.api.pokemon_models import (
     PokemonSourceResponse,
     PokemonSpeciesPage,
     PokemonSpeciesSummary,
+    PokemonSearchResultResponse,
 )
 from app.repositories.pokemon import PokemonOrder, PokemonRepository
 
@@ -31,6 +32,7 @@ class PokemonService:
         order: PokemonOrder,
         generation: int | None,
         in_alola_dex: bool | None,
+        search: str | None,
         offset: int,
         limit: int,
     ) -> PokemonSpeciesPage:
@@ -40,6 +42,7 @@ class PokemonService:
             order,
             generation,
             in_alola_dex,
+            search,
             offset,
             limit + 1,
         )
@@ -50,6 +53,36 @@ class PokemonService:
             offset=offset,
             next_offset=offset + limit if has_more else None,
         )
+
+    def search_forms(self, query: str, limit: int) -> list[PokemonSearchResultResponse]:
+        normalized_query = query.strip()
+        if not normalized_query:
+            raise ValueError("q must contain a Pokémon name")
+        rows = self.repository.search_forms(normalized_query, limit)
+        return [
+            PokemonSearchResultResponse(
+                species_key=row["species_key"],
+                national_dex_number=row["national_dex_number"],
+                alola_usum_dex_number=row["alola_usum_dex_number"],
+                display_name=row["display_name"],
+                generation=row["generation"],
+                selected_form=PokemonFormResponse(
+                    form_key=row["form_key"],
+                    identifier=row["identifier"],
+                    display_name=row["form_display_name"],
+                    display_name_source=row["display_name_source"],
+                    is_default=row["is_default"],
+                    form_order=row["form_order"],
+                    is_battle_only=row["is_battle_only"],
+                    is_mega=row["is_mega"],
+                    is_regional=row["is_regional"],
+                    regional_name=row["regional_name"],
+                    sprite_key=row["sprite_key"],
+                    sprite_path=row["sprite_path"],
+                ),
+            )
+            for row in rows
+        ]
 
     def get_pokemon(self, key: str) -> PokemonDetailResponse:
         row = self.repository.get_species_for_key(key)
@@ -83,4 +116,3 @@ class PokemonService:
         if rows is None:
             raise PokemonNotFoundError(f"Pokémon/form key {key!r} was not found")
         return [PokemonFormResponse.model_validate(row) for row in rows]
-

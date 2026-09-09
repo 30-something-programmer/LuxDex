@@ -55,7 +55,7 @@ export default function IslandTabs({
             onClick={() => onSelect(island.id)}
             aria-current={isActive ? "page" : undefined}
           >
-            {island.name}
+            {island.groupType === "island" ? island.name : `⋯ ${island.name}`}
           </button>
         )
       })}

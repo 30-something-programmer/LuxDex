@@ -1,6 +1,6 @@
 export function formatLevelRange(
-  minLevel?: number,
-  maxLevel?: number,
+  minLevel?: number | null,
+  maxLevel?: number | null,
 ): string | null {
   if (minLevel == null || maxLevel == null) return null
   return minLevel === maxLevel

@@ -1,37 +1,45 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { getHealth } from "./api/client"
-import type { HealthResponse } from "./api/types"
+import { getLocationExplore, getPokemonExplore } from "./api/explore"
+import { getAreaGroups, getLocations } from "./api/geography"
+import { listPokemon, searchPokemon } from "./api/pokemon"
+import type {
+  AreaGroupResponse,
+  ExploreLocationResponse,
+  HealthResponse,
+  LocationResponse,
+} from "./api/types"
 import AreasView from "./components/AreasView"
 import PokedexView from "./components/PokedexView"
 import PokePanel from "./components/PokePanel"
 import PokemonSearch from "./components/PokemonSearch"
+import { parseRoute, routePath, type AppRoute } from "./lib/routing"
+import {
+  toEncounterZones,
+  toIslandOptions,
+  toLocationOptions,
+  toPokedexEntries,
+  toPokemonDetail,
+  toSearchResults,
+} from "./presentation/adapters"
+import { buildIslandMap } from "./presentation/islandMaps"
 import type {
-  EncounterZoneModel,
-  IslandOption,
-  LocationOption,
   PokedexEntryModel,
   PokedexSort,
-  PokemonCardModel,
+  PokemonDetailModel,
   PokemonSearchResultModel,
   ResourceState,
   StatusFilter,
   TimeOfDay,
 } from "./types/presentation"
 
-type Tab = "areas" | "pokemon" | "pokedex"
 type Theme = "dark" | "light"
 
 interface TabItem {
-  key: Tab
+  key: AppRoute["view"]
   label: string
   path: string
 }
-
-const EMPTY_ISLANDS: IslandOption[] = []
-const EMPTY_LOCATIONS: LocationOption[] = []
-const EMPTY_ZONES: EncounterZoneModel[] = []
-const EMPTY_SEARCH_RESULTS: PokemonSearchResultModel[] = []
-const EMPTY_POKEDEX: PokedexEntryModel[] = []
 
 const TABS: TabItem[] = [
   {
@@ -50,6 +58,10 @@ const TABS: TabItem[] = [
     path: "M12 6.25v13m0-13C10.83 5.48 9.25 5 7.5 5S4.17 5.48 3 6.25v13C4.17 18.48 5.75 18 7.5 18s3.33.48 4.5 1.25m0-13C13.17 5.48 14.75 5 16.5 5s3.33.48 4.5 1.25v13C19.83 18.48 18.25 18 16.5 18s-3.33.48-4.5 1.25",
   },
 ]
+
+function isAbort(error: unknown): boolean {
+  return error instanceof DOMException && error.name === "AbortError"
+}
 
 function SunIcon() {
   return (
@@ -83,113 +95,396 @@ function MoonIcon() {
 }
 
 export default function App() {
-  const [tab, setTab] = useState<Tab>("areas")
+  const [route, setRoute] = useState<AppRoute>(() =>
+    parseRoute(window.location.pathname),
+  )
+  const [lastAreaRoute, setLastAreaRoute] = useState<AppRoute>({
+    view: "areas",
+    groupKey: null,
+    locationKey: null,
+  })
   const [theme, setTheme] = useState<Theme>("dark")
   const [health, setHealth] = useState<HealthResponse | null>(null)
-  const [healthError, setHealthError] = useState<string | null>(null)
-  const [activeIslandId, setActiveIslandId] = useState<string | null>(null)
-  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(
+  const [healthError, setHealthError] = useState(false)
+
+  const [groups, setGroups] = useState<AreaGroupResponse[]>([])
+  const [groupsState, setGroupsState] = useState<ResourceState>("loading")
+  const [locations, setLocations] = useState<LocationResponse[]>([])
+  const [locationsGroupKey, setLocationsGroupKey] = useState<string | null>(
     null,
   )
+  const [locationsState, setLocationsState] = useState<ResourceState>("empty")
+  const [locationExplore, setLocationExplore] =
+    useState<ExploreLocationResponse | null>(null)
+  const [locationState, setLocationState] = useState<ResourceState>("empty")
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null)
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("day")
   const [sosMode, setSosMode] = useState(false)
+
   const [searchQuery, setSearchQuery] = useState("")
+  const [searchResults, setSearchResults] =
+    useState<PokemonSearchResultModel[]>([])
+  const [searchState, setSearchState] = useState<ResourceState>("empty")
+  const [pokemonDetail, setPokemonDetail] = useState<PokemonDetailModel | null>(
+    null,
+  )
+  const [pokemonDetailState, setPokemonDetailState] =
+    useState<ResourceState>("empty")
+
   const [pokedexQuery, setPokedexQuery] = useState("")
   const [pokedexSort, setPokedexSort] = useState<PokedexSort>("alola")
+  const [pokedexGeneration, setPokedexGeneration] = useState<number | null>(
+    null,
+  )
   const [pokedexFilter, setPokedexFilter] = useState<StatusFilter>("all")
-  const [selectedPokemon, setSelectedPokemon] =
-    useState<PokedexEntryModel | null>(null)
+  const [pokedexEntries, setPokedexEntries] = useState<PokedexEntryModel[]>([])
+  const [pokedexState, setPokedexState] = useState<ResourceState>("empty")
+
+  const navigate = useCallback((nextRoute: AppRoute, replace = false) => {
+    const path = routePath(nextRoute)
+    if (replace) window.history.replaceState(null, "", path)
+    else window.history.pushState(null, "", path)
+    setRoute(nextRoute)
+  }, [])
 
   useEffect(() => {
-    const controller = new AbortController()
-    getHealth(controller.signal)
-      .then((response) => {
-        setHealth(response)
-        setHealthError(null)
-      })
-      .catch((error: unknown) => {
-        if (error instanceof DOMException && error.name === "AbortError") return
-        setHealthError(
-          error instanceof Error
-            ? error.message
-            : "The API health check failed.",
-        )
-      })
-    return () => controller.abort()
+    const onPopState = () => setRoute(parseRoute(window.location.pathname))
+    window.addEventListener("popstate", onPopState)
+    return () => window.removeEventListener("popstate", onPopState)
   }, [])
+
+  useEffect(() => {
+    if (route.view === "areas") setLastAreaRoute(route)
+  }, [route])
 
   useEffect(() => {
     if (theme === "light") document.documentElement.dataset.theme = "light"
     else delete document.documentElement.dataset.theme
   }, [theme])
 
-  const dataState: ResourceState = health
-    ? "empty"
-    : healthError
+  useEffect(() => {
+    const controller = new AbortController()
+    getHealth(controller.signal)
+      .then((response) => {
+        setHealth(response)
+        setHealthError(false)
+      })
+      .catch((error: unknown) => {
+        if (!isAbort(error)) setHealthError(true)
+      })
+    return () => controller.abort()
+  }, [])
+
+  useEffect(() => {
+    const controller = new AbortController()
+    setGroupsState("loading")
+    getAreaGroups(controller.signal)
+      .then((items) => {
+        setGroups(items)
+        setGroupsState(items.length ? "ready" : "empty")
+      })
+      .catch((error: unknown) => {
+        if (!isAbort(error)) setGroupsState("error")
+      })
+    return () => controller.abort()
+  }, [])
+
+  useEffect(() => {
+    if (route.view !== "areas" || groupsState !== "ready") return
+    if (
+      route.groupKey &&
+      groups.some((group) => group.group_key === route.groupKey)
+    )
+      return
+    const firstGroup = groups[0]
+    if (firstGroup) {
+      navigate(
+        { view: "areas", groupKey: firstGroup.group_key, locationKey: null },
+        true,
+      )
+    }
+  }, [groups, groupsState, navigate, route])
+
+  useEffect(() => {
+    if (route.view !== "areas" || !route.groupKey) {
+      setLocations([])
+      setLocationsGroupKey(null)
+      setLocationsState("empty")
+      return
+    }
+    const controller = new AbortController()
+    setLocations([])
+    setLocationsGroupKey(null)
+    setLocationsState("loading")
+    getLocations(route.groupKey, controller.signal)
+      .then((items) => {
+        setLocations(items)
+        setLocationsGroupKey(route.groupKey)
+        setLocationsState(items.length ? "ready" : "empty")
+      })
+      .catch((error: unknown) => {
+        if (!isAbort(error)) setLocationsState("error")
+      })
+    return () => controller.abort()
+  }, [route.view, route.view === "areas" ? route.groupKey : null])
+
+  useEffect(() => {
+    if (
+      route.view !== "areas" ||
+      !route.groupKey ||
+      locationsGroupKey !== route.groupKey ||
+      locationsState !== "ready"
+    )
+      return
+    if (
+      route.locationKey &&
+      locations.some((location) => location.location_key === route.locationKey)
+    )
+      return
+    const firstLocation = locations[0]
+    if (firstLocation) {
+      navigate(
+        {
+          view: "areas",
+          groupKey: route.groupKey,
+          locationKey: firstLocation.location_key,
+        },
+        true,
+      )
+    }
+  }, [locations, locationsGroupKey, locationsState, navigate, route])
+
+  useEffect(() => {
+    if (route.view !== "areas" || !route.groupKey || !route.locationKey) {
+      setLocationExplore(null)
+      setLocationState("empty")
+      setSelectedPlaceId(null)
+      return
+    }
+    const controller = new AbortController()
+    setLocationExplore(null)
+    setLocationState("loading")
+    getLocationExplore(route.groupKey, route.locationKey, controller.signal)
+      .then((response) => {
+        setLocationExplore(response)
+        setLocationState(response.places.length ? "ready" : "empty")
+        setSelectedPlaceId(response.places[0]?.place_key ?? null)
+      })
+      .catch((error: unknown) => {
+        if (!isAbort(error)) setLocationState("error")
+      })
+    return () => controller.abort()
+  }, [
+    route.view,
+    route.view === "areas" ? route.groupKey : null,
+    route.view === "areas" ? route.locationKey : null,
+  ])
+
+  useEffect(() => {
+    const normalizedQuery = searchQuery.trim()
+    if (!normalizedQuery) {
+      setSearchResults([])
+      setSearchState("empty")
+      return
+    }
+    const controller = new AbortController()
+    const timer = window.setTimeout(() => {
+      setSearchState("loading")
+      searchPokemon(normalizedQuery, controller.signal)
+        .then((response) => {
+          const results = toSearchResults(response)
+          setSearchResults(results)
+          setSearchState(results.length ? "ready" : "empty")
+        })
+        .catch((error: unknown) => {
+          if (!isAbort(error)) setSearchState("error")
+        })
+    }, 180)
+    return () => {
+      window.clearTimeout(timer)
+      controller.abort()
+    }
+  }, [searchQuery])
+
+  const selectedCanonicalKey =
+    route.view === "pokemon" ? route.canonicalKey : null
+  useEffect(() => {
+    if (!selectedCanonicalKey) {
+      setPokemonDetail(null)
+      setPokemonDetailState("empty")
+      return
+    }
+    const controller = new AbortController()
+    setPokemonDetail(null)
+    setPokemonDetailState("loading")
+    getPokemonExplore(selectedCanonicalKey, controller.signal)
+      .then((response) => {
+        setPokemonDetail(toPokemonDetail(response))
+        setPokemonDetailState("ready")
+      })
+      .catch((error: unknown) => {
+        if (!isAbort(error)) setPokemonDetailState("error")
+      })
+    return () => controller.abort()
+  }, [selectedCanonicalKey])
+
+  useEffect(() => {
+    if (route.view !== "pokedex") return
+    const controller = new AbortController()
+    const timer = window.setTimeout(() => {
+      setPokedexState("loading")
+      listPokemon(
+        {
+          order: pokedexSort === "az" ? "name" : pokedexSort,
+          generation: pokedexGeneration,
+          query: pokedexQuery,
+        },
+        controller.signal,
+      )
+        .then((response) => {
+          const entries = toPokedexEntries(response.items)
+          setPokedexEntries(entries)
+          setPokedexState(entries.length ? "ready" : "empty")
+        })
+        .catch((error: unknown) => {
+          if (!isAbort(error)) setPokedexState("error")
+        })
+    }, 120)
+    return () => {
+      window.clearTimeout(timer)
+      controller.abort()
+    }
+  }, [pokedexGeneration, pokedexQuery, pokedexSort, route.view])
+
+  const islands = useMemo(() => toIslandOptions(groups), [groups])
+  const locationOptions = useMemo(
+    () => toLocationOptions(locations),
+    [locations],
+  )
+  const islandMap = useMemo(
+    () =>
+      buildIslandMap(
+        route.view === "areas" ? (route.groupKey ?? "") : "",
+        route.view === "areas" && locationsGroupKey === route.groupKey
+          ? locations
+          : [],
+      ),
+    [locations, locationsGroupKey, route],
+  )
+  const zones = useMemo(
+    () => toEncounterZones(locationExplore, timeOfDay),
+    [locationExplore, timeOfDay],
+  )
+
+  const currentLocationIndex =
+    route.view === "areas"
+      ? locations.findIndex(
+          (location) => location.location_key === route.locationKey,
+        )
+      : -1
+  const goToLocationAt = (index: number) => {
+    if (route.view !== "areas" || !route.groupKey || !locations[index]) return
+    navigate({
+      view: "areas",
+      groupKey: route.groupKey,
+      locationKey: locations[index].location_key,
+    })
+  }
+
+  const areasState: ResourceState =
+    groupsState === "error" ||
+    locationsState === "error" ||
+    locationState === "error"
       ? "error"
-      : "loading"
+      : groupsState === "loading" ||
+          locationsState === "loading" ||
+          locationState === "loading"
+        ? "loading"
+        : zones.length
+          ? "ready"
+          : "empty"
+
   const connectionLabel = health
     ? `API connected · ${health.database.replace("_", " ")}`
     : healthError
       ? "API unavailable"
       : "Checking API"
 
-  const openFinder = (pokemon: PokemonCardModel) => {
-    setSelectedPokemon(null)
-    setSearchQuery(pokemon.name)
-    setTab("pokemon")
-  }
-
-  const goToLocation = (locationId: string) => {
-    setSelectedLocationId(locationId)
-    setTab("areas")
+  const navigateTab = (view: AppRoute["view"]) => {
+    if (view === "areas") navigate(lastAreaRoute)
+    else if (view === "pokemon")
+      navigate({ view: "pokemon", canonicalKey: null })
+    else navigate({ view: "pokedex" })
   }
 
   return (
     <div className="flex h-full flex-col overflow-hidden bg-[var(--color-bg)]">
       <div className="min-h-0 flex-1 overflow-hidden">
-        {tab === "areas" && (
+        {route.view === "areas" && (
           <AreasView
-            islands={EMPTY_ISLANDS}
-            activeIslandId={activeIslandId}
-            locations={EMPTY_LOCATIONS}
-            selectedLocationId={selectedLocationId}
-            map={null}
-            zones={EMPTY_ZONES}
-            state={dataState}
+            islands={islands}
+            activeIslandId={route.groupKey}
+            locations={locationOptions}
+            selectedLocationId={route.locationKey}
+            map={islandMap}
+            zones={zones}
+            selectedZoneId={selectedPlaceId}
+            state={areasState}
             timeOfDay={timeOfDay}
             sosMode={sosMode}
-            onSelectIsland={setActiveIslandId}
-            onSelectLocation={setSelectedLocationId}
+            onSelectIsland={(groupKey) =>
+              navigate({ view: "areas", groupKey, locationKey: null })
+            }
+            onSelectLocation={(locationKey) =>
+              route.groupKey &&
+              navigate({ view: "areas", groupKey: route.groupKey, locationKey })
+            }
+            onSelectZone={setSelectedPlaceId}
             onTimeOfDayChange={setTimeOfDay}
             onSosModeChange={setSosMode}
-            onPokemonSelect={setSelectedPokemon}
+            onPreviousLocation={
+              currentLocationIndex > 0
+                ? () => goToLocationAt(currentLocationIndex - 1)
+                : undefined
+            }
+            onNextLocation={
+              currentLocationIndex >= 0 &&
+              currentLocationIndex < locations.length - 1
+                ? () => goToLocationAt(currentLocationIndex + 1)
+                : undefined
+            }
+            onPokemonSelect={(pokemon) =>
+              navigate({ view: "pokemon", canonicalKey: pokemon.canonicalKey })
+            }
           />
         )}
-        {tab === "pokemon" && (
+        {route.view === "pokemon" && (
           <PokemonSearch
             query={searchQuery}
-            results={EMPTY_SEARCH_RESULTS}
-            state={dataState}
+            results={searchResults}
+            state={searchState}
             onQueryChange={setSearchQuery}
-            onPokemonSelect={setSelectedPokemon}
-            onGoToLocation={goToLocation}
+            onPokemonSelect={(canonicalKey) =>
+              navigate({ view: "pokemon", canonicalKey })
+            }
           />
         )}
-        {tab === "pokedex" && (
+        {route.view === "pokedex" && (
           <PokedexView
-            entries={EMPTY_POKEDEX}
-            state={dataState}
+            entries={pokedexEntries}
+            state={pokedexState}
             sort={pokedexSort}
             filter={pokedexFilter}
             query={pokedexQuery}
-            totalCount={0}
-            seenCount={0}
-            ownedCount={0}
+            generation={pokedexGeneration}
+            totalCount={pokedexEntries.length}
             onSortChange={setPokedexSort}
             onFilterChange={setPokedexFilter}
             onQueryChange={setPokedexQuery}
-            onPokemonSelect={setSelectedPokemon}
+            onGenerationChange={setPokedexGeneration}
+            onPokemonSelect={(pokemon) =>
+              navigate({ view: "pokemon", canonicalKey: pokemon.canonicalKey })
+            }
           />
         )}
       </div>
@@ -202,20 +497,22 @@ export default function App() {
           <button
             key={item.key}
             className={`flex flex-1 flex-col items-center gap-0.5 px-2 py-2.5 transition-colors ${
-              tab === item.key
+              route.view === item.key
                 ? "text-[var(--color-text)]"
                 : "text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
             }`}
             type="button"
-            onClick={() => setTab(item.key)}
-            aria-current={tab === item.key ? "page" : undefined}
+            onClick={() => navigateTab(item.key)}
+            aria-current={route.view === item.key ? "page" : undefined}
           >
             <svg
-              className={`h-5 w-5 ${tab === item.key ? "scale-110" : ""}`}
+              className={`h-5 w-5 ${
+                route.view === item.key ? "scale-110" : ""
+              }`}
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              strokeWidth={tab === item.key ? 2.5 : 1.8}
+              strokeWidth={route.view === item.key ? 2.5 : 1.8}
               aria-hidden="true"
             >
               <path
@@ -226,12 +523,12 @@ export default function App() {
             </svg>
             <span
               className={`text-[10px] font-bold leading-none ${
-                tab === item.key ? "text-[var(--color-accent)]" : ""
+                route.view === item.key ? "text-[var(--color-accent)]" : ""
               }`}
             >
               {item.label}
             </span>
-            {tab === item.key && (
+            {route.view === item.key && (
               <span
                 className="h-1 w-1 rounded-full bg-[var(--color-accent)]"
                 aria-hidden="true"
@@ -271,9 +568,16 @@ export default function App() {
       </nav>
 
       <PokePanel
-        pokemon={selectedPokemon}
-        onClose={() => setSelectedPokemon(null)}
-        onFindElsewhere={openFinder}
+        open={selectedCanonicalKey != null}
+        pokemon={pokemonDetail}
+        state={pokemonDetailState}
+        onClose={() => navigate({ view: "pokemon", canonicalKey: null })}
+        onSelectForm={(canonicalKey) =>
+          navigate({ view: "pokemon", canonicalKey })
+        }
+        onGoToLocation={(groupKey, locationKey) =>
+          navigate({ view: "areas", groupKey, locationKey })
+        }
       />
     </div>
   )

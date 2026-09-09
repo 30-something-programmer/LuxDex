@@ -7,7 +7,11 @@
 !db/data/source/penumbra/wild-encounters.txt
 !db/data/source/pokemon/
 !db/data/source/pokemon/**
+!db/data/source/usum/
+!db/data/source/usum/**
 !db/data/canonical/identity/
 !db/data/canonical/identity/**
+!db/data/canonical/geography/
+!db/data/canonical/geography/**
 !web/public/assets/pokemon/
 !web/public/assets/pokemon/**

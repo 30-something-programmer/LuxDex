@@ -1,0 +1,7 @@
+area_group_key,location_key,display_name,location_type,display_order,description
+melemele,route-1,Route 1,route,1,The player-facing Route 1 proper area.
+melemele,hauoli-outskirts,Hau'oli Outskirts,outskirts,2,The southern Route 1 area around the player's house and research lab.
+melemele,trainers-school,Trainers' School,landmark,3,The school grounds outside Hau'oli City.
+melemele,melemele-sea,Melemele Sea,sea,4,The sea east and south of Hau'oli Outskirts.
+melemele,route-3,Route 3,route,5,The route connecting Melemele Meadow and Route 1.
+melemele,kalae-bay,Kala'e Bay,bay,6,The bay reached through Seaward Cave.

@@ -64,6 +64,15 @@ class PokemonFormResponse(BaseModel):
     sprite_path: str | None
 
 
+class PokemonSearchResultResponse(BaseModel):
+    species_key: str
+    national_dex_number: int
+    alola_usum_dex_number: int | None
+    display_name: str
+    generation: int
+    selected_form: PokemonFormResponse
+
+
 class PokemonDetailResponse(BaseModel):
     species_key: str
     national_dex_number: int
@@ -71,4 +80,3 @@ class PokemonDetailResponse(BaseModel):
     generation: int
     dex_numbers: dict[str, int]
     selected_form: PokemonFormResponse
-

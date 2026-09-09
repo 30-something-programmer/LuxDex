@@ -11,6 +11,7 @@ from app.api.pokemon_models import (
     PokemonFormResponse,
     PokemonSourceResponse,
     PokemonSpeciesPage,
+    PokemonSearchResultResponse,
 )
 from app.repositories.pokemon import PokemonRepository
 from app.services.pokemon import PokemonNotFoundError, PokemonService
@@ -43,11 +44,24 @@ def list_pokemon(
     order: Literal["national", "alola", "name"] = "national",
     generation: Annotated[int | None, Query(ge=1, le=7)] = None,
     in_alola_dex: bool | None = None,
+    q: Annotated[str | None, Query(max_length=80)] = None,
     offset: Annotated[int, Query(ge=0)] = 0,
-    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+    limit: Annotated[int, Query(ge=1, le=1000)] = 50,
 ) -> PokemonSpeciesPage:
     try:
-        return service.list_species(order, generation, in_alola_dex, offset, limit)
+        return service.list_species(order, generation, in_alola_dex, q, offset, limit)
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)) from error
+
+
+@router.get("/search", response_model=list[PokemonSearchResultResponse])
+def search_pokemon_forms(
+    service: PokemonServiceDependency,
+    q: Annotated[str, Query(min_length=1, max_length=80)],
+    limit: Annotated[int, Query(ge=1, le=50)] = 20,
+) -> list[PokemonSearchResultResponse]:
+    try:
+        return service.search_forms(q, limit)
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)) from error
 
@@ -66,4 +80,3 @@ def list_forms(key: str, service: PokemonServiceDependency) -> list[PokemonFormR
         return service.list_forms(key)
     except PokemonNotFoundError as error:
         raise _not_found(error) from error
-

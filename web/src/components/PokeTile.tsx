@@ -1,5 +1,5 @@
 import type { PokemonCardModel, PokemonStatus } from "../types/presentation"
-import { formatSlots } from "../lib/format"
+import { formatLevelRange, formatSlots } from "../lib/format"
 import PokemonArtwork, { PokeBallIcon, SeenIcon } from "./PokemonArtwork"
 
 interface PokeTileProps {
@@ -63,7 +63,7 @@ export default function PokeTile({
       >
         <PokemonArtwork
           name={pokemon.name}
-          spriteAssetKey={pokemon.spriteAssetKey}
+          spritePath={pokemon.spritePath}
           status={pokemon.status}
         />
       </div>
@@ -86,6 +86,18 @@ export default function PokeTile({
         </div>
       )}
 
+      {formatLevelRange(
+        pokemon.minLevel ?? undefined,
+        pokemon.maxLevel ?? undefined,
+      ) && (
+        <div className="mt-0.5 text-[8px] font-semibold text-[var(--color-text-muted)] [font-family:var(--font-mono)]">
+          {formatLevelRange(
+            pokemon.minLevel ?? undefined,
+            pokemon.maxLevel ?? undefined,
+          )}
+        </div>
+      )}
+
       {slotLabel && (
         <div
           className={`mt-0.5 text-[8px] font-semibold ${
@@ -95,6 +107,12 @@ export default function PokeTile({
           }`}
         >
           SOS {slotLabel}
+        </div>
+      )}
+
+      {pokemon.contextLabel && (
+        <div className="mt-0.5 text-[8px] font-bold text-[var(--color-sos)]">
+          {pokemon.contextLabel}
         </div>
       )}
 

@@ -1,0 +1,12 @@
+{
+  "format_version": 1,
+  "vanilla_encounters": {
+    "repository": "https://gist.github.com/a539739085e24af55dffdf443cb70eb2.git",
+    "commit": "e9f9a551a7ad34a66f6812aa77e526cd21ee79f3",
+    "filename": "Pokemon Ultra Sun - Encounter Tables.txt",
+    "sha256": "80a4f0e768c4d4dcfdc0dd11b1dceae0d94049cba1cfb25c817cecbdb8a724e8",
+    "byte_count": 686192,
+    "line_count": 10078,
+    "purpose": "Pinned vanilla Ultra Sun structural donor; not Penumbra encounter content."
+  }
+}

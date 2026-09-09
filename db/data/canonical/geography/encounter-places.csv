@@ -1,0 +1,18 @@
+location_key,place_key,display_name,subtitle,encounter_method,requirement,display_order,mapping_status
+route-1,route-1-first-two-fields-east-house,First Two Fields East of the Player's House,,grass,,1,verified
+route-1,route-1-grass-overlooking-bay,Grass Overlooking the Bay,,grass,,2,verified
+route-1,route-1-grass-near-iki-western-path,Grass Near Iki Town and on the Western Path,,grass,,3,verified
+route-1,route-1-path-south-iki-behind-rocks,Path South of Iki Town Behind Rocks,,grass,Tauros Charge,4,verified
+hauoli-outskirts,hauoli-outskirts-tall-grass,Tall Grass,,grass,,1,verified
+hauoli-outskirts,hauoli-outskirts-surfing,Surfing from the Beach,,surf,Lapras Paddle,2,verified
+trainers-school,trainers-school-tall-grass,School Grounds Tall Grass,,grass,,1,verified
+melemele-sea,melemele-sea-fishing,Fishing,,fishing,Fishing Rod,1,verified
+melemele-sea,melemele-sea-bubbling-fishing-route-1-side,Bubbling Fishing Spot,Route 1 side,bubbling_fishing,Fishing Rod,2,verified
+route-3,route-3-two-fields-north-bridge,Two Fields North of the Bridge,,grass,,1,verified
+route-3,route-3-field-south-bridge,Field South of the Bridge,Bagon can call Salamence by SOS here,grass,,2,verified
+route-3,route-3-ambush-encounters,Ambush Encounters,Flying Pokémon shadows,moving_shadow,,3,verified
+route-3,route-3-berry-pile,Berry Pile by the Berry Tree,,berry_pile,,4,verified
+kalae-bay,kalae-bay-tall-grass,Tall Grass,,grass,,1,verified
+kalae-bay,kalae-bay-fishing,Fishing,,fishing,Fishing Rod,2,verified
+kalae-bay,kalae-bay-bubbling-fishing,Bubbling Fishing Spot,,bubbling_fishing,Fishing Rod,3,verified
+kalae-bay,kalae-bay-surfing,Surfing,,surf,Lapras Paddle,4,verified

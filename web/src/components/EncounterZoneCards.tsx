@@ -57,7 +57,9 @@ export default function EncounterZoneCards({
               : "No encounter areas loaded"}
           </div>
           <div className="mt-1 text-xs font-semibold text-[var(--color-text-muted)]">
-            This shell will render API-provided zones and Pokémon cards.
+            {state === "error"
+              ? "Unable to load location data."
+              : "No verified encounter places are currently mapped for this location."}
           </div>
         </div>
       </div>
@@ -67,7 +69,9 @@ export default function EncounterZoneCards({
   return (
     <div className="flex flex-col gap-3">
       {zones.map((zone) => {
-        const encounters = sosMode ? zone.sosEncounters : zone.encounters
+        const encounters = sosMode
+          ? [...zone.sosEncounters, ...zone.additionalSosEncounters]
+          : zone.encounters
         const levelRange = formatLevelRange(zone.minLevel, zone.maxLevel)
         return (
           <section

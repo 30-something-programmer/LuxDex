@@ -1,0 +1,1278 @@
+{
+  "format_version": 1,
+  "mapper_version": "1.0.0",
+  "source_versions": {
+    "penumbra_sha256": "14d2d30bbd3abecc45a6fd3255e920bc620b9f8ea16d797f883419ae1aefb4f4",
+    "pokemon_master_sha256": "b42daa5381483fd8453db2a37109392fbe9cc252f5fb591302fdc663d8ba9d6c",
+    "canonical_bundle_sha256": "c51f826f8c5787b13679a40007abadff4d19a82c2a192424ade1583907d653c0",
+    "vanilla_source_file": "db/data/source/usum/vanilla-encounters/e9f9a551a7ad34a66f6812aa77e526cd21ee79f3/Pokemon Ultra Sun - Encounter Tables.txt",
+    "vanilla_source_commit": "e9f9a551a7ad34a66f6812aa77e526cd21ee79f3",
+    "vanilla_source_sha256": "80a4f0e768c4d4dcfdc0dd11b1dceae0d94049cba1cfb25c817cecbdb8a724e8"
+  },
+  "structural_validation": {
+    "result": "exact_match",
+    "vanilla_map_blocks": 336,
+    "penumbra_map_blocks": 336,
+    "vanilla_encounter_tables": 397,
+    "penumbra_encounter_tables": 397,
+    "content_matching_warning": "Penumbra pools are modified; only raw framework identity is shared."
+  },
+  "summary": {
+    "total_raw_tables": 397,
+    "verified_mapped_tables": 39,
+    "probable_tables": 0,
+    "unresolved_tables": 358,
+    "coverage_percent": 9.82,
+    "area_groups": 5,
+    "locations": 6,
+    "encounter_places": 17
+  },
+  "places_by_method": {
+    "berry_pile": 1,
+    "bubbling_fishing": 2,
+    "fishing": 2,
+    "grass": 9,
+    "moving_shadow": 1,
+    "surf": 2
+  },
+  "verified_mappings_by_evidence_type": {
+    "location_reference": 35,
+    "structured_dump": 39,
+    "walkthrough": 4
+  },
+  "area_groups": [
+    {
+      "key": "melemele",
+      "display_name": "Melemele Island",
+      "group_type": "island"
+    },
+    {
+      "key": "akala",
+      "display_name": "Akala Island",
+      "group_type": "island"
+    },
+    {
+      "key": "ulaula",
+      "display_name": "Ula'ula Island",
+      "group_type": "island"
+    },
+    {
+      "key": "poni",
+      "display_name": "Poni Island",
+      "group_type": "island"
+    },
+    {
+      "key": "other-special",
+      "display_name": "Other / Special",
+      "group_type": "other"
+    }
+  ],
+  "locations": [
+    {
+      "key": "route-1",
+      "display_name": "Route 1",
+      "area_group_key": "melemele"
+    },
+    {
+      "key": "hauoli-outskirts",
+      "display_name": "Hau'oli Outskirts",
+      "area_group_key": "melemele"
+    },
+    {
+      "key": "trainers-school",
+      "display_name": "Trainers' School",
+      "area_group_key": "melemele"
+    },
+    {
+      "key": "melemele-sea",
+      "display_name": "Melemele Sea",
+      "area_group_key": "melemele"
+    },
+    {
+      "key": "route-3",
+      "display_name": "Route 3",
+      "area_group_key": "melemele"
+    },
+    {
+      "key": "kalae-bay",
+      "display_name": "Kala'e Bay",
+      "area_group_key": "melemele"
+    }
+  ],
+  "worked_examples": {
+    "route_1_hauoli_melemele_sea_trainers_school": [
+      {
+        "mapping_key": "g001-t01",
+        "source_sequence": 1,
+        "source_table_number": 1,
+        "place_key": "route-1-first-two-fields-east-house",
+        "place_label": "First Two Fields East of the Player's House",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g001-t13",
+        "source_sequence": 1,
+        "source_table_number": 13,
+        "place_key": "route-1-first-two-fields-east-house",
+        "place_label": "First Two Fields East of the Player's House",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g001-t14",
+        "source_sequence": 1,
+        "source_table_number": 14,
+        "place_key": "route-1-grass-overlooking-bay",
+        "place_label": "Grass Overlooking the Bay",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g001-t02",
+        "source_sequence": 1,
+        "source_table_number": 2,
+        "place_key": "route-1-grass-near-iki-western-path",
+        "place_label": "Grass Near Iki Town and on the Western Path",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g001-t12",
+        "source_sequence": 1,
+        "source_table_number": 12,
+        "place_key": "route-1-grass-near-iki-western-path",
+        "place_label": "Grass Near Iki Town and on the Western Path",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g001-t15",
+        "source_sequence": 1,
+        "source_table_number": 15,
+        "place_key": "route-1-grass-near-iki-western-path",
+        "place_label": "Grass Near Iki Town and on the Western Path",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g002-t01",
+        "source_sequence": 2,
+        "source_table_number": 1,
+        "place_key": "route-1-grass-near-iki-western-path",
+        "place_label": "Grass Near Iki Town and on the Western Path",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g002-t02",
+        "source_sequence": 2,
+        "source_table_number": 2,
+        "place_key": "route-1-grass-near-iki-western-path",
+        "place_label": "Grass Near Iki Town and on the Western Path",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g002-t03",
+        "source_sequence": 2,
+        "source_table_number": 3,
+        "place_key": "route-1-grass-near-iki-western-path",
+        "place_label": "Grass Near Iki Town and on the Western Path",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g001-t09",
+        "source_sequence": 1,
+        "source_table_number": 9,
+        "place_key": "route-1-path-south-iki-behind-rocks",
+        "place_label": "Path South of Iki Town Behind Rocks",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g001-t16",
+        "source_sequence": 1,
+        "source_table_number": 16,
+        "place_key": "route-1-path-south-iki-behind-rocks",
+        "place_label": "Path South of Iki Town Behind Rocks",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g001-t17",
+        "source_sequence": 1,
+        "source_table_number": 17,
+        "place_key": "route-1-path-south-iki-behind-rocks",
+        "place_label": "Path South of Iki Town Behind Rocks",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g001-t03",
+        "source_sequence": 1,
+        "source_table_number": 3,
+        "place_key": "hauoli-outskirts-tall-grass",
+        "place_label": "Tall Grass",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g001-t10",
+        "source_sequence": 1,
+        "source_table_number": 10,
+        "place_key": "hauoli-outskirts-tall-grass",
+        "place_label": "Tall Grass",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g001-t11",
+        "source_sequence": 1,
+        "source_table_number": 11,
+        "place_key": "hauoli-outskirts-surfing",
+        "place_label": "Surfing from the Beach",
+        "method": "surf"
+      },
+      {
+        "mapping_key": "g001-t04",
+        "source_sequence": 1,
+        "source_table_number": 4,
+        "place_key": "melemele-sea-fishing",
+        "place_label": "Fishing",
+        "method": "fishing"
+      },
+      {
+        "mapping_key": "g001-t05",
+        "source_sequence": 1,
+        "source_table_number": 5,
+        "place_key": "melemele-sea-fishing",
+        "place_label": "Fishing",
+        "method": "fishing"
+      },
+      {
+        "mapping_key": "g001-t06",
+        "source_sequence": 1,
+        "source_table_number": 6,
+        "place_key": "melemele-sea-fishing",
+        "place_label": "Fishing",
+        "method": "fishing"
+      },
+      {
+        "mapping_key": "g001-t07",
+        "source_sequence": 1,
+        "source_table_number": 7,
+        "place_key": "melemele-sea-fishing",
+        "place_label": "Fishing",
+        "method": "fishing"
+      },
+      {
+        "mapping_key": "g001-t08",
+        "source_sequence": 1,
+        "source_table_number": 8,
+        "place_key": "melemele-sea-bubbling-fishing-route-1-side",
+        "place_label": "Bubbling Fishing Spot",
+        "method": "bubbling_fishing"
+      },
+      {
+        "mapping_key": "g048-t01",
+        "source_sequence": 48,
+        "source_table_number": 1,
+        "place_key": "trainers-school-tall-grass",
+        "place_label": "School Grounds Tall Grass",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g048-t02",
+        "source_sequence": 48,
+        "source_table_number": 2,
+        "place_key": "trainers-school-tall-grass",
+        "place_label": "School Grounds Tall Grass",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g048-t03",
+        "source_sequence": 48,
+        "source_table_number": 3,
+        "place_key": "trainers-school-tall-grass",
+        "place_label": "School Grounds Tall Grass",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g048-t04",
+        "source_sequence": 48,
+        "source_table_number": 4,
+        "place_key": "trainers-school-tall-grass",
+        "place_label": "School Grounds Tall Grass",
+        "method": "grass"
+      }
+    ],
+    "route_3_kalae_bay": [
+      {
+        "mapping_key": "g005-t01",
+        "source_sequence": 5,
+        "source_table_number": 1,
+        "place_key": "route-3-two-fields-north-bridge",
+        "place_label": "Two Fields North of the Bridge",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g005-t10",
+        "source_sequence": 5,
+        "source_table_number": 10,
+        "place_key": "route-3-two-fields-north-bridge",
+        "place_label": "Two Fields North of the Bridge",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g005-t14",
+        "source_sequence": 5,
+        "source_table_number": 14,
+        "place_key": "route-3-field-south-bridge",
+        "place_label": "Field South of the Bridge",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g005-t03",
+        "source_sequence": 5,
+        "source_table_number": 3,
+        "place_key": "route-3-ambush-encounters",
+        "place_label": "Ambush Encounters",
+        "method": "moving_shadow"
+      },
+      {
+        "mapping_key": "g005-t11",
+        "source_sequence": 5,
+        "source_table_number": 11,
+        "place_key": "route-3-ambush-encounters",
+        "place_label": "Ambush Encounters",
+        "method": "moving_shadow"
+      },
+      {
+        "mapping_key": "g005-t12",
+        "source_sequence": 5,
+        "source_table_number": 12,
+        "place_key": "route-3-ambush-encounters",
+        "place_label": "Ambush Encounters",
+        "method": "moving_shadow"
+      },
+      {
+        "mapping_key": "g005-t13",
+        "source_sequence": 5,
+        "source_table_number": 13,
+        "place_key": "route-3-ambush-encounters",
+        "place_label": "Ambush Encounters",
+        "method": "moving_shadow"
+      },
+      {
+        "mapping_key": "g005-t04",
+        "source_sequence": 5,
+        "source_table_number": 4,
+        "place_key": "route-3-berry-pile",
+        "place_label": "Berry Pile by the Berry Tree",
+        "method": "berry_pile"
+      },
+      {
+        "mapping_key": "g005-t02",
+        "source_sequence": 5,
+        "source_table_number": 2,
+        "place_key": "kalae-bay-tall-grass",
+        "place_label": "Tall Grass",
+        "method": "grass"
+      },
+      {
+        "mapping_key": "g005-t05",
+        "source_sequence": 5,
+        "source_table_number": 5,
+        "place_key": "kalae-bay-fishing",
+        "place_label": "Fishing",
+        "method": "fishing"
+      },
+      {
+        "mapping_key": "g005-t06",
+        "source_sequence": 5,
+        "source_table_number": 6,
+        "place_key": "kalae-bay-fishing",
+        "place_label": "Fishing",
+        "method": "fishing"
+      },
+      {
+        "mapping_key": "g005-t07",
+        "source_sequence": 5,
+        "source_table_number": 7,
+        "place_key": "kalae-bay-fishing",
+        "place_label": "Fishing",
+        "method": "fishing"
+      },
+      {
+        "mapping_key": "g005-t08",
+        "source_sequence": 5,
+        "source_table_number": 8,
+        "place_key": "kalae-bay-fishing",
+        "place_label": "Fishing",
+        "method": "fishing"
+      },
+      {
+        "mapping_key": "g005-t09",
+        "source_sequence": 5,
+        "source_table_number": 9,
+        "place_key": "kalae-bay-bubbling-fishing",
+        "place_label": "Bubbling Fishing Spot",
+        "method": "bubbling_fishing"
+      },
+      {
+        "mapping_key": "g005-t15",
+        "source_sequence": 5,
+        "source_table_number": 15,
+        "place_key": "kalae-bay-surfing",
+        "place_label": "Surfing",
+        "method": "surf"
+      }
+    ]
+  },
+  "probable_mappings": [],
+  "unresolved_by_raw_map_block": [
+    {
+      "source_sequence": 1,
+      "raw_header": "000 - Route 1 (Hau’oli Outskirts) / 003 - Route 1 / 010 - Melemele Sea",
+      "unresolved_table_numbers": [
+        18
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 6,
+      "raw_header": "007 - Route 2",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "unresolved_count": 9
+    },
+    {
+      "source_sequence": 7,
+      "raw_header": "009 - Melemele Sea / 012 - Hau’oli City (Beachfront)",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "unresolved_count": 7
+    },
+    {
+      "source_sequence": 9,
+      "raw_header": "013 - Hau’oli City (Shopping District) / 014 - Hau’oli City (Marina)",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "unresolved_count": 8
+    },
+    {
+      "source_sequence": 21,
+      "raw_header": "026 - Ten Carat Hill",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3
+      ],
+      "unresolved_count": 3
+    },
+    {
+      "source_sequence": 22,
+      "raw_header": "027 - Ten Carat Hill (Farthest Hollow)",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "unresolved_count": 4
+    },
+    {
+      "source_sequence": 23,
+      "raw_header": "028 - Hau’oli Cemetery",
+      "unresolved_table_numbers": [
+        1,
+        2
+      ],
+      "unresolved_count": 2
+    },
+    {
+      "source_sequence": 24,
+      "raw_header": "029 - Melemele Meadow",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 25,
+      "raw_header": "030 - Seaward Cave",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "unresolved_count": 4
+    },
+    {
+      "source_sequence": 26,
+      "raw_header": "031 - Berry Fields",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 27,
+      "raw_header": "032 - Sandy Cave",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 28,
+      "raw_header": "033 - Verdant Cavern (Trial Site)",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3
+      ],
+      "unresolved_count": 3
+    },
+    {
+      "source_sequence": 66,
+      "raw_header": "080 - Route 4",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "unresolved_count": 7
+    },
+    {
+      "source_sequence": 67,
+      "raw_header": "081 - Route 5",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "unresolved_count": 10
+    },
+    {
+      "source_sequence": 68,
+      "raw_header": "082 - Route 6",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3
+      ],
+      "unresolved_count": 3
+    },
+    {
+      "source_sequence": 69,
+      "raw_header": "083 - Route 7",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "unresolved_count": 9
+    },
+    {
+      "source_sequence": 70,
+      "raw_header": "084 - Route 8",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "unresolved_count": 12
+    },
+    {
+      "source_sequence": 71,
+      "raw_header": "085 - Route 9",
+      "unresolved_table_numbers": [
+        1,
+        2
+      ],
+      "unresolved_count": 2
+    },
+    {
+      "source_sequence": 72,
+      "raw_header": "086 - Hano Grand Resort / 087 - Hano Beach",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "unresolved_count": 4
+    },
+    {
+      "source_sequence": 74,
+      "raw_header": "089 - Paniola Town",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3
+      ],
+      "unresolved_count": 3
+    },
+    {
+      "source_sequence": 78,
+      "raw_header": "093 - Dividing Peak Tunnel",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3
+      ],
+      "unresolved_count": 3
+    },
+    {
+      "source_sequence": 82,
+      "raw_header": "097 - Memorial Hill / 098 - Akala Outskirts",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "unresolved_count": 9
+    },
+    {
+      "source_sequence": 83,
+      "raw_header": "099 - Diglett’s Tunnel",
+      "unresolved_table_numbers": [
+        1,
+        2
+      ],
+      "unresolved_count": 2
+    },
+    {
+      "source_sequence": 84,
+      "raw_header": "100 - Wela Volcano Park",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "unresolved_count": 5
+    },
+    {
+      "source_sequence": 86,
+      "raw_header": "102 - Brooklet Hill / 103 - Brooklet Hill",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "unresolved_count": 18
+    },
+    {
+      "source_sequence": 87,
+      "raw_header": "104 - Brooklet Hill (Totem’s Den)",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "unresolved_count": 8
+    },
+    {
+      "source_sequence": 88,
+      "raw_header": "105 - Lush Jungle",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3
+      ],
+      "unresolved_count": 3
+    },
+    {
+      "source_sequence": 89,
+      "raw_header": "106 - Lush Jungle",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 90,
+      "raw_header": "107 - Lush Jungle",
+      "unresolved_table_numbers": [
+        1,
+        2
+      ],
+      "unresolved_count": 2
+    },
+    {
+      "source_sequence": 92,
+      "raw_header": "109 - Lush Jungle",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 122,
+      "raw_header": "150 - Paniola Ranch",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "unresolved_count": 4
+    },
+    {
+      "source_sequence": 123,
+      "raw_header": "151 - Paniola Ranch",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 136,
+      "raw_header": "164 - Route 10",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "unresolved_count": 12
+    },
+    {
+      "source_sequence": 137,
+      "raw_header": "165 - Route 11",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "unresolved_count": 6
+    },
+    {
+      "source_sequence": 138,
+      "raw_header": "166 - Ula’ula Beach",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 139,
+      "raw_header": "167 - Route 13",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3
+      ],
+      "unresolved_count": 3
+    },
+    {
+      "source_sequence": 140,
+      "raw_header": "168 - Tapu Village / 169 - Route 14",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "unresolved_count": 8
+    },
+    {
+      "source_sequence": 141,
+      "raw_header": "170 - Route 15 / 171 - Route 16",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "unresolved_count": 10
+    },
+    {
+      "source_sequence": 142,
+      "raw_header": "172 - Route 17",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "unresolved_count": 9
+    },
+    {
+      "source_sequence": 143,
+      "raw_header": "173 - Route 12",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "unresolved_count": 11
+    },
+    {
+      "source_sequence": 144,
+      "raw_header": "174 - Malie City / 175 - Malie City (Outer Cape)",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3
+      ],
+      "unresolved_count": 3
+    },
+    {
+      "source_sequence": 146,
+      "raw_header": "177 - Haina Desert / 178 - Haina Desert / 179 - Haina Desert / 180 - Haina Desert",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "unresolved_count": 10
+    },
+    {
+      "source_sequence": 147,
+      "raw_header": "181 - Haina Desert / 182 - Haina Desert / 183 - Haina Desert / 184 - Haina Desert",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ],
+      "unresolved_count": 8
+    },
+    {
+      "source_sequence": 148,
+      "raw_header": "185 - Ula’ula Meadow",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "unresolved_count": 4
+    },
+    {
+      "source_sequence": 149,
+      "raw_header": "186 - Malie Garden",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16
+      ],
+      "unresolved_count": 16
+    },
+    {
+      "source_sequence": 150,
+      "raw_header": "187 - Mount Hokulani",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "unresolved_count": 4
+    },
+    {
+      "source_sequence": 151,
+      "raw_header": "188 - Blush Mountain",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "unresolved_count": 6
+    },
+    {
+      "source_sequence": 152,
+      "raw_header": "189 - Ruins of Abundance",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 163,
+      "raw_header": "200 - Mount Lanakila",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 164,
+      "raw_header": "201 - Mount Lanakila",
+      "unresolved_table_numbers": [
+        1,
+        2
+      ],
+      "unresolved_count": 2
+    },
+    {
+      "source_sequence": 165,
+      "raw_header": "202 - Mount Lanakila",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 167,
+      "raw_header": "204 - Mount Lanakila",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 168,
+      "raw_header": "205 - Mount Lanakila",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 169,
+      "raw_header": "206 - Mount Lanakila",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 185,
+      "raw_header": "222 - Thrifty Megamart (Abandoned Site)",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 224,
+      "raw_header": "264 - Poni Wilds",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "unresolved_count": 11
+    },
+    {
+      "source_sequence": 225,
+      "raw_header": "265 - Ancient Poni Path / 266 - Poni Breaker Coast",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "unresolved_count": 11
+    },
+    {
+      "source_sequence": 226,
+      "raw_header": "267 - Poni Grove",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "unresolved_count": 7
+    },
+    {
+      "source_sequence": 227,
+      "raw_header": "268 - Poni Plains",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "unresolved_count": 23
+    },
+    {
+      "source_sequence": 228,
+      "raw_header": "269 - Poni Coast",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 229,
+      "raw_header": "270 - Poni Gauntlet",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "unresolved_count": 7
+    },
+    {
+      "source_sequence": 231,
+      "raw_header": "272 - Seafolk Village",
+      "unresolved_table_numbers": [
+        1,
+        2
+      ],
+      "unresolved_count": 2
+    },
+    {
+      "source_sequence": 232,
+      "raw_header": "273 - Poni Meadow",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "unresolved_count": 6
+    },
+    {
+      "source_sequence": 233,
+      "raw_header": "274 - Vast Poni Canyon",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "unresolved_count": 4
+    },
+    {
+      "source_sequence": 234,
+      "raw_header": "275 - Vast Poni Canyon",
+      "unresolved_table_numbers": [
+        1,
+        2
+      ],
+      "unresolved_count": 2
+    },
+    {
+      "source_sequence": 235,
+      "raw_header": "276 - Vast Poni Canyon",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 236,
+      "raw_header": "277 - Vast Poni Canyon",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 237,
+      "raw_header": "278 - Vast Poni Canyon",
+      "unresolved_table_numbers": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "unresolved_count": 7
+    },
+    {
+      "source_sequence": 246,
+      "raw_header": "287 - Resolution Cave",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 247,
+      "raw_header": "288 - Resolution Cave",
+      "unresolved_table_numbers": [
+        1
+      ],
+      "unresolved_count": 1
+    },
+    {
+      "source_sequence": 249,
+      "raw_header": "290 - Exeggutor Island",
+      "unresolved_table_numbers": [
+        1,
+        2
+      ],
+      "unresolved_count": 2
+    }
+  ]
+}

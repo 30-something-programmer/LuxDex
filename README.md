@@ -2,7 +2,7 @@
 
 LuxDex is a LuxForge application whose backend publishes authoritative Penumbra encounter data and canonical Pokémon metadata to a presentation-only web client. The data flow is deliberately one way:
 
-`preserved source data -> complete parse and validation -> PostgreSQL -> repository/service layer -> read-only API`
+`preserved source/research data -> complete validation -> canonical mappings -> PostgreSQL -> repository/service layer -> read-only API`
 
 The web application does not read, parse, or own canonical encounter data.
 
@@ -16,7 +16,7 @@ The web application does not read, parse, or own canonical encounter data.
 - `docker/` — container builds, Compose configuration, and lifecycle commands.
 - `build/` — canonical project metadata and the single `VERSION` file.
 - `scripts/` — repeatable repository bootstrap and asset-acquisition utilities.
-- `tests/` — backend tests.
+- `tests/` — backend and database integration tests; frontend tests live beside the React source under `web/src/`.
 - `.venvs/app/` — ignored local Python environment created by the bootstrap script.
 - `.dev/` — ignored scratch space.
 
@@ -46,7 +46,7 @@ Running `.\docker\run.ps1` without arguments opens the lifecycle menu. The web U
 
 All services communicate on the private `luxdex-internal` Docker network. Ports `52032`–`52039` remain reserved for future LuxDex services.
 
-`Rebuild` rebuilds application images without Docker layer cache and restarts the stack while preserving the database volume. `Full Blowaway` removes only Compose resources belonging to LuxDex, including its database volume and service images, then rebuilds the schema, ingests both source datasets, and builds their identity map before the API starts. Normal startup is offline: each loader compares versioned source fingerprints and skips unchanged work.
+`Rebuild` rebuilds application images without Docker layer cache and restarts the stack while preserving the database volume. `Full Blowaway` removes only Compose resources belonging to LuxDex, including its database volume and service images, then rebuilds the schema, ingests both source datasets, builds their identity map, and publishes canonical geography before the API starts. Normal startup is offline: each loader compares versioned source fingerprints and skips unchanged work.
 
 ## Penumbra data commands
 
@@ -89,6 +89,32 @@ Canonical Pokémon and mapping proof endpoints include:
 - `GET /api/pokemon/{canonical_key}`
 - `GET /api/pokemon/{canonical_key}/forms`
 - `GET /api/identity/penumbra`
+- `GET /api/pokemon/search?q=Pichu`
+
+## Canonical geography
+
+Raw Penumbra map blocks and table numbers remain immutable implementation identities. The reviewed files under `db/data/canonical/geography/` separately map verified raw tables to backend-owned area groups, locations, encounter places, methods, and evidence. Unresolved tables remain absent from the mapping relation and are listed—without invented labels—in `geography-coverage-report.json`.
+
+SciresM's vanilla Ultra Sun encounter dump is pinned beneath `db/data/source/usum/` as a structural research donor. Reproduce it explicitly with `scripts/pull-usum-geography-source.ps1`; normal builds never access the internet. Build or revalidate the geography transactionally with:
+
+```powershell
+.\scripts\build-geography.ps1
+```
+
+Proof endpoints are:
+
+- `GET /api/geography/groups`
+- `GET /api/geography/groups/{group_key}/locations`
+- `GET /api/geography/locations/{location_key}`
+- `GET /api/geography/locations/{location_key}/encounter-places`
+- `GET /api/geography/encounter-places/{place_key}`
+
+The frontend consumes two composed read models in addition to the proof endpoints:
+
+- `GET /api/explore/areas/{group_key}/{location_key}` — verified places with Day/Night normal, SOS, and Additional SOS pools.
+- `GET /api/explore/pokemon/{canonical_key}` — canonical form details and grouped player-facing Penumbra locations.
+
+Areas, Pokémon Finder, and Pokédex now use these APIs and the canonical Pokémon list directly. URL paths retain selected area/location or Pokémon form, sprites resolve only through backend-provided local asset paths, and loading/error/empty states never fall back to generated records. Seen/Owned tracking remains deliberately unimplemented.
 
 ## Local development
 
@@ -97,6 +123,7 @@ Canonical Pokémon and mapping proof endpoints include:
 .\.venvs\app\Scripts\python.exe -m uvicorn app.main:app --reload --port 52031
 Set-Location web
 pnpm dev
+pnpm test
 ```
 
 The Vite development server proxies `/api` to the local API. Use `VITE_API_BASE_URL` only when an explicit alternative API base is required. The workspace at `.vscode/luxdex.code-workspace` includes equivalent tasks.
