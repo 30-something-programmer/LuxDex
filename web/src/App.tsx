@@ -128,7 +128,6 @@ export default function App() {
   const [locationExplore, setLocationExplore] =
     useState<ExploreLocationResponse | null>(null)
   const [locationState, setLocationState] = useState<ResourceState>("empty")
-  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null)
   const [timeOfDay, setTimeOfDay] = useState<TimeOfDay>("day")
   const [sosMode, setSosMode] = useState(false)
   const [areasReloadKey, setAreasReloadKey] = useState(0)
@@ -288,7 +287,6 @@ export default function App() {
     if (route.view !== "areas" || !route.groupKey || !route.locationKey) {
       setLocationExplore(null)
       setLocationState("empty")
-      setSelectedPlaceId(null)
       return
     }
     const controller = new AbortController()
@@ -298,7 +296,6 @@ export default function App() {
       .then((response) => {
         setLocationExplore(response)
         setLocationState(response.places.length ? "ready" : "empty")
-        setSelectedPlaceId(response.places[0]?.place_key ?? null)
       })
       .catch((error: unknown) => {
         if (!isAbort(error)) setLocationState("error")
@@ -523,12 +520,20 @@ export default function App() {
     [mutateCollection, pokemonDetail],
   )
 
+  const markOwned = useCallback(
+    (canonicalKey: string, currentState: CollectionState) => {
+      void mutateCollection(canonicalKey, currentState, "owned", () =>
+        setCollectionState(canonicalKey, "owned"),
+      )
+    },
+    [mutateCollection],
+  )
+
   const areaCompletion = useMemo(() => {
-    const selected = zones.find((zone) => zone.id === selectedPlaceId)
-    if (!selected) return undefined
-    const encounters = sosMode
-      ? [...selected.sosEncounters, ...selected.additionalSosEncounters]
-      : selected.encounters
+    if (zones.length === 0) return undefined
+    const encounters = zones.flatMap((zone) =>
+      sosMode ? [...zone.sosEncounters, ...zone.additionalSosEncounters] : zone.encounters,
+    )
     const unique = new Map(encounters.map((pokemon) => [pokemon.canonicalKey, pokemon]))
     const values = [...unique.values()]
     return {
@@ -536,7 +541,7 @@ export default function App() {
       seen: values.filter((pokemon) => pokemon.status === "seen").length,
       owned: values.filter((pokemon) => pokemon.status === "owned").length,
     }
-  }, [selectedPlaceId, sosMode, zones])
+  }, [sosMode, zones])
 
   const visiblePokedexEntries = useMemo(
     () =>
@@ -604,7 +609,6 @@ export default function App() {
             map={islandMap}
             zones={zones}
             completion={areaCompletion}
-            selectedZoneId={selectedPlaceId}
             state={areasState}
             timeOfDay={timeOfDay}
             sosMode={sosMode}
@@ -615,7 +619,6 @@ export default function App() {
               route.groupKey &&
               navigate({ view: "areas", groupKey: route.groupKey, locationKey })
             }
-            onSelectZone={setSelectedPlaceId}
             onTimeOfDayChange={setTimeOfDay}
             onSosModeChange={setSosMode}
             onPreviousLocation={
@@ -632,7 +635,8 @@ export default function App() {
             onPokemonSelect={(pokemon) =>
               navigate({ view: "pokemon", canonicalKey: pokemon.canonicalKey })
             }
-            onStatusAction={advanceStatus}
+            onMarkSeen={advanceStatus}
+            onMarkOwned={markOwned}
             mappingInProgress={mappingInProgress}
             onRetry={() => setAreasReloadKey((current) => current + 1)}
           />

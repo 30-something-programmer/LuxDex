@@ -23,7 +23,6 @@ interface AreasViewProps {
   selectedLocationId: string | null
   map: IslandMapModel | null
   zones: EncounterZoneModel[]
-  selectedZoneId: string | null
   completion?: AreaCompletionModel
   state: ResourceState
   timeOfDay: TimeOfDay
@@ -32,11 +31,11 @@ interface AreasViewProps {
   onSelectLocation: (locationId: string) => void
   onTimeOfDayChange: (timeOfDay: TimeOfDay) => void
   onSosModeChange: (active: boolean) => void
-  onSelectZone: (zoneId: string) => void
   onPreviousLocation?: () => void
   onNextLocation?: () => void
   onPokemonSelect?: (pokemon: PokemonCardModel) => void
-  onStatusAction?: (canonicalKey: string, status: PokemonStatus) => void
+  onMarkSeen?: (canonicalKey: string, status: PokemonStatus) => void
+  onMarkOwned?: (canonicalKey: string, status: PokemonStatus) => void
   mappingInProgress?: boolean
   onRetry?: () => void
 }
@@ -63,7 +62,6 @@ export default function AreasView({
   selectedLocationId,
   map,
   zones,
-  selectedZoneId,
   completion,
   state,
   timeOfDay,
@@ -72,11 +70,11 @@ export default function AreasView({
   onSelectLocation,
   onTimeOfDayChange,
   onSosModeChange,
-  onSelectZone,
   onPreviousLocation,
   onNextLocation,
   onPokemonSelect,
-  onStatusAction,
+  onMarkSeen,
+  onMarkOwned,
   mappingInProgress = false,
   onRetry,
 }: AreasViewProps) {
@@ -252,36 +250,14 @@ export default function AreasView({
             )}
           </div>
 
-          {zones.length > 0 && (
-            <div
-              className="flex flex-shrink-0 gap-1.5 overflow-x-auto border-b border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 sm:px-4"
-              aria-label="Encounter places"
-            >
-              {zones.map((zone) => (
-                <button
-                  key={zone.id}
-                  className={`min-h-9 flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-black transition-colors ${
-                    zone.id === selectedZoneId
-                      ? "bg-[var(--color-accent)] text-white"
-                      : "bg-[var(--color-panel)] text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
-                  }`}
-                  type="button"
-                  onClick={() => onSelectZone(zone.id)}
-                  aria-pressed={zone.id === selectedZoneId}
-                >
-                  {zone.label}
-                </button>
-              ))}
-            </div>
-          )}
-
           <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">
             <EncounterZoneCards
-              zones={zones.filter((zone) => zone.id === selectedZoneId)}
+              zones={zones}
               sosMode={sosMode}
               state={state}
               onPokemonSelect={onPokemonSelect}
-              onStatusAction={onStatusAction}
+              onMarkSeen={onMarkSeen}
+              onMarkOwned={onMarkOwned}
               onRetry={onRetry}
               emptyMessage={
                 mappingInProgress

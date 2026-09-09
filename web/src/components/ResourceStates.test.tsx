@@ -67,13 +67,11 @@ describe("screen resource states", () => {
         selectedLocationId={null}
         map={null}
         zones={[]}
-        selectedZoneId={null}
         state="empty"
         timeOfDay="day"
         sosMode={false}
         onSelectIsland={vi.fn()}
         onSelectLocation={vi.fn()}
-        onSelectZone={vi.fn()}
         onTimeOfDayChange={vi.fn()}
         onSosModeChange={vi.fn()}
       />,

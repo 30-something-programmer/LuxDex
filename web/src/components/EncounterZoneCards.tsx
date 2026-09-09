@@ -5,6 +5,7 @@ import type {
   ResourceState,
 } from "../types/presentation"
 import { formatLevelRange } from "../lib/format"
+import { environmentClassName, environmentStyleFor } from "../presentation/environments"
 import PokeTile from "./PokeTile"
 
 interface EncounterZoneCardsProps {
@@ -12,7 +13,8 @@ interface EncounterZoneCardsProps {
   sosMode: boolean
   state: ResourceState
   onPokemonSelect?: (pokemon: PokemonCardModel) => void
-  onStatusAction?: (canonicalKey: string, status: PokemonStatus) => void
+  onMarkSeen?: (canonicalKey: string, status: PokemonStatus) => void
+  onMarkOwned?: (canonicalKey: string, status: PokemonStatus) => void
   onRetry?: () => void
   emptyMessage?: string
 }
@@ -21,7 +23,8 @@ export default function EncounterZoneCards({
   sosMode,
   state,
   onPokemonSelect,
-  onStatusAction,
+  onMarkSeen,
+  onMarkOwned,
   onRetry,
   emptyMessage,
 }: EncounterZoneCardsProps) {
@@ -87,13 +90,16 @@ export default function EncounterZoneCards({
           ? [...zone.sosEncounters, ...zone.additionalSosEncounters]
           : zone.encounters
         const levelRange = formatLevelRange(zone.minLevel, zone.maxLevel)
+        const environmentClass = environmentClassName(
+          environmentStyleFor(zone.method, zone.label),
+        )
         return (
           <section
             key={zone.id}
-            className="overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)]"
+            className={`overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-panel)] ${environmentClass}`}
           >
             <div
-              className={`flex items-center gap-2 border-b border-[var(--color-border)] px-3 py-2.5 ${
+              className={`flex items-center gap-2 border-b border-[var(--color-border)]/70 px-3 py-2.5 ${
                 sosMode ? "bg-[var(--color-sos)]/10" : ""
               }`}
             >
@@ -101,7 +107,7 @@ export default function EncounterZoneCards({
                 {zone.label}
               </h3>
               {levelRange && (
-                <span className="rounded-lg bg-[var(--color-surface)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-text-muted)] [font-family:var(--font-mono)]">
+                <span className="rounded-lg bg-[var(--color-surface)]/80 px-1.5 py-0.5 text-[10px] font-semibold text-[var(--color-text-muted)] [font-family:var(--font-mono)]">
                   {levelRange}
                 </span>
               )}
@@ -121,13 +127,14 @@ export default function EncounterZoneCards({
                   No {sosMode ? "SOS " : ""}encounters in this zone
                 </div>
               ) : (
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5 xl:grid-cols-6">
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6 xl:grid-cols-8">
                   {encounters.map((pokemon) => (
                     <PokeTile
                       key={pokemon.id}
                       pokemon={pokemon}
                       onSelect={onPokemonSelect}
-                      onStatusAction={onStatusAction}
+                      onMarkSeen={onMarkSeen}
+                      onMarkOwned={onMarkOwned}
                     />
                   ))}
                 </div>

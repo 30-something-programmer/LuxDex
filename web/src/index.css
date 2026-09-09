@@ -135,3 +135,108 @@ select:disabled {
   border-radius: 4px;
   background: var(--color-border);
 }
+
+/* ── Temporary encounter-place mood backgrounds ──────────────────────────
+   Subtle, local-only CSS treatments hinting at an encounter method's
+   environment. Presentation flavour only — not real per-location maps. */
+.env-water {
+  background:
+    linear-gradient(165deg, rgb(56 132 255 / 30%) 0%, rgb(56 132 255 / 6%) 100%),
+    repeating-linear-gradient(
+      115deg,
+      rgb(255 255 255 / 6%) 0 2px,
+      transparent 2px 14px
+    );
+}
+.env-beach-water {
+  background: linear-gradient(
+    180deg,
+    rgb(56 132 255 / 30%) 0%,
+    rgb(56 132 255 / 12%) 45%,
+    rgb(234 197 138 / 26%) 100%
+  );
+}
+.env-tall-grass {
+  background:
+    linear-gradient(160deg, rgb(16 140 80 / 42%) 0%, rgb(16 140 80 / 8%) 100%),
+    repeating-linear-gradient(
+      100deg,
+      rgb(255 255 255 / 5%) 0 2px,
+      transparent 2px 10px
+    );
+}
+.env-meadow {
+  background: linear-gradient(160deg, rgb(74 222 128 / 26%) 0%, rgb(74 222 128 / 5%) 100%);
+}
+.env-meadow-ocean {
+  background: linear-gradient(
+    135deg,
+    rgb(74 222 128 / 30%) 0%,
+    rgb(74 222 128 / 12%) 40%,
+    rgb(56 132 255 / 28%) 100%
+  );
+}
+.env-cave {
+  background: linear-gradient(160deg, rgb(148 163 184 / 30%) 0%, rgb(148 163 184 / 6%) 100%);
+}
+.env-urban {
+  background: linear-gradient(160deg, rgb(148 163 184 / 18%) 0%, rgb(148 163 184 / 4%) 100%);
+}
+.env-forest {
+  background: radial-gradient(
+    130% 110% at 25% 0%,
+    rgb(16 110 66 / 46%),
+    rgb(15 23 42 / 4%) 100%
+  );
+}
+
+[data-theme='light'] .env-water {
+  background:
+    linear-gradient(165deg, rgb(56 132 255 / 24%) 0%, rgb(56 132 255 / 5%) 100%),
+    repeating-linear-gradient(
+      115deg,
+      rgb(255 255 255 / 45%) 0 2px,
+      transparent 2px 14px
+    );
+}
+[data-theme='light'] .env-beach-water {
+  background: linear-gradient(
+    180deg,
+    rgb(56 132 255 / 26%) 0%,
+    rgb(56 132 255 / 9%) 45%,
+    rgb(202 138 4 / 20%) 100%
+  );
+}
+[data-theme='light'] .env-tall-grass {
+  background:
+    linear-gradient(160deg, rgb(22 163 74 / 30%) 0%, rgb(22 163 74 / 6%) 100%),
+    repeating-linear-gradient(
+      100deg,
+      rgb(255 255 255 / 40%) 0 2px,
+      transparent 2px 10px
+    );
+}
+[data-theme='light'] .env-meadow {
+  background: linear-gradient(160deg, rgb(22 163 74 / 20%) 0%, rgb(22 163 74 / 4%) 100%);
+}
+[data-theme='light'] .env-meadow-ocean {
+  background: linear-gradient(
+    135deg,
+    rgb(22 163 74 / 24%) 0%,
+    rgb(22 163 74 / 8%) 40%,
+    rgb(56 132 255 / 20%) 100%
+  );
+}
+[data-theme='light'] .env-cave {
+  background: linear-gradient(160deg, rgb(100 116 139 / 22%) 0%, rgb(100 116 139 / 5%) 100%);
+}
+[data-theme='light'] .env-urban {
+  background: linear-gradient(160deg, rgb(100 116 139 / 14%) 0%, rgb(100 116 139 / 3%) 100%);
+}
+[data-theme='light'] .env-forest {
+  background: radial-gradient(
+    130% 110% at 25% 0%,
+    rgb(21 128 61 / 30%),
+    rgb(253 246 232 / 3%) 100%
+  );
+}

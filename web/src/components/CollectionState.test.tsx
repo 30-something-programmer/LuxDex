@@ -25,35 +25,114 @@ describe("collection state presentation", () => {
     })
   })
 
-  it("renders owned in full colour with a Poké Ball and never advances again", async () => {
-    const action = vi.fn()
-    const { container } = render(
-      <PokeTile
-        pokemon={{ ...basePokemon, status: "owned" }}
-        onStatusAction={action}
-      />,
-    )
+  it("renders owned in full colour with a coloured Poké Ball", () => {
+    render(<PokeTile pokemon={{ ...basePokemon, status: "owned" }} />)
     expect(screen.getByRole("img", { name: "Pichu" })).toHaveStyle({ filter: "none" })
-    expect(container.querySelector("svg circle[fill='var(--color-owned)']")).toBeInTheDocument()
-    const owned = screen.getByRole("button", { name: "✓ Owned" })
-    expect(owned).toBeDisabled()
-    await userEvent.click(owned)
-    expect(action).not.toHaveBeenCalled()
+    expect(
+      screen.getByRole("button", { name: "Pichu is owned" }),
+    ).toBeDisabled()
   })
 
-  it("keeps navigation and quick advancement as separate actions", async () => {
+  it("shows a closed eye and grey Poké Ball for an unseen card", () => {
+    render(<PokeTile pokemon={{ ...basePokemon, status: "unseen" }} />)
+    expect(
+      screen.getByRole("button", { name: "Mark Pichu as seen" }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole("button", { name: "Mark Pichu as owned" }),
+    ).toBeInTheDocument()
+  })
+
+  it("clicking the eye on an unseen card marks it seen and does not select it", async () => {
     const select = vi.fn()
-    const action = vi.fn()
+    const markSeen = vi.fn()
     const user = userEvent.setup()
     render(
       <PokeTile
         pokemon={{ ...basePokemon, status: "unseen" }}
         onSelect={select}
-        onStatusAction={action}
+        onMarkSeen={markSeen}
       />,
     )
-    await user.click(screen.getByRole("button", { name: "Mark Seen" }))
-    expect(action).toHaveBeenCalledWith("pichu", "unseen")
+    await user.click(screen.getByRole("button", { name: "Mark Pichu as seen" }))
+    expect(markSeen).toHaveBeenCalledWith("pichu", "unseen")
     expect(select).not.toHaveBeenCalled()
+  })
+
+  it("shows an open eye once seen and never downgrades on click", async () => {
+    const markSeen = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <PokeTile
+        pokemon={{ ...basePokemon, status: "seen" }}
+        onMarkSeen={markSeen}
+      />,
+    )
+    const eye = screen.getByRole("button", { name: "Pichu has been seen" })
+    expect(eye).toBeDisabled()
+    await user.click(eye)
+    expect(markSeen).not.toHaveBeenCalled()
+  })
+
+  it("clicking the grey Poké Ball on an unseen card sets it owned directly", async () => {
+    const markOwned = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <PokeTile
+        pokemon={{ ...basePokemon, status: "unseen" }}
+        onMarkOwned={markOwned}
+      />,
+    )
+    await user.click(screen.getByRole("button", { name: "Mark Pichu as owned" }))
+    expect(markOwned).toHaveBeenCalledWith("pichu", "unseen")
+  })
+
+  it("clicking the grey Poké Ball on a seen card sets it owned", async () => {
+    const markOwned = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <PokeTile
+        pokemon={{ ...basePokemon, status: "seen" }}
+        onMarkOwned={markOwned}
+      />,
+    )
+    await user.click(screen.getByRole("button", { name: "Mark Pichu as owned" }))
+    expect(markOwned).toHaveBeenCalledWith("pichu", "seen")
+  })
+
+  it("disables the Poké Ball once owned and never re-fires", async () => {
+    const markOwned = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <PokeTile
+        pokemon={{ ...basePokemon, status: "owned" }}
+        onMarkOwned={markOwned}
+      />,
+    )
+    const ball = screen.getByRole("button", { name: "Pichu is owned" })
+    expect(ball).toBeDisabled()
+    await user.click(ball)
+    expect(markOwned).not.toHaveBeenCalled()
+  })
+
+  it("keeps navigation and quick actions as separate controls", async () => {
+    const select = vi.fn()
+    const markOwned = vi.fn()
+    const user = userEvent.setup()
+    render(
+      <PokeTile
+        pokemon={{ ...basePokemon, status: "unseen" }}
+        onSelect={select}
+        onMarkOwned={markOwned}
+      />,
+    )
+    await user.click(screen.getByRole("button", { name: "Mark Pichu as owned" }))
+    expect(markOwned).toHaveBeenCalledWith("pichu", "unseen")
+    expect(select).not.toHaveBeenCalled()
+
+    await user.click(screen.getByRole("button", { name: "Open Pichu details" }))
+    expect(select).toHaveBeenCalledWith(
+      expect.objectContaining({ canonicalKey: "pichu" }),
+    )
   })
 })

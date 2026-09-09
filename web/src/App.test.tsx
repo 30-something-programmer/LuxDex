@@ -355,18 +355,17 @@ describe("real-data application binding", () => {
       (await screen.findAllByText("Grass Overlooking the Bay")).length,
     ).toBeGreaterThan(0)
     expect(await screen.findByText("Pichu")).toBeInTheDocument()
+    // All verified places for the location render at once, stacked — no tabs.
+    expect(screen.getByText("Path Behind the Rocks")).toBeInTheDocument()
 
     await user.click(screen.getByRole("button", { name: /Night/ }))
     expect(await screen.findByText("Alolan Rattata")).toBeInTheDocument()
 
     await user.click(screen.getByRole("button", { name: /Day/ }))
     await user.click(screen.getByRole("button", { name: "SOS" }))
+    // Normal/SOS is a global control: both stacked sections update together.
     expect(await screen.findByText("Pikachu")).toBeInTheDocument()
     expect(screen.getByText("SOS 1–4")).toBeInTheDocument()
-
-    await user.click(
-      screen.getByRole("button", { name: "Path Behind the Rocks" }),
-    )
     expect(
       screen.getByText("No SOS encounters in this zone"),
     ).toBeInTheDocument()
@@ -587,8 +586,10 @@ describe("real-data application binding", () => {
     vi.spyOn(window, "confirm").mockReturnValue(true)
     render(<App />)
 
-    await user.click(await screen.findByRole("button", { name: "Mark Seen" }))
-    expect(await screen.findByRole("button", { name: "Mark Owned" })).toBeInTheDocument()
+    await user.click(await screen.findByRole("button", { name: "Mark Pichu as seen" }))
+    expect(
+      await screen.findByRole("button", { name: "Pichu has been seen" }),
+    ).toBeInTheDocument()
 
     await user.click(screen.getByRole("button", { name: /Pokédex/ }))
     expect(await screen.findByText("Pichu")).toBeInTheDocument()
@@ -609,10 +610,12 @@ describe("real-data application binding", () => {
     installApi({ failMutation: true })
     render(<App />)
 
-    await user.click(await screen.findByRole("button", { name: "Mark Seen" }))
+    await user.click(await screen.findByRole("button", { name: "Mark Pichu as seen" }))
     expect(
       await screen.findByText("Collection update failed. Your previous status was restored."),
     ).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: "Mark Seen" })).toBeInTheDocument()
+    expect(
+      screen.getByRole("button", { name: "Mark Pichu as seen" }),
+    ).toBeInTheDocument()
   })
 })

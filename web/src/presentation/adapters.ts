@@ -98,6 +98,7 @@ export function toEncounterZones(
     return {
       id: place.place_key,
       label: place.display_name,
+      method: place.encounter_method,
       minLevel: minimums.length ? Math.min(...minimums) : undefined,
       maxLevel: maximums.length ? Math.max(...maximums) : undefined,
       encounters: normal.map((pokemon) =>

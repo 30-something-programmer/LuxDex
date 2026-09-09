@@ -69,6 +69,7 @@ export interface PokemonCardModel {
 export interface EncounterZoneModel {
   id: string
   label: string
+  method: string
   minLevel?: number
   maxLevel?: number
   encounters: PokemonCardModel[]

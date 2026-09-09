@@ -2,7 +2,14 @@ import { useEffect, useState } from "react"
 import type { PokemonStatus } from "../types/presentation"
 import { normalizeLocalSpritePath } from "../lib/sprites"
 
-export function PokeBallIcon({ className }: { className?: string }) {
+export function PokeBallIcon({
+  className,
+  muted = false,
+}: {
+  className?: string
+  muted?: boolean
+}) {
+  const color = muted ? "var(--color-text-muted)" : "var(--color-owned)"
   return (
     <svg
       className={className}
@@ -10,14 +17,7 @@ export function PokeBallIcon({ className }: { className?: string }) {
       fill="none"
       aria-hidden="true"
     >
-      <circle
-        cx="10"
-        cy="10"
-        r="9"
-        fill="var(--color-owned)"
-        stroke="white"
-        strokeWidth="1.5"
-      />
+      <circle cx="10" cy="10" r="9" fill={color} stroke="white" strokeWidth="1.5" />
       <path d="M1.5 10h17" stroke="white" strokeWidth="1.5" />
       <circle
         cx="10"
@@ -27,7 +27,7 @@ export function PokeBallIcon({ className }: { className?: string }) {
         stroke="white"
         strokeWidth="1"
       />
-      <circle cx="10" cy="10" r="1.5" fill="var(--color-owned)" />
+      <circle cx="10" cy="10" r="1.5" fill={color} />
     </svg>
   )
 }
@@ -41,6 +41,24 @@ export function SeenIcon({ className }: { className?: string }) {
       aria-hidden="true"
     >
       <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10Zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" />
+    </svg>
+  )
+}
+
+export function EyeClosedIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M2.5 12S6 6 12 6s9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" opacity="0.35" />
+      <path d="M3 3l18 18" />
     </svg>
   )
 }
