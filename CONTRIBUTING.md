@@ -3,8 +3,8 @@
 Keep the repository contract intact:
 
 - The repository root contains only `.gitignore`, `README.md`, `CONTRIBUTING.md`, and directories.
-- `web/` is presentation and interaction only. It must not own canonical encounters, Pokédex records, mappings, business rules, or application persistence.
-- `app/` owns API and backend application logic.
+- `web/` is presentation and interaction only. It must not read raw source files or own canonical encounters, parsers, location mappings, Pokédex records, business rules, or application persistence.
+- `app/` owns ingestion, validation, database access, API, and backend application logic. Runtime encounter reads go through PostgreSQL repositories/services rather than source files.
 - `db/schema/` contains the authoritative raw SQL used to construct database objects.
 - `db/data/source/` preserves authoritative inputs unchanged. Derived or normalised canonical data belongs separately under `db/data/canonical/` and is republished on database rebuild.
 - Do not add fabricated or demo canonical data to the frontend to compensate for an API that has not been built.
@@ -16,4 +16,3 @@ Keep the repository contract intact:
 - Python virtual environments belong under `.venvs/`, with the backend environment at `.venvs/app/`.
 
 Before submitting a change, run the backend tests, build the frontend, validate Compose configuration, and verify that no remote runtime asset URLs or frontend-owned canonical data were introduced.
-

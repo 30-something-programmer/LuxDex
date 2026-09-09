@@ -3,4 +3,5 @@
 !app/**
 !build/
 !build/**
-
+!db/data/source/penumbra/
+!db/data/source/penumbra/wild-encounters.txt

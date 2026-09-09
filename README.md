@@ -1,10 +1,14 @@
 # LuxDex
 
-LuxDex is a LuxForge application whose future backend will publish Penumbra encounter and Pokédex data to a presentation-only web client. Pass 1 establishes the development, build, database, and Docker foundations; it intentionally contains no encounter parser or product dataset API.
+LuxDex is a LuxForge application whose backend publishes authoritative Penumbra encounter data to a presentation-only web client. The data flow is deliberately one way:
+
+`raw Penumbra source -> complete parse and validation -> PostgreSQL -> repository/service layer -> read-only API`
+
+The web application does not read, parse, or own canonical encounter data.
 
 ## Repository layout
 
-- `app/` — FastAPI backend. `GET /health` is the only endpoint in this pass.
+- `app/` — FastAPI backend, Penumbra ingestion pipeline, repositories, services, and API routes.
 - `web/` — standalone React/Vite frontend and local runtime assets. It owns presentation, not canonical data or persistence.
 - `db/schema/` — authoritative, readable SQL schema inputs.
 - `db/data/source/` — preserved authoritative raw datasets for later ingestion.
@@ -42,7 +46,30 @@ Running `.\docker\run.ps1` without arguments opens the lifecycle menu. The web U
 
 All services communicate on the private `luxdex-internal` Docker network. Ports `52032`–`52039` remain reserved for future LuxDex services.
 
-`Rebuild` rebuilds application images without Docker layer cache and restarts the stack while preserving the database volume. `Full Blowaway` removes only Compose resources belonging to LuxDex, including its database volume and service images, then rebuilds and replays schema and canonical SQL data from repository source.
+`Rebuild` rebuilds application images without Docker layer cache and restarts the stack while preserving the database volume. `Full Blowaway` removes only Compose resources belonging to LuxDex, including its database volume and service images, then rebuilds the schema and ingests the Penumbra source before the API starts. On normal startup, the backend compares the source SHA-256 with the active dataset and skips parsing when it is unchanged.
+
+## Penumbra data commands
+
+After running `scripts/bootstrap.ps1`, validate the complete source without changing the database:
+
+```powershell
+.\scripts\validate-penumbra-data.ps1
+```
+
+Load the source into the Docker database, or skip it if the active source hash is unchanged:
+
+```powershell
+.\scripts\build-penumbra-data.ps1
+```
+
+The proof API exposes source metadata, raw map groups and locations, raw encounter tables with Day/Night pools, and raw Pokémon/form occurrence search:
+
+- `GET /api/encounters/source`
+- `GET /api/encounters/maps`
+- `GET /api/encounters/maps/{map_group_id}`
+- `GET /api/encounters/maps/{map_group_id}/tables`
+- `GET /api/encounters/maps/{map_group_id}/tables/{table_number}`
+- `GET /api/encounters/pokemon?name=Pichu`
 
 ## Local development
 

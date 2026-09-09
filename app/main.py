@@ -1,4 +1,4 @@
-"""Minimal LuxDex API entrypoint for the foundation pass."""
+"""LuxDex API entrypoint."""
 
 from __future__ import annotations
 
@@ -10,6 +10,8 @@ import psycopg
 from fastapi import FastAPI, Response, status
 from pydantic import BaseModel
 
+from app.api.encounters import router as encounters_router
+
 
 def _read_version() -> str:
     version_file = Path(__file__).resolve().parents[1] / "build" / "VERSION"
@@ -18,6 +20,7 @@ def _read_version() -> str:
 
 VERSION = _read_version()
 app = FastAPI(title="LuxDex API", version=VERSION)
+app.include_router(encounters_router)
 
 
 class HealthResponse(BaseModel):
@@ -44,6 +47,7 @@ def _database_health() -> Literal["ok", "not_configured", "unavailable"]:
 
 
 @app.get("/health", response_model=HealthResponse)
+@app.get("/api/health", response_model=HealthResponse, include_in_schema=False)
 def health(response: Response) -> HealthResponse:
     """Report API and configured database readiness."""
     database = _database_health()
@@ -58,4 +62,3 @@ def health(response: Response) -> HealthResponse:
         version=VERSION,
         database=database,
     )
-
