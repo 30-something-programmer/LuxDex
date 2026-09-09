@@ -1,9 +1,8 @@
-const LOCAL_SPRITE_ROOT = "/assets/sprites/pokemon"
+const LOCAL_SPRITE_ROOT = "/assets/pokemon/sprites"
 
 /**
  * Resolve a backend-provided, filesystem-safe sprite asset key locally.
- * The frontend does not contain a species-to-sprite dataset; that mapping will
- * be supplied by a future API after asset provenance is established.
+ * Canonical form-to-asset relationships remain in PostgreSQL/the API.
  */
 export function getLocalSpritePath(
   assetKey: string | null | undefined,

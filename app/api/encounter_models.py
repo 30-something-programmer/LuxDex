@@ -48,11 +48,30 @@ class EncounterTableSummary(BaseModel):
     source_line_end: int
 
 
+class CanonicalPokemonIdentityResponse(BaseModel):
+    canonical_key: str
+    display_name: str
+    species_key: str
+    species_name: str
+    national_dex_number: int
+    alola_dex_number: int | None
+    local_sprite_path: str | None
+    mapping_method: Literal[
+        "exact",
+        "normalised_exact",
+        "explicit_alias",
+        "explicit_form_alias",
+        "manual_verified",
+    ]
+    mapping_confidence: Literal["verified"]
+
+
 class EncounterResponse(BaseModel):
     source_order: int
     source_pokemon_name: str
     rate_percent: int | None
     source_line_number: int
+    canonical_pokemon: CanonicalPokemonIdentityResponse | None
 
 
 class EncounterPoolResponse(BaseModel):
@@ -90,6 +109,7 @@ class PokemonOccurrenceResponse(BaseModel):
     map_group_source_sequence: int
     raw_header: str
     locations: list[RawMapLocationResponse]
+    canonical_pokemon: CanonicalPokemonIdentityResponse | None
 
 
 class PokemonOccurrencePage(BaseModel):

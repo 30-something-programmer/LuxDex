@@ -77,3 +77,21 @@ class EncountersService:
             items=items,
             next_cursor=items[-1].occurrence_id if has_more and items else None,
         )
+
+    def find_by_canonical_key(
+        self,
+        canonical_key: str,
+        after_id: int,
+        limit: int,
+    ) -> PokemonOccurrencePage:
+        normalized_key = canonical_key.strip().casefold()
+        if not normalized_key:
+            raise ValueError("canonical_key must contain at least one non-whitespace character")
+        rows = self.repository.find_by_canonical_key(normalized_key, after_id, limit + 1)
+        has_more = len(rows) > limit
+        page_rows = rows[:limit]
+        items = [PokemonOccurrenceResponse.model_validate(row) for row in page_rows]
+        return PokemonOccurrencePage(
+            items=items,
+            next_cursor=items[-1].occurrence_id if has_more and items else None,
+        )

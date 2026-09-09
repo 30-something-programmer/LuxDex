@@ -72,6 +72,77 @@ class EncountersRepository:
                 )
                 return list(cursor.fetchall())
 
+    def find_by_canonical_key(
+        self,
+        canonical_key: str,
+        after_id: int,
+        limit: int,
+    ) -> list[dict[str, Any]]:
+        with connect_database(self.database_url) as connection:
+            with connection.cursor(row_factory=dict_row) as cursor:
+                cursor.execute(
+                    """
+                    SELECT
+                        encounter.id AS occurrence_id,
+                        encounter.source_pokemon_name,
+                        encounter.rate_percent,
+                        encounter.source_order,
+                        encounter.source_line_number,
+                        pool.time_of_day,
+                        pool.pool_type,
+                        pool.sos_slot,
+                        pool.min_level,
+                        pool.max_level,
+                        encounter_table.source_table_number,
+                        map_group.id AS map_group_id,
+                        map_group.source_sequence AS map_group_source_sequence,
+                        map_group.raw_header,
+                        jsonb_build_object(
+                            'canonical_key', resolved.canonical_key,
+                            'display_name', resolved.canonical_display_name,
+                            'species_key', resolved.species_key,
+                            'species_name', resolved.species_display_name,
+                            'national_dex_number', resolved.national_dex_number,
+                            'alola_dex_number', resolved.alola_dex_number,
+                            'local_sprite_path', resolved.local_sprite_path,
+                            'mapping_method', resolved.mapping_method,
+                            'mapping_confidence', resolved.mapping_confidence
+                        ) AS canonical_pokemon,
+                        COALESCE(
+                            (
+                                SELECT jsonb_agg(
+                                    jsonb_build_object(
+                                        'source_order', location.source_order,
+                                        'raw_map_number', location.raw_map_number,
+                                        'source_location_name', location.source_location_name,
+                                        'raw_reference', location.raw_reference
+                                    ) ORDER BY location.source_order
+                                )
+                                FROM luxdex.penumbra_map_location AS location
+                                WHERE location.map_group_id = map_group.id
+                            ),
+                            '[]'::jsonb
+                        ) AS locations
+                    FROM luxdex.penumbra_encounter AS encounter
+                    JOIN luxdex.penumbra_encounter_pool AS pool
+                      ON pool.id = encounter.encounter_pool_id
+                    JOIN luxdex.penumbra_encounter_table AS encounter_table
+                      ON encounter_table.id = pool.encounter_table_id
+                    JOIN luxdex.penumbra_map_group AS map_group
+                      ON map_group.id = encounter_table.map_group_id
+                    JOIN luxdex.source_dataset AS dataset ON dataset.id = map_group.dataset_id
+                    JOIN luxdex.penumbra_encounter_resolved AS resolved
+                      ON resolved.encounter_id = encounter.id
+                    WHERE dataset.source_name = %s
+                      AND resolved.canonical_key = %s
+                      AND encounter.id > %s
+                    ORDER BY encounter.id
+                    LIMIT %s
+                    """,
+                    (SOURCE_NAME, canonical_key, after_id, limit),
+                )
+                return list(cursor.fetchall())
+
     def get_map_group(self, map_group_id: int) -> dict[str, Any] | None:
         with connect_database(self.database_url) as connection:
             with connection.cursor(row_factory=dict_row) as cursor:
@@ -167,9 +238,24 @@ class EncountersRepository:
                         encounter.source_order AS encounter_source_order,
                         encounter.source_pokemon_name,
                         encounter.rate_percent,
-                        encounter.source_line_number AS encounter_source_line_number
+                        encounter.source_line_number AS encounter_source_line_number,
+                        CASE WHEN resolved.pokemon_form_id IS NULL THEN NULL ELSE
+                            jsonb_build_object(
+                                'canonical_key', resolved.canonical_key,
+                                'display_name', resolved.canonical_display_name,
+                                'species_key', resolved.species_key,
+                                'species_name', resolved.species_display_name,
+                                'national_dex_number', resolved.national_dex_number,
+                                'alola_dex_number', resolved.alola_dex_number,
+                                'local_sprite_path', resolved.local_sprite_path,
+                                'mapping_method', resolved.mapping_method,
+                                'mapping_confidence', resolved.mapping_confidence
+                            )
+                        END AS canonical_pokemon
                     FROM luxdex.penumbra_encounter_pool AS pool
                     LEFT JOIN luxdex.penumbra_encounter AS encounter ON encounter.encounter_pool_id = pool.id
+                    LEFT JOIN luxdex.penumbra_encounter_resolved AS resolved
+                      ON resolved.encounter_id = encounter.id
                     WHERE pool.encounter_table_id = %s
                     ORDER BY
                         CASE pool.time_of_day WHEN 'day' THEN 1 ELSE 2 END,
@@ -207,6 +293,7 @@ class EncountersRepository:
                                 "source_pokemon_name": row["source_pokemon_name"],
                                 "rate_percent": row["rate_percent"],
                                 "source_line_number": row["encounter_source_line_number"],
+                                "canonical_pokemon": row["canonical_pokemon"],
                             }
                         )
 
@@ -243,6 +330,19 @@ class EncountersRepository:
                         map_group.id AS map_group_id,
                         map_group.source_sequence AS map_group_source_sequence,
                         map_group.raw_header,
+                        CASE WHEN resolved.pokemon_form_id IS NULL THEN NULL ELSE
+                            jsonb_build_object(
+                                'canonical_key', resolved.canonical_key,
+                                'display_name', resolved.canonical_display_name,
+                                'species_key', resolved.species_key,
+                                'species_name', resolved.species_display_name,
+                                'national_dex_number', resolved.national_dex_number,
+                                'alola_dex_number', resolved.alola_dex_number,
+                                'local_sprite_path', resolved.local_sprite_path,
+                                'mapping_method', resolved.mapping_method,
+                                'mapping_confidence', resolved.mapping_confidence
+                            )
+                        END AS canonical_pokemon,
                         COALESCE(
                             (
                                 SELECT jsonb_agg(
@@ -263,12 +363,29 @@ class EncountersRepository:
                     JOIN luxdex.penumbra_encounter_table AS encounter_table ON encounter_table.id = pool.encounter_table_id
                     JOIN luxdex.penumbra_map_group AS map_group ON map_group.id = encounter_table.map_group_id
                     JOIN luxdex.source_dataset AS dataset ON dataset.id = map_group.dataset_id
+                    LEFT JOIN luxdex.penumbra_encounter_resolved AS resolved
+                      ON resolved.encounter_id = encounter.id
                     WHERE dataset.source_name = %s
-                      AND lower(encounter.source_pokemon_name) LIKE lower(%s) || '%%'
+                      AND (
+                          lower(encounter.source_pokemon_name) LIKE lower(%s) || '%%'
+                          OR lower(resolved.canonical_key) LIKE lower(%s) || '%%'
+                          OR lower(resolved.canonical_display_name) LIKE lower(%s) || '%%'
+                          OR lower(resolved.species_key) LIKE lower(%s) || '%%'
+                          OR lower(resolved.species_display_name) LIKE lower(%s) || '%%'
+                      )
                       AND encounter.id > %s
                     ORDER BY encounter.id
                     LIMIT %s
                     """,
-                    (SOURCE_NAME, name_prefix, after_id, limit),
+                    (
+                        SOURCE_NAME,
+                        name_prefix,
+                        name_prefix,
+                        name_prefix,
+                        name_prefix,
+                        name_prefix,
+                        after_id,
+                        limit,
+                    ),
                 )
                 return list(cursor.fetchall())

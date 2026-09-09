@@ -61,8 +61,9 @@ def build_compatibility_report(database_url: str | None = None) -> dict[str, Any
     exact_names: dict[str, set[str]] = {}
     for row in canonical_rows:
         form_key = str(row["form_key"])
-        for display_name in (row["species_display_name"], row["form_display_name"]):
-            exact_names.setdefault(str(display_name).casefold(), set()).add(form_key)
+        if row["is_default"]:
+            exact_names.setdefault(str(row["species_display_name"]).casefold(), set()).add(form_key)
+        exact_names.setdefault(str(row["form_display_name"]).casefold(), set()).add(form_key)
 
     resolved: list[dict[str, str]] = []
     requires_mapping: list[dict[str, Any]] = []
@@ -144,4 +145,3 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

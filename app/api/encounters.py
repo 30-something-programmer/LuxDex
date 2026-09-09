@@ -90,3 +90,16 @@ def search_pokemon(
         return service.search_pokemon(name, after, limit)
     except ValueError as error:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)) from error
+
+
+@router.get("/pokemon/{canonical_key}", response_model=PokemonOccurrencePage)
+def find_pokemon_by_canonical_key(
+    canonical_key: str,
+    service: ServiceDependency,
+    after: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=200)] = 50,
+) -> PokemonOccurrencePage:
+    try:
+        return service.find_by_canonical_key(canonical_key, after, limit)
+    except ValueError as error:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(error)) from error

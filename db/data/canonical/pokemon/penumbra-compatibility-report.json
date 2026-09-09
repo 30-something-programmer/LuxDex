@@ -1,0 +1,2364 @@
+{
+  "format_version": 1,
+  "classification_policy": {
+    "resolved": "one exact Unicode case-insensitive canonical display-name match",
+    "requires_explicit_mapping": "ambiguous exact match or explicit Penumbra Forme notation",
+    "unresolved": "no exact display-name match; no alias was guessed"
+  },
+  "source_versions": {
+    "penumbra-wild-encounters": "14d2d30bbd3abecc45a6fd3255e920bc620b9f8ea16d797f883419ae1aefb4f4",
+    "pokemon-master-usum": "b42daa5381483fd8453db2a37109392fbe9cc252f5fb591302fdc663d8ba9d6c"
+  },
+  "summary": {
+    "penumbra_unique_raw_names": 570,
+    "resolved": 508,
+    "requires_explicit_mapping": 60,
+    "unresolved": 2
+  },
+  "resolved": [
+    {
+      "source_pokemon_name": "Abomasnow",
+      "form_key": "abomasnow"
+    },
+    {
+      "source_pokemon_name": "Abra",
+      "form_key": "abra"
+    },
+    {
+      "source_pokemon_name": "Absol",
+      "form_key": "absol"
+    },
+    {
+      "source_pokemon_name": "Aegislash",
+      "form_key": "aegislash"
+    },
+    {
+      "source_pokemon_name": "Aggron",
+      "form_key": "aggron"
+    },
+    {
+      "source_pokemon_name": "Aipom",
+      "form_key": "aipom"
+    },
+    {
+      "source_pokemon_name": "Alomomola",
+      "form_key": "alomomola"
+    },
+    {
+      "source_pokemon_name": "Ambipom",
+      "form_key": "ambipom"
+    },
+    {
+      "source_pokemon_name": "Amoonguss",
+      "form_key": "amoonguss"
+    },
+    {
+      "source_pokemon_name": "Araquanid",
+      "form_key": "araquanid"
+    },
+    {
+      "source_pokemon_name": "Ariados",
+      "form_key": "ariados"
+    },
+    {
+      "source_pokemon_name": "Aromatisse",
+      "form_key": "aromatisse"
+    },
+    {
+      "source_pokemon_name": "Aron",
+      "form_key": "aron"
+    },
+    {
+      "source_pokemon_name": "Audino",
+      "form_key": "audino"
+    },
+    {
+      "source_pokemon_name": "Avalugg",
+      "form_key": "avalugg"
+    },
+    {
+      "source_pokemon_name": "Azurill",
+      "form_key": "azurill"
+    },
+    {
+      "source_pokemon_name": "Bagon",
+      "form_key": "bagon"
+    },
+    {
+      "source_pokemon_name": "Baltoy",
+      "form_key": "baltoy"
+    },
+    {
+      "source_pokemon_name": "Barbaracle",
+      "form_key": "barbaracle"
+    },
+    {
+      "source_pokemon_name": "Barboach",
+      "form_key": "barboach"
+    },
+    {
+      "source_pokemon_name": "Basculin",
+      "form_key": "basculin"
+    },
+    {
+      "source_pokemon_name": "Bayleef",
+      "form_key": "bayleef"
+    },
+    {
+      "source_pokemon_name": "Beartic",
+      "form_key": "beartic"
+    },
+    {
+      "source_pokemon_name": "Beldum",
+      "form_key": "beldum"
+    },
+    {
+      "source_pokemon_name": "Bellsprout",
+      "form_key": "bellsprout"
+    },
+    {
+      "source_pokemon_name": "Bergmite",
+      "form_key": "bergmite"
+    },
+    {
+      "source_pokemon_name": "Bewear",
+      "form_key": "bewear"
+    },
+    {
+      "source_pokemon_name": "Bibarel",
+      "form_key": "bibarel"
+    },
+    {
+      "source_pokemon_name": "Binacle",
+      "form_key": "binacle"
+    },
+    {
+      "source_pokemon_name": "Bisharp",
+      "form_key": "bisharp"
+    },
+    {
+      "source_pokemon_name": "Blissey",
+      "form_key": "blissey"
+    },
+    {
+      "source_pokemon_name": "Blitzle",
+      "form_key": "blitzle"
+    },
+    {
+      "source_pokemon_name": "Boldore",
+      "form_key": "boldore"
+    },
+    {
+      "source_pokemon_name": "Bonsly",
+      "form_key": "bonsly"
+    },
+    {
+      "source_pokemon_name": "Bouffalant",
+      "form_key": "bouffalant"
+    },
+    {
+      "source_pokemon_name": "Braixen",
+      "form_key": "braixen"
+    },
+    {
+      "source_pokemon_name": "Braviary",
+      "form_key": "braviary"
+    },
+    {
+      "source_pokemon_name": "Brionne",
+      "form_key": "brionne"
+    },
+    {
+      "source_pokemon_name": "Bronzor",
+      "form_key": "bronzor"
+    },
+    {
+      "source_pokemon_name": "Bruxish",
+      "form_key": "bruxish"
+    },
+    {
+      "source_pokemon_name": "Budew",
+      "form_key": "budew"
+    },
+    {
+      "source_pokemon_name": "Buizel",
+      "form_key": "buizel"
+    },
+    {
+      "source_pokemon_name": "Bulbasaur",
+      "form_key": "bulbasaur"
+    },
+    {
+      "source_pokemon_name": "Buneary",
+      "form_key": "buneary"
+    },
+    {
+      "source_pokemon_name": "Bunnelby",
+      "form_key": "bunnelby"
+    },
+    {
+      "source_pokemon_name": "Burmy",
+      "form_key": "burmy"
+    },
+    {
+      "source_pokemon_name": "Butterfree",
+      "form_key": "butterfree"
+    },
+    {
+      "source_pokemon_name": "Cacturne",
+      "form_key": "cacturne"
+    },
+    {
+      "source_pokemon_name": "Carbink",
+      "form_key": "carbink"
+    },
+    {
+      "source_pokemon_name": "Carnivine",
+      "form_key": "carnivine"
+    },
+    {
+      "source_pokemon_name": "Carvanha",
+      "form_key": "carvanha"
+    },
+    {
+      "source_pokemon_name": "Castform",
+      "form_key": "castform"
+    },
+    {
+      "source_pokemon_name": "Caterpie",
+      "form_key": "caterpie"
+    },
+    {
+      "source_pokemon_name": "Chandelure",
+      "form_key": "chandelure"
+    },
+    {
+      "source_pokemon_name": "Chansey",
+      "form_key": "chansey"
+    },
+    {
+      "source_pokemon_name": "Charizard",
+      "form_key": "charizard"
+    },
+    {
+      "source_pokemon_name": "Charjabug",
+      "form_key": "charjabug"
+    },
+    {
+      "source_pokemon_name": "Charmeleon",
+      "form_key": "charmeleon"
+    },
+    {
+      "source_pokemon_name": "Chatot",
+      "form_key": "chatot"
+    },
+    {
+      "source_pokemon_name": "Cherrim",
+      "form_key": "cherrim"
+    },
+    {
+      "source_pokemon_name": "Cherubi",
+      "form_key": "cherubi"
+    },
+    {
+      "source_pokemon_name": "Chespin",
+      "form_key": "chespin"
+    },
+    {
+      "source_pokemon_name": "Chimchar",
+      "form_key": "chimchar"
+    },
+    {
+      "source_pokemon_name": "Chimecho",
+      "form_key": "chimecho"
+    },
+    {
+      "source_pokemon_name": "Chinchou",
+      "form_key": "chinchou"
+    },
+    {
+      "source_pokemon_name": "Chingling",
+      "form_key": "chingling"
+    },
+    {
+      "source_pokemon_name": "Cinccino",
+      "form_key": "cinccino"
+    },
+    {
+      "source_pokemon_name": "Clamperl",
+      "form_key": "clamperl"
+    },
+    {
+      "source_pokemon_name": "Clauncher",
+      "form_key": "clauncher"
+    },
+    {
+      "source_pokemon_name": "Clawitzer",
+      "form_key": "clawitzer"
+    },
+    {
+      "source_pokemon_name": "Claydol",
+      "form_key": "claydol"
+    },
+    {
+      "source_pokemon_name": "Clefable",
+      "form_key": "clefable"
+    },
+    {
+      "source_pokemon_name": "Clefairy",
+      "form_key": "clefairy"
+    },
+    {
+      "source_pokemon_name": "Cleffa",
+      "form_key": "cleffa"
+    },
+    {
+      "source_pokemon_name": "Combee",
+      "form_key": "combee"
+    },
+    {
+      "source_pokemon_name": "Combusken",
+      "form_key": "combusken"
+    },
+    {
+      "source_pokemon_name": "Comfey",
+      "form_key": "comfey"
+    },
+    {
+      "source_pokemon_name": "Conkeldurr",
+      "form_key": "conkeldurr"
+    },
+    {
+      "source_pokemon_name": "Corphish",
+      "form_key": "corphish"
+    },
+    {
+      "source_pokemon_name": "Corsola",
+      "form_key": "corsola"
+    },
+    {
+      "source_pokemon_name": "Cottonee",
+      "form_key": "cottonee"
+    },
+    {
+      "source_pokemon_name": "Crabrawler",
+      "form_key": "crabrawler"
+    },
+    {
+      "source_pokemon_name": "Crawdaunt",
+      "form_key": "crawdaunt"
+    },
+    {
+      "source_pokemon_name": "Croagunk",
+      "form_key": "croagunk"
+    },
+    {
+      "source_pokemon_name": "Crobat",
+      "form_key": "crobat"
+    },
+    {
+      "source_pokemon_name": "Cryogonal",
+      "form_key": "cryogonal"
+    },
+    {
+      "source_pokemon_name": "Cubchoo",
+      "form_key": "cubchoo"
+    },
+    {
+      "source_pokemon_name": "Cubone",
+      "form_key": "cubone"
+    },
+    {
+      "source_pokemon_name": "Cutiefly",
+      "form_key": "cutiefly"
+    },
+    {
+      "source_pokemon_name": "Darmanitan",
+      "form_key": "darmanitan"
+    },
+    {
+      "source_pokemon_name": "Decidueye",
+      "form_key": "decidueye"
+    },
+    {
+      "source_pokemon_name": "Dedenne",
+      "form_key": "dedenne"
+    },
+    {
+      "source_pokemon_name": "Deerling",
+      "form_key": "deerling"
+    },
+    {
+      "source_pokemon_name": "Deino",
+      "form_key": "deino"
+    },
+    {
+      "source_pokemon_name": "Delibird",
+      "form_key": "delibird"
+    },
+    {
+      "source_pokemon_name": "Dewgong",
+      "form_key": "dewgong"
+    },
+    {
+      "source_pokemon_name": "Dewott",
+      "form_key": "dewott"
+    },
+    {
+      "source_pokemon_name": "Dewpider",
+      "form_key": "dewpider"
+    },
+    {
+      "source_pokemon_name": "Dhelmise",
+      "form_key": "dhelmise"
+    },
+    {
+      "source_pokemon_name": "Diglett",
+      "form_key": "diglett"
+    },
+    {
+      "source_pokemon_name": "Ditto",
+      "form_key": "ditto"
+    },
+    {
+      "source_pokemon_name": "Doduo",
+      "form_key": "doduo"
+    },
+    {
+      "source_pokemon_name": "Doublade",
+      "form_key": "doublade"
+    },
+    {
+      "source_pokemon_name": "Dragalge",
+      "form_key": "dragalge"
+    },
+    {
+      "source_pokemon_name": "Dragonair",
+      "form_key": "dragonair"
+    },
+    {
+      "source_pokemon_name": "Dragonite",
+      "form_key": "dragonite"
+    },
+    {
+      "source_pokemon_name": "Drampa",
+      "form_key": "drampa"
+    },
+    {
+      "source_pokemon_name": "Dratini",
+      "form_key": "dratini"
+    },
+    {
+      "source_pokemon_name": "Drifloon",
+      "form_key": "drifloon"
+    },
+    {
+      "source_pokemon_name": "Drilbur",
+      "form_key": "drilbur"
+    },
+    {
+      "source_pokemon_name": "Drowzee",
+      "form_key": "drowzee"
+    },
+    {
+      "source_pokemon_name": "Druddigon",
+      "form_key": "druddigon"
+    },
+    {
+      "source_pokemon_name": "Ducklett",
+      "form_key": "ducklett"
+    },
+    {
+      "source_pokemon_name": "Dugtrio",
+      "form_key": "dugtrio"
+    },
+    {
+      "source_pokemon_name": "Dunsparce",
+      "form_key": "dunsparce"
+    },
+    {
+      "source_pokemon_name": "Duosion",
+      "form_key": "duosion"
+    },
+    {
+      "source_pokemon_name": "Durant",
+      "form_key": "durant"
+    },
+    {
+      "source_pokemon_name": "Dusclops",
+      "form_key": "dusclops"
+    },
+    {
+      "source_pokemon_name": "Dusknoir",
+      "form_key": "dusknoir"
+    },
+    {
+      "source_pokemon_name": "Duskull",
+      "form_key": "duskull"
+    },
+    {
+      "source_pokemon_name": "Dwebble",
+      "form_key": "dwebble"
+    },
+    {
+      "source_pokemon_name": "Eelektrik",
+      "form_key": "eelektrik"
+    },
+    {
+      "source_pokemon_name": "Eelektross",
+      "form_key": "eelektross"
+    },
+    {
+      "source_pokemon_name": "Eevee",
+      "form_key": "eevee"
+    },
+    {
+      "source_pokemon_name": "Ekans",
+      "form_key": "ekans"
+    },
+    {
+      "source_pokemon_name": "Electabuzz",
+      "form_key": "electabuzz"
+    },
+    {
+      "source_pokemon_name": "Electrode",
+      "form_key": "electrode"
+    },
+    {
+      "source_pokemon_name": "Elekid",
+      "form_key": "elekid"
+    },
+    {
+      "source_pokemon_name": "Elgyem",
+      "form_key": "elgyem"
+    },
+    {
+      "source_pokemon_name": "Emolga",
+      "form_key": "emolga"
+    },
+    {
+      "source_pokemon_name": "Escavalier",
+      "form_key": "escavalier"
+    },
+    {
+      "source_pokemon_name": "Espeon",
+      "form_key": "espeon"
+    },
+    {
+      "source_pokemon_name": "Espurr",
+      "form_key": "espurr"
+    },
+    {
+      "source_pokemon_name": "Exeggcute",
+      "form_key": "exeggcute"
+    },
+    {
+      "source_pokemon_name": "Exeggutor",
+      "form_key": "exeggutor"
+    },
+    {
+      "source_pokemon_name": "Farfetch’d",
+      "form_key": "farfetchd"
+    },
+    {
+      "source_pokemon_name": "Fearow",
+      "form_key": "fearow"
+    },
+    {
+      "source_pokemon_name": "Feebas",
+      "form_key": "feebas"
+    },
+    {
+      "source_pokemon_name": "Ferroseed",
+      "form_key": "ferroseed"
+    },
+    {
+      "source_pokemon_name": "Finneon",
+      "form_key": "finneon"
+    },
+    {
+      "source_pokemon_name": "Fletchinder",
+      "form_key": "fletchinder"
+    },
+    {
+      "source_pokemon_name": "Fletchling",
+      "form_key": "fletchling"
+    },
+    {
+      "source_pokemon_name": "Floette",
+      "form_key": "floette"
+    },
+    {
+      "source_pokemon_name": "Fomantis",
+      "form_key": "fomantis"
+    },
+    {
+      "source_pokemon_name": "Fraxure",
+      "form_key": "fraxure"
+    },
+    {
+      "source_pokemon_name": "Frillish",
+      "form_key": "frillish"
+    },
+    {
+      "source_pokemon_name": "Frogadier",
+      "form_key": "frogadier"
+    },
+    {
+      "source_pokemon_name": "Froslass",
+      "form_key": "froslass"
+    },
+    {
+      "source_pokemon_name": "Furfrou",
+      "form_key": "furfrou"
+    },
+    {
+      "source_pokemon_name": "Gabite",
+      "form_key": "gabite"
+    },
+    {
+      "source_pokemon_name": "Gallade",
+      "form_key": "gallade"
+    },
+    {
+      "source_pokemon_name": "Garbodor",
+      "form_key": "garbodor"
+    },
+    {
+      "source_pokemon_name": "Gardevoir",
+      "form_key": "gardevoir"
+    },
+    {
+      "source_pokemon_name": "Gastly",
+      "form_key": "gastly"
+    },
+    {
+      "source_pokemon_name": "Gastrodon",
+      "form_key": "gastrodon"
+    },
+    {
+      "source_pokemon_name": "Gengar",
+      "form_key": "gengar"
+    },
+    {
+      "source_pokemon_name": "Gigalith",
+      "form_key": "gigalith"
+    },
+    {
+      "source_pokemon_name": "Girafarig",
+      "form_key": "girafarig"
+    },
+    {
+      "source_pokemon_name": "Glalie",
+      "form_key": "glalie"
+    },
+    {
+      "source_pokemon_name": "Glameow",
+      "form_key": "glameow"
+    },
+    {
+      "source_pokemon_name": "Gligar",
+      "form_key": "gligar"
+    },
+    {
+      "source_pokemon_name": "Gliscor",
+      "form_key": "gliscor"
+    },
+    {
+      "source_pokemon_name": "Gogoat",
+      "form_key": "gogoat"
+    },
+    {
+      "source_pokemon_name": "Golbat",
+      "form_key": "golbat"
+    },
+    {
+      "source_pokemon_name": "Goldeen",
+      "form_key": "goldeen"
+    },
+    {
+      "source_pokemon_name": "Golduck",
+      "form_key": "golduck"
+    },
+    {
+      "source_pokemon_name": "Golett",
+      "form_key": "golett"
+    },
+    {
+      "source_pokemon_name": "Goomy",
+      "form_key": "goomy"
+    },
+    {
+      "source_pokemon_name": "Gorebyss",
+      "form_key": "gorebyss"
+    },
+    {
+      "source_pokemon_name": "Gothitelle",
+      "form_key": "gothitelle"
+    },
+    {
+      "source_pokemon_name": "Gothorita",
+      "form_key": "gothorita"
+    },
+    {
+      "source_pokemon_name": "Granbull",
+      "form_key": "granbull"
+    },
+    {
+      "source_pokemon_name": "Graveler",
+      "form_key": "graveler"
+    },
+    {
+      "source_pokemon_name": "Grimer",
+      "form_key": "grimer"
+    },
+    {
+      "source_pokemon_name": "Grotle",
+      "form_key": "grotle"
+    },
+    {
+      "source_pokemon_name": "Grovyle",
+      "form_key": "grovyle"
+    },
+    {
+      "source_pokemon_name": "Growlithe",
+      "form_key": "growlithe"
+    },
+    {
+      "source_pokemon_name": "Grubbin",
+      "form_key": "grubbin"
+    },
+    {
+      "source_pokemon_name": "Gumshoos",
+      "form_key": "gumshoos"
+    },
+    {
+      "source_pokemon_name": "Gurdurr",
+      "form_key": "gurdurr"
+    },
+    {
+      "source_pokemon_name": "Gyarados",
+      "form_key": "gyarados"
+    },
+    {
+      "source_pokemon_name": "Hakamo-o",
+      "form_key": "hakamo-o"
+    },
+    {
+      "source_pokemon_name": "Happiny",
+      "form_key": "happiny"
+    },
+    {
+      "source_pokemon_name": "Hariyama",
+      "form_key": "hariyama"
+    },
+    {
+      "source_pokemon_name": "Haunter",
+      "form_key": "haunter"
+    },
+    {
+      "source_pokemon_name": "Hawlucha",
+      "form_key": "hawlucha"
+    },
+    {
+      "source_pokemon_name": "Heatmor",
+      "form_key": "heatmor"
+    },
+    {
+      "source_pokemon_name": "Heliolisk",
+      "form_key": "heliolisk"
+    },
+    {
+      "source_pokemon_name": "Helioptile",
+      "form_key": "helioptile"
+    },
+    {
+      "source_pokemon_name": "Heracross",
+      "form_key": "heracross"
+    },
+    {
+      "source_pokemon_name": "Hippopotas",
+      "form_key": "hippopotas"
+    },
+    {
+      "source_pokemon_name": "Hippowdon",
+      "form_key": "hippowdon"
+    },
+    {
+      "source_pokemon_name": "Hitmonchan",
+      "form_key": "hitmonchan"
+    },
+    {
+      "source_pokemon_name": "Hitmonlee",
+      "form_key": "hitmonlee"
+    },
+    {
+      "source_pokemon_name": "Hitmontop",
+      "form_key": "hitmontop"
+    },
+    {
+      "source_pokemon_name": "Honedge",
+      "form_key": "honedge"
+    },
+    {
+      "source_pokemon_name": "Hoppip",
+      "form_key": "hoppip"
+    },
+    {
+      "source_pokemon_name": "Houndoom",
+      "form_key": "houndoom"
+    },
+    {
+      "source_pokemon_name": "Huntail",
+      "form_key": "huntail"
+    },
+    {
+      "source_pokemon_name": "Hypno",
+      "form_key": "hypno"
+    },
+    {
+      "source_pokemon_name": "Igglybuff",
+      "form_key": "igglybuff"
+    },
+    {
+      "source_pokemon_name": "Illumise",
+      "form_key": "illumise"
+    },
+    {
+      "source_pokemon_name": "Incineroar",
+      "form_key": "incineroar"
+    },
+    {
+      "source_pokemon_name": "Infernape",
+      "form_key": "infernape"
+    },
+    {
+      "source_pokemon_name": "Inkay",
+      "form_key": "inkay"
+    },
+    {
+      "source_pokemon_name": "Ivysaur",
+      "form_key": "ivysaur"
+    },
+    {
+      "source_pokemon_name": "Jangmo-o",
+      "form_key": "jangmo-o"
+    },
+    {
+      "source_pokemon_name": "Jellicent",
+      "form_key": "jellicent"
+    },
+    {
+      "source_pokemon_name": "Jigglypuff",
+      "form_key": "jigglypuff"
+    },
+    {
+      "source_pokemon_name": "Joltik",
+      "form_key": "joltik"
+    },
+    {
+      "source_pokemon_name": "Jynx",
+      "form_key": "jynx"
+    },
+    {
+      "source_pokemon_name": "Kangaskhan",
+      "form_key": "kangaskhan"
+    },
+    {
+      "source_pokemon_name": "Karrablast",
+      "form_key": "karrablast"
+    },
+    {
+      "source_pokemon_name": "Kecleon",
+      "form_key": "kecleon"
+    },
+    {
+      "source_pokemon_name": "Kirlia",
+      "form_key": "kirlia"
+    },
+    {
+      "source_pokemon_name": "Klang",
+      "form_key": "klang"
+    },
+    {
+      "source_pokemon_name": "Klefki",
+      "form_key": "klefki"
+    },
+    {
+      "source_pokemon_name": "Klinklang",
+      "form_key": "klinklang"
+    },
+    {
+      "source_pokemon_name": "Koffing",
+      "form_key": "koffing"
+    },
+    {
+      "source_pokemon_name": "Komala",
+      "form_key": "komala"
+    },
+    {
+      "source_pokemon_name": "Kommo-o",
+      "form_key": "kommo-o"
+    },
+    {
+      "source_pokemon_name": "Krabby",
+      "form_key": "krabby"
+    },
+    {
+      "source_pokemon_name": "Kricketune",
+      "form_key": "kricketune"
+    },
+    {
+      "source_pokemon_name": "Krokorok",
+      "form_key": "krokorok"
+    },
+    {
+      "source_pokemon_name": "Lairon",
+      "form_key": "lairon"
+    },
+    {
+      "source_pokemon_name": "Lampent",
+      "form_key": "lampent"
+    },
+    {
+      "source_pokemon_name": "Lanturn",
+      "form_key": "lanturn"
+    },
+    {
+      "source_pokemon_name": "Lapras",
+      "form_key": "lapras"
+    },
+    {
+      "source_pokemon_name": "Larvesta",
+      "form_key": "larvesta"
+    },
+    {
+      "source_pokemon_name": "Larvitar",
+      "form_key": "larvitar"
+    },
+    {
+      "source_pokemon_name": "Ledian",
+      "form_key": "ledian"
+    },
+    {
+      "source_pokemon_name": "Ledyba",
+      "form_key": "ledyba"
+    },
+    {
+      "source_pokemon_name": "Lickilicky",
+      "form_key": "lickilicky"
+    },
+    {
+      "source_pokemon_name": "Lickitung",
+      "form_key": "lickitung"
+    },
+    {
+      "source_pokemon_name": "Liepard",
+      "form_key": "liepard"
+    },
+    {
+      "source_pokemon_name": "Lillipup",
+      "form_key": "lillipup"
+    },
+    {
+      "source_pokemon_name": "Lombre",
+      "form_key": "lombre"
+    },
+    {
+      "source_pokemon_name": "Lopunny",
+      "form_key": "lopunny"
+    },
+    {
+      "source_pokemon_name": "Lotad",
+      "form_key": "lotad"
+    },
+    {
+      "source_pokemon_name": "Lucario",
+      "form_key": "lucario"
+    },
+    {
+      "source_pokemon_name": "Ludicolo",
+      "form_key": "ludicolo"
+    },
+    {
+      "source_pokemon_name": "Lumineon",
+      "form_key": "lumineon"
+    },
+    {
+      "source_pokemon_name": "Lunatone",
+      "form_key": "lunatone"
+    },
+    {
+      "source_pokemon_name": "Lurantis",
+      "form_key": "lurantis"
+    },
+    {
+      "source_pokemon_name": "Luvdisc",
+      "form_key": "luvdisc"
+    },
+    {
+      "source_pokemon_name": "Luxio",
+      "form_key": "luxio"
+    },
+    {
+      "source_pokemon_name": "Lycanroc",
+      "form_key": "lycanroc"
+    },
+    {
+      "source_pokemon_name": "Machamp",
+      "form_key": "machamp"
+    },
+    {
+      "source_pokemon_name": "Machoke",
+      "form_key": "machoke"
+    },
+    {
+      "source_pokemon_name": "Machop",
+      "form_key": "machop"
+    },
+    {
+      "source_pokemon_name": "Magby",
+      "form_key": "magby"
+    },
+    {
+      "source_pokemon_name": "Magcargo",
+      "form_key": "magcargo"
+    },
+    {
+      "source_pokemon_name": "Magikarp",
+      "form_key": "magikarp"
+    },
+    {
+      "source_pokemon_name": "Magmar",
+      "form_key": "magmar"
+    },
+    {
+      "source_pokemon_name": "Magnemite",
+      "form_key": "magnemite"
+    },
+    {
+      "source_pokemon_name": "Magneton",
+      "form_key": "magneton"
+    },
+    {
+      "source_pokemon_name": "Makuhita",
+      "form_key": "makuhita"
+    },
+    {
+      "source_pokemon_name": "Malamar",
+      "form_key": "malamar"
+    },
+    {
+      "source_pokemon_name": "Mandibuzz",
+      "form_key": "mandibuzz"
+    },
+    {
+      "source_pokemon_name": "Manectric",
+      "form_key": "manectric"
+    },
+    {
+      "source_pokemon_name": "Mankey",
+      "form_key": "mankey"
+    },
+    {
+      "source_pokemon_name": "Mantine",
+      "form_key": "mantine"
+    },
+    {
+      "source_pokemon_name": "Mantyke",
+      "form_key": "mantyke"
+    },
+    {
+      "source_pokemon_name": "Maractus",
+      "form_key": "maractus"
+    },
+    {
+      "source_pokemon_name": "Mareanie",
+      "form_key": "mareanie"
+    },
+    {
+      "source_pokemon_name": "Mareep",
+      "form_key": "mareep"
+    },
+    {
+      "source_pokemon_name": "Marill",
+      "form_key": "marill"
+    },
+    {
+      "source_pokemon_name": "Marowak",
+      "form_key": "marowak"
+    },
+    {
+      "source_pokemon_name": "Marshtomp",
+      "form_key": "marshtomp"
+    },
+    {
+      "source_pokemon_name": "Masquerain",
+      "form_key": "masquerain"
+    },
+    {
+      "source_pokemon_name": "Mawile",
+      "form_key": "mawile"
+    },
+    {
+      "source_pokemon_name": "Meditite",
+      "form_key": "meditite"
+    },
+    {
+      "source_pokemon_name": "Meowstic",
+      "form_key": "meowstic"
+    },
+    {
+      "source_pokemon_name": "Meowth",
+      "form_key": "meowth"
+    },
+    {
+      "source_pokemon_name": "Metapod",
+      "form_key": "metapod"
+    },
+    {
+      "source_pokemon_name": "Mienshao",
+      "form_key": "mienshao"
+    },
+    {
+      "source_pokemon_name": "Milotic",
+      "form_key": "milotic"
+    },
+    {
+      "source_pokemon_name": "Miltank",
+      "form_key": "miltank"
+    },
+    {
+      "source_pokemon_name": "Mime Jr.",
+      "form_key": "mime-jr"
+    },
+    {
+      "source_pokemon_name": "Mimikyu",
+      "form_key": "mimikyu"
+    },
+    {
+      "source_pokemon_name": "Minccino",
+      "form_key": "minccino"
+    },
+    {
+      "source_pokemon_name": "Minior",
+      "form_key": "minior"
+    },
+    {
+      "source_pokemon_name": "Minun",
+      "form_key": "minun"
+    },
+    {
+      "source_pokemon_name": "Misdreavus",
+      "form_key": "misdreavus"
+    },
+    {
+      "source_pokemon_name": "Mismagius",
+      "form_key": "mismagius"
+    },
+    {
+      "source_pokemon_name": "Monferno",
+      "form_key": "monferno"
+    },
+    {
+      "source_pokemon_name": "Morelull",
+      "form_key": "morelull"
+    },
+    {
+      "source_pokemon_name": "Mothim",
+      "form_key": "mothim"
+    },
+    {
+      "source_pokemon_name": "Mr. Mime",
+      "form_key": "mr-mime"
+    },
+    {
+      "source_pokemon_name": "Mudbray",
+      "form_key": "mudbray"
+    },
+    {
+      "source_pokemon_name": "Mudsdale",
+      "form_key": "mudsdale"
+    },
+    {
+      "source_pokemon_name": "Muk",
+      "form_key": "muk"
+    },
+    {
+      "source_pokemon_name": "Munchlax",
+      "form_key": "munchlax"
+    },
+    {
+      "source_pokemon_name": "Munna",
+      "form_key": "munna"
+    },
+    {
+      "source_pokemon_name": "Murkrow",
+      "form_key": "murkrow"
+    },
+    {
+      "source_pokemon_name": "Musharna",
+      "form_key": "musharna"
+    },
+    {
+      "source_pokemon_name": "Natu",
+      "form_key": "natu"
+    },
+    {
+      "source_pokemon_name": "Nincada",
+      "form_key": "nincada"
+    },
+    {
+      "source_pokemon_name": "Noctowl",
+      "form_key": "noctowl"
+    },
+    {
+      "source_pokemon_name": "Noibat",
+      "form_key": "noibat"
+    },
+    {
+      "source_pokemon_name": "Noivern",
+      "form_key": "noivern"
+    },
+    {
+      "source_pokemon_name": "Nosepass",
+      "form_key": "nosepass"
+    },
+    {
+      "source_pokemon_name": "Numel",
+      "form_key": "numel"
+    },
+    {
+      "source_pokemon_name": "Nuzleaf",
+      "form_key": "nuzleaf"
+    },
+    {
+      "source_pokemon_name": "Octillery",
+      "form_key": "octillery"
+    },
+    {
+      "source_pokemon_name": "Oddish",
+      "form_key": "oddish"
+    },
+    {
+      "source_pokemon_name": "Onix",
+      "form_key": "onix"
+    },
+    {
+      "source_pokemon_name": "Oranguru",
+      "form_key": "oranguru"
+    },
+    {
+      "source_pokemon_name": "Oricorio",
+      "form_key": "oricorio"
+    },
+    {
+      "source_pokemon_name": "Pachirisu",
+      "form_key": "pachirisu"
+    },
+    {
+      "source_pokemon_name": "Palpitoad",
+      "form_key": "palpitoad"
+    },
+    {
+      "source_pokemon_name": "Pancham",
+      "form_key": "pancham"
+    },
+    {
+      "source_pokemon_name": "Pangoro",
+      "form_key": "pangoro"
+    },
+    {
+      "source_pokemon_name": "Panpour",
+      "form_key": "panpour"
+    },
+    {
+      "source_pokemon_name": "Pansage",
+      "form_key": "pansage"
+    },
+    {
+      "source_pokemon_name": "Pansear",
+      "form_key": "pansear"
+    },
+    {
+      "source_pokemon_name": "Paras",
+      "form_key": "paras"
+    },
+    {
+      "source_pokemon_name": "Parasect",
+      "form_key": "parasect"
+    },
+    {
+      "source_pokemon_name": "Passimian",
+      "form_key": "passimian"
+    },
+    {
+      "source_pokemon_name": "Pawniard",
+      "form_key": "pawniard"
+    },
+    {
+      "source_pokemon_name": "Pelipper",
+      "form_key": "pelipper"
+    },
+    {
+      "source_pokemon_name": "Persian",
+      "form_key": "persian"
+    },
+    {
+      "source_pokemon_name": "Petilil",
+      "form_key": "petilil"
+    },
+    {
+      "source_pokemon_name": "Phanpy",
+      "form_key": "phanpy"
+    },
+    {
+      "source_pokemon_name": "Phantump",
+      "form_key": "phantump"
+    },
+    {
+      "source_pokemon_name": "Pichu",
+      "form_key": "pichu"
+    },
+    {
+      "source_pokemon_name": "Pidgeotto",
+      "form_key": "pidgeotto"
+    },
+    {
+      "source_pokemon_name": "Pidove",
+      "form_key": "pidove"
+    },
+    {
+      "source_pokemon_name": "Pignite",
+      "form_key": "pignite"
+    },
+    {
+      "source_pokemon_name": "Pikachu",
+      "form_key": "pikachu"
+    },
+    {
+      "source_pokemon_name": "Pikipek",
+      "form_key": "pikipek"
+    },
+    {
+      "source_pokemon_name": "Pineco",
+      "form_key": "pineco"
+    },
+    {
+      "source_pokemon_name": "Pinsir",
+      "form_key": "pinsir"
+    },
+    {
+      "source_pokemon_name": "Piplup",
+      "form_key": "piplup"
+    },
+    {
+      "source_pokemon_name": "Plusle",
+      "form_key": "plusle"
+    },
+    {
+      "source_pokemon_name": "Politoed",
+      "form_key": "politoed"
+    },
+    {
+      "source_pokemon_name": "Poliwag",
+      "form_key": "poliwag"
+    },
+    {
+      "source_pokemon_name": "Poliwhirl",
+      "form_key": "poliwhirl"
+    },
+    {
+      "source_pokemon_name": "Poliwrath",
+      "form_key": "poliwrath"
+    },
+    {
+      "source_pokemon_name": "Ponyta",
+      "form_key": "ponyta"
+    },
+    {
+      "source_pokemon_name": "Poochyena",
+      "form_key": "poochyena"
+    },
+    {
+      "source_pokemon_name": "Porygon",
+      "form_key": "porygon"
+    },
+    {
+      "source_pokemon_name": "Porygon-Z",
+      "form_key": "porygon-z"
+    },
+    {
+      "source_pokemon_name": "Porygon2",
+      "form_key": "porygon2"
+    },
+    {
+      "source_pokemon_name": "Primarina",
+      "form_key": "primarina"
+    },
+    {
+      "source_pokemon_name": "Primeape",
+      "form_key": "primeape"
+    },
+    {
+      "source_pokemon_name": "Probopass",
+      "form_key": "probopass"
+    },
+    {
+      "source_pokemon_name": "Psyduck",
+      "form_key": "psyduck"
+    },
+    {
+      "source_pokemon_name": "Pumpkaboo",
+      "form_key": "pumpkaboo"
+    },
+    {
+      "source_pokemon_name": "Pupitar",
+      "form_key": "pupitar"
+    },
+    {
+      "source_pokemon_name": "Pyroar",
+      "form_key": "pyroar"
+    },
+    {
+      "source_pokemon_name": "Pyukumuku",
+      "form_key": "pyukumuku"
+    },
+    {
+      "source_pokemon_name": "Quilava",
+      "form_key": "quilava"
+    },
+    {
+      "source_pokemon_name": "Qwilfish",
+      "form_key": "qwilfish"
+    },
+    {
+      "source_pokemon_name": "Raichu",
+      "form_key": "raichu"
+    },
+    {
+      "source_pokemon_name": "Raticate",
+      "form_key": "raticate"
+    },
+    {
+      "source_pokemon_name": "Rattata",
+      "form_key": "rattata"
+    },
+    {
+      "source_pokemon_name": "Relicanth",
+      "form_key": "relicanth"
+    },
+    {
+      "source_pokemon_name": "Remoraid",
+      "form_key": "remoraid"
+    },
+    {
+      "source_pokemon_name": "Rhyhorn",
+      "form_key": "rhyhorn"
+    },
+    {
+      "source_pokemon_name": "Ribombee",
+      "form_key": "ribombee"
+    },
+    {
+      "source_pokemon_name": "Riolu",
+      "form_key": "riolu"
+    },
+    {
+      "source_pokemon_name": "Rockruff",
+      "form_key": "rockruff"
+    },
+    {
+      "source_pokemon_name": "Roggenrola",
+      "form_key": "roggenrola"
+    },
+    {
+      "source_pokemon_name": "Roselia",
+      "form_key": "roselia"
+    },
+    {
+      "source_pokemon_name": "Rotom",
+      "form_key": "rotom"
+    },
+    {
+      "source_pokemon_name": "Rufflet",
+      "form_key": "rufflet"
+    },
+    {
+      "source_pokemon_name": "Sableye",
+      "form_key": "sableye"
+    },
+    {
+      "source_pokemon_name": "Salamence",
+      "form_key": "salamence"
+    },
+    {
+      "source_pokemon_name": "Salandit",
+      "form_key": "salandit"
+    },
+    {
+      "source_pokemon_name": "Salazzle",
+      "form_key": "salazzle"
+    },
+    {
+      "source_pokemon_name": "Sandshrew",
+      "form_key": "sandshrew"
+    },
+    {
+      "source_pokemon_name": "Sandygast",
+      "form_key": "sandygast"
+    },
+    {
+      "source_pokemon_name": "Sawk",
+      "form_key": "sawk"
+    },
+    {
+      "source_pokemon_name": "Scrafty",
+      "form_key": "scrafty"
+    },
+    {
+      "source_pokemon_name": "Scraggy",
+      "form_key": "scraggy"
+    },
+    {
+      "source_pokemon_name": "Scyther",
+      "form_key": "scyther"
+    },
+    {
+      "source_pokemon_name": "Seadra",
+      "form_key": "seadra"
+    },
+    {
+      "source_pokemon_name": "Seaking",
+      "form_key": "seaking"
+    },
+    {
+      "source_pokemon_name": "Seedot",
+      "form_key": "seedot"
+    },
+    {
+      "source_pokemon_name": "Seel",
+      "form_key": "seel"
+    },
+    {
+      "source_pokemon_name": "Sentret",
+      "form_key": "sentret"
+    },
+    {
+      "source_pokemon_name": "Serperior",
+      "form_key": "serperior"
+    },
+    {
+      "source_pokemon_name": "Servine",
+      "form_key": "servine"
+    },
+    {
+      "source_pokemon_name": "Seviper",
+      "form_key": "seviper"
+    },
+    {
+      "source_pokemon_name": "Sewaddle",
+      "form_key": "sewaddle"
+    },
+    {
+      "source_pokemon_name": "Sharpedo",
+      "form_key": "sharpedo"
+    },
+    {
+      "source_pokemon_name": "Shelgon",
+      "form_key": "shelgon"
+    },
+    {
+      "source_pokemon_name": "Shellder",
+      "form_key": "shellder"
+    },
+    {
+      "source_pokemon_name": "Shellos",
+      "form_key": "shellos"
+    },
+    {
+      "source_pokemon_name": "Shelmet",
+      "form_key": "shelmet"
+    },
+    {
+      "source_pokemon_name": "Shiftry",
+      "form_key": "shiftry"
+    },
+    {
+      "source_pokemon_name": "Shiinotic",
+      "form_key": "shiinotic"
+    },
+    {
+      "source_pokemon_name": "Shroomish",
+      "form_key": "shroomish"
+    },
+    {
+      "source_pokemon_name": "Shuckle",
+      "form_key": "shuckle"
+    },
+    {
+      "source_pokemon_name": "Shuppet",
+      "form_key": "shuppet"
+    },
+    {
+      "source_pokemon_name": "Sigilyph",
+      "form_key": "sigilyph"
+    },
+    {
+      "source_pokemon_name": "Skarmory",
+      "form_key": "skarmory"
+    },
+    {
+      "source_pokemon_name": "Skiddo",
+      "form_key": "skiddo"
+    },
+    {
+      "source_pokemon_name": "Skitty",
+      "form_key": "skitty"
+    },
+    {
+      "source_pokemon_name": "Skorupi",
+      "form_key": "skorupi"
+    },
+    {
+      "source_pokemon_name": "Skrelp",
+      "form_key": "skrelp"
+    },
+    {
+      "source_pokemon_name": "Skuntank",
+      "form_key": "skuntank"
+    },
+    {
+      "source_pokemon_name": "Sliggoo",
+      "form_key": "sliggoo"
+    },
+    {
+      "source_pokemon_name": "Slowbro",
+      "form_key": "slowbro"
+    },
+    {
+      "source_pokemon_name": "Slowking",
+      "form_key": "slowking"
+    },
+    {
+      "source_pokemon_name": "Slowpoke",
+      "form_key": "slowpoke"
+    },
+    {
+      "source_pokemon_name": "Slugma",
+      "form_key": "slugma"
+    },
+    {
+      "source_pokemon_name": "Slurpuff",
+      "form_key": "slurpuff"
+    },
+    {
+      "source_pokemon_name": "Smeargle",
+      "form_key": "smeargle"
+    },
+    {
+      "source_pokemon_name": "Smoochum",
+      "form_key": "smoochum"
+    },
+    {
+      "source_pokemon_name": "Sneasel",
+      "form_key": "sneasel"
+    },
+    {
+      "source_pokemon_name": "Snorlax",
+      "form_key": "snorlax"
+    },
+    {
+      "source_pokemon_name": "Snorunt",
+      "form_key": "snorunt"
+    },
+    {
+      "source_pokemon_name": "Snover",
+      "form_key": "snover"
+    },
+    {
+      "source_pokemon_name": "Solrock",
+      "form_key": "solrock"
+    },
+    {
+      "source_pokemon_name": "Spearow",
+      "form_key": "spearow"
+    },
+    {
+      "source_pokemon_name": "Spewpa",
+      "form_key": "spewpa"
+    },
+    {
+      "source_pokemon_name": "Spheal",
+      "form_key": "spheal"
+    },
+    {
+      "source_pokemon_name": "Spinarak",
+      "form_key": "spinarak"
+    },
+    {
+      "source_pokemon_name": "Spinda",
+      "form_key": "spinda"
+    },
+    {
+      "source_pokemon_name": "Spiritomb",
+      "form_key": "spiritomb"
+    },
+    {
+      "source_pokemon_name": "Spoink",
+      "form_key": "spoink"
+    },
+    {
+      "source_pokemon_name": "Spritzee",
+      "form_key": "spritzee"
+    },
+    {
+      "source_pokemon_name": "Stantler",
+      "form_key": "stantler"
+    },
+    {
+      "source_pokemon_name": "Staravia",
+      "form_key": "staravia"
+    },
+    {
+      "source_pokemon_name": "Starmie",
+      "form_key": "starmie"
+    },
+    {
+      "source_pokemon_name": "Staryu",
+      "form_key": "staryu"
+    },
+    {
+      "source_pokemon_name": "Steelix",
+      "form_key": "steelix"
+    },
+    {
+      "source_pokemon_name": "Steenee",
+      "form_key": "steenee"
+    },
+    {
+      "source_pokemon_name": "Stufful",
+      "form_key": "stufful"
+    },
+    {
+      "source_pokemon_name": "Stunfisk",
+      "form_key": "stunfisk"
+    },
+    {
+      "source_pokemon_name": "Sudowoodo",
+      "form_key": "sudowoodo"
+    },
+    {
+      "source_pokemon_name": "Sunflora",
+      "form_key": "sunflora"
+    },
+    {
+      "source_pokemon_name": "Surskit",
+      "form_key": "surskit"
+    },
+    {
+      "source_pokemon_name": "Swablu",
+      "form_key": "swablu"
+    },
+    {
+      "source_pokemon_name": "Swalot",
+      "form_key": "swalot"
+    },
+    {
+      "source_pokemon_name": "Swampert",
+      "form_key": "swampert"
+    },
+    {
+      "source_pokemon_name": "Swellow",
+      "form_key": "swellow"
+    },
+    {
+      "source_pokemon_name": "Swinub",
+      "form_key": "swinub"
+    },
+    {
+      "source_pokemon_name": "Swirlix",
+      "form_key": "swirlix"
+    },
+    {
+      "source_pokemon_name": "Swoobat",
+      "form_key": "swoobat"
+    },
+    {
+      "source_pokemon_name": "Tangela",
+      "form_key": "tangela"
+    },
+    {
+      "source_pokemon_name": "Tangrowth",
+      "form_key": "tangrowth"
+    },
+    {
+      "source_pokemon_name": "Tauros",
+      "form_key": "tauros"
+    },
+    {
+      "source_pokemon_name": "Teddiursa",
+      "form_key": "teddiursa"
+    },
+    {
+      "source_pokemon_name": "Tentacool",
+      "form_key": "tentacool"
+    },
+    {
+      "source_pokemon_name": "Tentacruel",
+      "form_key": "tentacruel"
+    },
+    {
+      "source_pokemon_name": "Throh",
+      "form_key": "throh"
+    },
+    {
+      "source_pokemon_name": "Togedemaru",
+      "form_key": "togedemaru"
+    },
+    {
+      "source_pokemon_name": "Togepi",
+      "form_key": "togepi"
+    },
+    {
+      "source_pokemon_name": "Torchic",
+      "form_key": "torchic"
+    },
+    {
+      "source_pokemon_name": "Torkoal",
+      "form_key": "torkoal"
+    },
+    {
+      "source_pokemon_name": "Torracat",
+      "form_key": "torracat"
+    },
+    {
+      "source_pokemon_name": "Totodile",
+      "form_key": "totodile"
+    },
+    {
+      "source_pokemon_name": "Toucannon",
+      "form_key": "toucannon"
+    },
+    {
+      "source_pokemon_name": "Toxicroak",
+      "form_key": "toxicroak"
+    },
+    {
+      "source_pokemon_name": "Trapinch",
+      "form_key": "trapinch"
+    },
+    {
+      "source_pokemon_name": "Tropius",
+      "form_key": "tropius"
+    },
+    {
+      "source_pokemon_name": "Trubbish",
+      "form_key": "trubbish"
+    },
+    {
+      "source_pokemon_name": "Trumbeak",
+      "form_key": "trumbeak"
+    },
+    {
+      "source_pokemon_name": "Tsareena",
+      "form_key": "tsareena"
+    },
+    {
+      "source_pokemon_name": "Turtonator",
+      "form_key": "turtonator"
+    },
+    {
+      "source_pokemon_name": "Typhlosion",
+      "form_key": "typhlosion"
+    },
+    {
+      "source_pokemon_name": "Tyranitar",
+      "form_key": "tyranitar"
+    },
+    {
+      "source_pokemon_name": "Tyrogue",
+      "form_key": "tyrogue"
+    },
+    {
+      "source_pokemon_name": "Umbreon",
+      "form_key": "umbreon"
+    },
+    {
+      "source_pokemon_name": "Unown",
+      "form_key": "unown"
+    },
+    {
+      "source_pokemon_name": "Vanillish",
+      "form_key": "vanillish"
+    },
+    {
+      "source_pokemon_name": "Vanillite",
+      "form_key": "vanillite"
+    },
+    {
+      "source_pokemon_name": "Vanilluxe",
+      "form_key": "vanilluxe"
+    },
+    {
+      "source_pokemon_name": "Venomoth",
+      "form_key": "venomoth"
+    },
+    {
+      "source_pokemon_name": "Venonat",
+      "form_key": "venonat"
+    },
+    {
+      "source_pokemon_name": "Venusaur",
+      "form_key": "venusaur"
+    },
+    {
+      "source_pokemon_name": "Vespiquen",
+      "form_key": "vespiquen"
+    },
+    {
+      "source_pokemon_name": "Vigoroth",
+      "form_key": "vigoroth"
+    },
+    {
+      "source_pokemon_name": "Vikavolt",
+      "form_key": "vikavolt"
+    },
+    {
+      "source_pokemon_name": "Volbeat",
+      "form_key": "volbeat"
+    },
+    {
+      "source_pokemon_name": "Volcarona",
+      "form_key": "volcarona"
+    },
+    {
+      "source_pokemon_name": "Voltorb",
+      "form_key": "voltorb"
+    },
+    {
+      "source_pokemon_name": "Vullaby",
+      "form_key": "vullaby"
+    },
+    {
+      "source_pokemon_name": "Vulpix",
+      "form_key": "vulpix"
+    },
+    {
+      "source_pokemon_name": "Wailmer",
+      "form_key": "wailmer"
+    },
+    {
+      "source_pokemon_name": "Wailord",
+      "form_key": "wailord"
+    },
+    {
+      "source_pokemon_name": "Wartortle",
+      "form_key": "wartortle"
+    },
+    {
+      "source_pokemon_name": "Watchog",
+      "form_key": "watchog"
+    },
+    {
+      "source_pokemon_name": "Weedle",
+      "form_key": "weedle"
+    },
+    {
+      "source_pokemon_name": "Weepinbell",
+      "form_key": "weepinbell"
+    },
+    {
+      "source_pokemon_name": "Whirlipede",
+      "form_key": "whirlipede"
+    },
+    {
+      "source_pokemon_name": "Whiscash",
+      "form_key": "whiscash"
+    },
+    {
+      "source_pokemon_name": "Whismur",
+      "form_key": "whismur"
+    },
+    {
+      "source_pokemon_name": "Wimpod",
+      "form_key": "wimpod"
+    },
+    {
+      "source_pokemon_name": "Wingull",
+      "form_key": "wingull"
+    },
+    {
+      "source_pokemon_name": "Wishiwashi",
+      "form_key": "wishiwashi"
+    },
+    {
+      "source_pokemon_name": "Wobbuffet",
+      "form_key": "wobbuffet"
+    },
+    {
+      "source_pokemon_name": "Woobat",
+      "form_key": "woobat"
+    },
+    {
+      "source_pokemon_name": "Wooper",
+      "form_key": "wooper"
+    },
+    {
+      "source_pokemon_name": "Wurmple",
+      "form_key": "wurmple"
+    },
+    {
+      "source_pokemon_name": "Wynaut",
+      "form_key": "wynaut"
+    },
+    {
+      "source_pokemon_name": "Xatu",
+      "form_key": "xatu"
+    },
+    {
+      "source_pokemon_name": "Yamask",
+      "form_key": "yamask"
+    },
+    {
+      "source_pokemon_name": "Yanma",
+      "form_key": "yanma"
+    },
+    {
+      "source_pokemon_name": "Yungoos",
+      "form_key": "yungoos"
+    },
+    {
+      "source_pokemon_name": "Zangoose",
+      "form_key": "zangoose"
+    },
+    {
+      "source_pokemon_name": "Zigzagoon",
+      "form_key": "zigzagoon"
+    },
+    {
+      "source_pokemon_name": "Zoroark",
+      "form_key": "zoroark"
+    },
+    {
+      "source_pokemon_name": "Zorua",
+      "form_key": "zorua"
+    },
+    {
+      "source_pokemon_name": "Zubat",
+      "form_key": "zubat"
+    }
+  ],
+  "requires_explicit_mapping": [
+    {
+      "source_pokemon_name": "Basculin (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Deerling (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Deerling (Forme 2)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Deerling (Forme 3)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Diglett (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Dugtrio (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Exeggutor (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Flabébé (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Flabébé (Forme 2)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Flabébé (Forme 4)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Floette (Forme 2)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Floette (Forme 3)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Floette (Forme 4)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Gastrodon (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Graveler (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Grimer (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Lycanroc (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Marowak (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Meowstic (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Meowth (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Muk (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Oricorio (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Oricorio (Forme 2)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Oricorio (Forme 3)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Persian (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Pumpkaboo (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Pumpkaboo (Forme 2)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Pumpkaboo (Forme 3)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Raticate (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Rattata (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Sandshrew (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Shellos (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 10)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 11)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 12)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 13)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 14)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 15)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 16)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 17)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 18)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 19)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 2)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 20)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 21)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 22)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 23)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 24)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 25)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 26)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 27)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 3)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 4)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 5)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 6)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 7)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 8)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Unown (Forme 9)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    },
+    {
+      "source_pokemon_name": "Vulpix (Forme 1)",
+      "reason": "Penumbra Forme notation requires an explicit identity mapping",
+      "candidate_form_keys": []
+    }
+  ],
+  "unresolved": [
+    {
+      "source_pokemon_name": "Nidoran",
+      "reason": "no exact canonical English species/form display name"
+    },
+    {
+      "source_pokemon_name": "Nidoran",
+      "reason": "no exact canonical English species/form display name"
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+source_name,target_key,mapping_method,note
+Basculin (Forme 1),basculin:blue-striped,explicit_form_alias,Penumbra form index 1 is the Blue-Striped form.
+Deerling (Forme 1),deerling:summer,explicit_form_alias,Penumbra form index 1 is the Summer form.
+Deerling (Forme 2),deerling:autumn,explicit_form_alias,Penumbra form index 2 is the Autumn form.
+Deerling (Forme 3),deerling:winter,explicit_form_alias,Penumbra form index 3 is the Winter form.
+Diglett (Forme 1),diglett:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Dugtrio (Forme 1),dugtrio:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Exeggutor (Forme 1),exeggutor:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Flabébé (Forme 1),flabebe:yellow,explicit_form_alias,Penumbra form index 1 is the Yellow Flower form.
+Flabébé (Forme 2),flabebe:orange,explicit_form_alias,Penumbra form index 2 is the Orange Flower form.
+Flabébé (Forme 4),flabebe:white,explicit_form_alias,Penumbra form index 4 is the White Flower form.
+Floette (Forme 2),floette:orange,explicit_form_alias,Penumbra form index 2 is the Orange Flower form.
+Floette (Forme 3),floette:blue,explicit_form_alias,Penumbra form index 3 is the Blue Flower form.
+Floette (Forme 4),floette:white,explicit_form_alias,Penumbra form index 4 is the White Flower form.
+Gastrodon (Forme 1),gastrodon:east,explicit_form_alias,Penumbra form index 1 is the East Sea form.
+Graveler (Forme 1),graveler:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Grimer (Forme 1),grimer:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Lycanroc (Forme 1),lycanroc:midnight,explicit_form_alias,Penumbra form index 1 is the Midnight form.
+Marowak (Forme 1),marowak:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Meowstic (Forme 1),meowstic:female,explicit_form_alias,Penumbra form index 1 is the female form; the pinned USUM sprite donor has no exact local asset for this form.
+Meowth (Forme 1),meowth:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Muk (Forme 1),muk:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Oricorio (Forme 1),oricorio:pom-pom,explicit_form_alias,Penumbra form index 1 is the Pom-Pom Style form.
+Oricorio (Forme 2),oricorio:pau,explicit_form_alias,Penumbra form index 2 is the Pa'u Style form.
+Oricorio (Forme 3),oricorio:sensu,explicit_form_alias,Penumbra form index 3 is the Sensu Style form.
+Persian (Forme 1),persian:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Pumpkaboo (Forme 1),pumpkaboo:small,explicit_form_alias,Penumbra form index 1 is the Small Size form.
+Pumpkaboo (Forme 2),pumpkaboo:large,explicit_form_alias,Penumbra form index 2 is the Large Size form.
+Pumpkaboo (Forme 3),pumpkaboo:super,explicit_form_alias,Penumbra form index 3 is the Super Size form.
+Raticate (Forme 1),raticate:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form rather than the separate Totem form.
+Rattata (Forme 1),rattata:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Sandshrew (Forme 1),sandshrew:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Shellos (Forme 1),shellos:east,explicit_form_alias,Penumbra form index 1 is the East Sea form.
+Unown (Forme 1),unown:b,explicit_form_alias,Penumbra form index 1 is letter B.
+Unown (Forme 2),unown:c,explicit_form_alias,Penumbra form index 2 is letter C.
+Unown (Forme 3),unown:d,explicit_form_alias,Penumbra form index 3 is letter D.
+Unown (Forme 4),unown:e,explicit_form_alias,Penumbra form index 4 is letter E.
+Unown (Forme 5),unown:f,explicit_form_alias,Penumbra form index 5 is letter F.
+Unown (Forme 6),unown:g,explicit_form_alias,Penumbra form index 6 is letter G.
+Unown (Forme 7),unown:h,explicit_form_alias,Penumbra form index 7 is letter H.
+Unown (Forme 8),unown:i,explicit_form_alias,Penumbra form index 8 is letter I.
+Unown (Forme 9),unown:j,explicit_form_alias,Penumbra form index 9 is letter J.
+Unown (Forme 10),unown:k,explicit_form_alias,Penumbra form index 10 is letter K.
+Unown (Forme 11),unown:l,explicit_form_alias,Penumbra form index 11 is letter L.
+Unown (Forme 12),unown:m,explicit_form_alias,Penumbra form index 12 is letter M.
+Unown (Forme 13),unown:n,explicit_form_alias,Penumbra form index 13 is letter N.
+Unown (Forme 14),unown:o,explicit_form_alias,Penumbra form index 14 is letter O.
+Unown (Forme 15),unown:p,explicit_form_alias,Penumbra form index 15 is letter P.
+Unown (Forme 16),unown:q,explicit_form_alias,Penumbra form index 16 is letter Q.
+Unown (Forme 17),unown:r,explicit_form_alias,Penumbra form index 17 is letter R.
+Unown (Forme 18),unown:s,explicit_form_alias,Penumbra form index 18 is letter S.
+Unown (Forme 19),unown:t,explicit_form_alias,Penumbra form index 19 is letter T.
+Unown (Forme 20),unown:u,explicit_form_alias,Penumbra form index 20 is letter U.
+Unown (Forme 21),unown:v,explicit_form_alias,Penumbra form index 21 is letter V.
+Unown (Forme 22),unown:w,explicit_form_alias,Penumbra form index 22 is letter W.
+Unown (Forme 23),unown:x,explicit_form_alias,Penumbra form index 23 is letter X.
+Unown (Forme 24),unown:y,explicit_form_alias,Penumbra form index 24 is letter Y.
+Unown (Forme 25),unown:z,explicit_form_alias,Penumbra form index 25 is letter Z.
+Unown (Forme 26),unown:exclamation,explicit_form_alias,Penumbra form index 26 is the exclamation-mark form.
+Unown (Forme 27),unown:question,explicit_form_alias,Penumbra form index 27 is the question-mark form.
+Vulpix (Forme 1),vulpix:alola,explicit_form_alias,Penumbra form index 1 is the Alolan form.
+Nidoran,nidoran-m,explicit_alias,Gen VII private-use character U+E08E represents the male sign.
+Nidoran,nidoran-f,explicit_alias,Gen VII private-use character U+E08F represents the female sign.

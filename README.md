@@ -1,14 +1,14 @@
 # LuxDex
 
-LuxDex is a LuxForge application whose backend publishes authoritative Penumbra encounter data to a presentation-only web client. The data flow is deliberately one way:
+LuxDex is a LuxForge application whose backend publishes authoritative Penumbra encounter data and canonical Pokémon metadata to a presentation-only web client. The data flow is deliberately one way:
 
-`raw Penumbra source -> complete parse and validation -> PostgreSQL -> repository/service layer -> read-only API`
+`preserved source data -> complete parse and validation -> PostgreSQL -> repository/service layer -> read-only API`
 
 The web application does not read, parse, or own canonical encounter data.
 
 ## Repository layout
 
-- `app/` — FastAPI backend, Penumbra ingestion pipeline, repositories, services, and API routes.
+- `app/` — FastAPI backend, ingestion and identity pipelines, repositories, services, and API routes.
 - `web/` — standalone React/Vite frontend and local runtime assets. It owns presentation, not canonical data or persistence.
 - `db/schema/` — authoritative, readable SQL schema inputs.
 - `db/data/source/` — preserved authoritative raw datasets for later ingestion.
@@ -46,7 +46,7 @@ Running `.\docker\run.ps1` without arguments opens the lifecycle menu. The web U
 
 All services communicate on the private `luxdex-internal` Docker network. Ports `52032`–`52039` remain reserved for future LuxDex services.
 
-`Rebuild` rebuilds application images without Docker layer cache and restarts the stack while preserving the database volume. `Full Blowaway` removes only Compose resources belonging to LuxDex, including its database volume and service images, then rebuilds the schema and ingests the Penumbra source before the API starts. On normal startup, the backend compares the source SHA-256 with the active dataset and skips parsing when it is unchanged.
+`Rebuild` rebuilds application images without Docker layer cache and restarts the stack while preserving the database volume. `Full Blowaway` removes only Compose resources belonging to LuxDex, including its database volume and service images, then rebuilds the schema, ingests both source datasets, and builds their identity map before the API starts. Normal startup is offline: each loader compares versioned source fingerprints and skips unchanged work.
 
 ## Penumbra data commands
 
@@ -70,6 +70,25 @@ The proof API exposes source metadata, raw map groups and locations, raw encount
 - `GET /api/encounters/maps/{map_group_id}/tables`
 - `GET /api/encounters/maps/{map_group_id}/tables/{table_number}`
 - `GET /api/encounters/pokemon?name=Pichu`
+- `GET /api/encounters/pokemon/rattata:alola`
+
+## Pokémon master and identity mapping
+
+The pinned Pokémon master and exact USUM sprite donor files are acquired explicitly with `scripts/pull-pokemon-data.ps1`; ordinary builds never download them. Validate or load the vendored dataset with:
+
+```powershell
+.\scripts\validate-pokemon-data.ps1
+.\scripts\build-pokemon-data.ps1
+```
+
+Penumbra's literal `source_pokemon_name` is preserved. `scripts/build-penumbra-pokemon-map.ps1` derives a distinct raw-name inventory, applies deterministic exact matches and the reviewed exceptions in `db/data/canonical/identity/penumbra-pokemon-aliases.csv`, validates every target, and transactionally publishes only verified mappings. The complete generated audit is `db/data/canonical/identity/penumbra-pokemon-identity-report.json`.
+
+Canonical Pokémon and mapping proof endpoints include:
+
+- `GET /api/pokemon`
+- `GET /api/pokemon/{canonical_key}`
+- `GET /api/pokemon/{canonical_key}/forms`
+- `GET /api/identity/penumbra`
 
 ## Local development
 

@@ -11,6 +11,7 @@ from fastapi import FastAPI, Response, status
 from pydantic import BaseModel
 
 from app.api.encounters import router as encounters_router
+from app.api.identity import router as identity_router
 from app.api.pokemon import router as pokemon_router
 
 
@@ -23,6 +24,7 @@ VERSION = _read_version()
 app = FastAPI(title="LuxDex API", version=VERSION)
 app.include_router(encounters_router)
 app.include_router(pokemon_router)
+app.include_router(identity_router)
 
 
 class HealthResponse(BaseModel):
