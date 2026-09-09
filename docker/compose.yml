@@ -64,6 +64,25 @@ services:
     networks:
       - internal
 
+  test:
+    build:
+      context: ..
+      dockerfile: docker/test/Dockerfile
+    image: luxdex-test:local
+    container_name: luxdex-test
+    environment:
+      TEST_DATABASE_URL: postgresql://luxdex:${LUXDEX_DB_PASSWORD:-luxdex-dev-only}@db:5432/luxdex
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ..:/opt/luxdex
+    working_dir: /opt/luxdex/build
+    networks:
+      - internal
+    profiles:
+      - test
+
 volumes:
   luxdex-db-data:
     name: luxdex-db-data

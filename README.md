@@ -152,6 +152,18 @@ The Vite development server proxies `/api` to the local API. Use `VITE_API_BASE_
 
 The committed web fonts can be refreshed reproducibly from their pinned upstream revision with `.\scripts\pull-assets.ps1`. Normal UI rendering uses only local static assets.
 
+## Testing
+
+```powershell
+.\scripts\test.ps1               # backend unit tests + frontend tests (no Docker required)
+.\scripts\test.ps1 -Integration  # backend database integration tests only
+.\scripts\test.ps1 -All          # everything above
+```
+
+Backend unit tests never open a database connection; the 20 database-backed tests under `tests/app/` are skipped automatically whenever `TEST_DATABASE_URL` is unset, which is the default for a plain `pytest` run.
+
+`-Integration` and `-All` run those tests inside a disposable `luxdex-test` container, built from `docker/test/Dockerfile` and attached only to the private `luxdex-internal` network — PostgreSQL is never published to the host. The container connects to `luxdex-db` by Docker DNS (`db:5432`) using the same admin credentials as `luxdex-app`. Each database-backed test class then creates its own `luxdex_test_<random>` database, applies `db/schema/*.sql`, seeds only what that suite needs, and drops the database in teardown; the live `luxdex` database that the running application uses is never written to. The repository is bind-mounted into the container at run time, so the image only bakes in Python dependencies and always runs against the current working tree. The container is removed (`--rm`) after each run; no new service stays running afterward.
+
 ## Release verification
 
-Version `0.1.0` is sourced from `build/VERSION`. Before packaging a release, run the complete backend suite, frontend suite and production build, validate the Compose model, then perform a Full Blowaway to prove that schema creation and all canonical loaders remain replayable from the preserved source files. Full Blowaway intentionally resets the local collection profile.
+Version `0.1.0` is sourced from `build/VERSION`. Before packaging a release, run `.\scripts\test.ps1 -All`, build the production frontend, validate the Compose model, then perform a Full Blowaway to prove that schema creation and all canonical loaders remain replayable from the preserved source files. Full Blowaway intentionally resets the local collection profile.

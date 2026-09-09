@@ -413,17 +413,117 @@ describe("real-data application binding", () => {
     await waitFor(() => expect(window.location.pathname).toBe("/pokemon"))
   })
 
-  it("restores routed views on browser history navigation", async () => {
+  it("restores an areas view when history navigation returns to it", async () => {
     const user = userEvent.setup()
     installApi()
     render(<App />)
 
+    expect(
+      (await screen.findAllByText("Grass Overlooking the Bay")).length,
+    ).toBeGreaterThan(0)
+
     await user.click(screen.getByRole("button", { name: /Pokédex/ }))
     await waitFor(() => expect(window.location.pathname).toBe("/pokedex"))
+    expect(screen.queryByText("Grass Overlooking the Bay")).not.toBeInTheDocument()
 
-    window.history.replaceState(null, "", "/areas/melemele/route-1")
-    window.dispatchEvent(new PopStateEvent("popstate"))
-    expect(await screen.findByText("Grass Overlooking the Bay")).toBeInTheDocument()
+    window.history.back()
+    await waitFor(() =>
+      expect(window.location.pathname).toBe("/areas/melemele/route-1"),
+    )
+    expect(
+      (await screen.findAllByText("Grass Overlooking the Bay")).length,
+    ).toBeGreaterThan(0)
+    // The URL must not be overwritten by stale component state once restored.
+    expect(window.location.pathname).toBe("/areas/melemele/route-1")
+  })
+
+  it("moves through Back and Forward across an area and a location change", async () => {
+    const user = userEvent.setup()
+    installApi()
+    render(<App />)
+
+    expect(
+      (await screen.findAllByText("Grass Overlooking the Bay")).length,
+    ).toBeGreaterThan(0)
+
+    await user.click(screen.getAllByRole("button", { name: /Route 3/ })[0])
+    await waitFor(() =>
+      expect(window.location.pathname).toBe("/areas/melemele/route-3"),
+    )
+    expect(
+      (await screen.findAllByText("Field South of the Bridge")).length,
+    ).toBeGreaterThan(0)
+
+    await user.click(screen.getByRole("button", { name: "Akala" }))
+    await waitFor(() => expect(window.location.pathname).toBe("/areas/akala"))
+    expect(
+      await screen.findByText("Locations will appear as mapping is verified."),
+    ).toBeInTheDocument()
+
+    window.history.back()
+    await waitFor(() =>
+      expect(window.location.pathname).toBe("/areas/melemele/route-3"),
+    )
+    expect(
+      (await screen.findAllByText("Field South of the Bridge")).length,
+    ).toBeGreaterThan(0)
+
+    window.history.back()
+    await waitFor(() =>
+      expect(window.location.pathname).toBe("/areas/melemele/route-1"),
+    )
+    expect(
+      (await screen.findAllByText("Grass Overlooking the Bay")).length,
+    ).toBeGreaterThan(0)
+
+    window.history.forward()
+    await waitFor(() =>
+      expect(window.location.pathname).toBe("/areas/melemele/route-3"),
+    )
+    expect(
+      (await screen.findAllByText("Field South of the Bridge")).length,
+    ).toBeGreaterThan(0)
+
+    window.history.forward()
+    await waitFor(() => expect(window.location.pathname).toBe("/areas/akala"))
+    expect(
+      await screen.findByText("Locations will appear as mapping is verified."),
+    ).toBeInTheDocument()
+  })
+
+  it("renders a deep link straight to a nested area location on first mount", async () => {
+    installApi()
+    window.history.replaceState(null, "", "/areas/melemele/route-3")
+    render(<App />)
+
+    expect(
+      (await screen.findAllByText("Field South of the Bridge")).length,
+    ).toBeGreaterThan(0)
+    expect(window.location.pathname).toBe("/areas/melemele/route-3")
+  })
+
+  it("settles on the latest location when navigation happens faster than requests resolve", async () => {
+    const user = userEvent.setup()
+    installApi()
+    render(<App />)
+
+    expect(
+      (await screen.findAllByText("Grass Overlooking the Bay")).length,
+    ).toBeGreaterThan(0)
+
+    const routeThreeButton = screen.getAllByRole("button", {
+      name: /Route 3/,
+    })[0]
+    await user.click(routeThreeButton)
+    window.history.back()
+
+    await waitFor(() =>
+      expect(window.location.pathname).toBe("/areas/melemele/route-1"),
+    )
+    expect(
+      (await screen.findAllByText("Grass Overlooking the Bay")).length,
+    ).toBeGreaterThan(0)
+    expect(screen.queryByText("Field South of the Bridge")).not.toBeInTheDocument()
   })
 
   it("shows clear empty and error states", async () => {
