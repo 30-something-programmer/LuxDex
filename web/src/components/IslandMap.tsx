@@ -1,200 +1,226 @@
-import type { Area } from '../data/types';
-import type { IslandId, IslandMapData, MapNode } from '../data/islands';
-import { ISLAND_MAPS } from '../data/islands';
+import { useId } from "react"
+import type { IslandMapModel, ResourceState } from "../types/presentation"
 
-interface Props {
-  island: IslandId;
-  areas: Area[];
-  selectedAreaId: string;
-  onSelectArea: (id: string) => void;
-  getAreaCompletion: (areaId: string) => { caught: number; total: number };
+interface CompletionArcProps {
+  cx: number
+  cy: number
+  radius: number
+  owned: number
+  total: number
+  color: string
 }
+function CompletionArc({
+  cx,
+  cy,
+  radius,
+  owned,
+  total,
+  color,
+}: CompletionArcProps) {
+  if (total <= 0 || owned <= 0) return null
 
-// Find which area matches a node pattern
-function matchArea(areas: Area[], pattern: RegExp): Area | undefined {
-  return areas.find(a =>
-    pattern.test(a.primaryName) || a.allNames.some(n => pattern.test(n))
-  );
-}
-
-// Completion arc: draws a small arc around the node circle
-function CompletionArc({ cx, cy, r, caught, total, color }: {
-  cx: number; cy: number; r: number; caught: number; total: number; color: string;
-}) {
-  if (total === 0) return null;
-  const pct = caught / total;
-  if (pct <= 0) return null;
-
-  const sweep = pct * 2 * Math.PI;
-  const startAngle = -Math.PI / 2;
-  const endAngle = startAngle + sweep;
-  const x1 = cx + r * Math.cos(startAngle);
-  const y1 = cy + r * Math.sin(startAngle);
-  const x2 = cx + r * Math.cos(endAngle);
-  const y2 = cy + r * Math.sin(endAngle);
-  const largeArc = sweep > Math.PI ? 1 : 0;
+  const sweep = Math.min(owned / total, 1) * 2 * Math.PI
+  const startAngle = -Math.PI / 2
+  const endAngle = startAngle + sweep
+  const x1 = cx + radius * Math.cos(startAngle)
+  const y1 = cy + radius * Math.sin(startAngle)
+  const x2 = cx + radius * Math.cos(endAngle)
+  const y2 = cy + radius * Math.sin(endAngle)
 
   return (
     <path
-      d={`M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`}
+      d={`M ${x1} ${y1} A ${radius} ${radius} 0 ${
+        sweep > Math.PI ? 1 : 0
+      } 1 ${x2} ${y2}`}
       fill="none"
       stroke={color}
       strokeWidth="2.5"
       strokeLinecap="round"
     />
-  );
+  )
 }
 
-export default function IslandMap({ island, areas, selectedAreaId, onSelectArea, getAreaCompletion }: Props) {
-  const mapData: IslandMapData | undefined = ISLAND_MAPS.find(m => m.island === island);
+interface IslandMapProps {
+  map: IslandMapModel | null
+  selectedLocationId: string | null
+  accentColor: string
+  state: ResourceState
+  onSelectLocation: (locationId: string) => void
+}
 
-  // For "other" or no map data — show a simple list
-  if (!mapData) {
-    const islandAreas = areas.filter(a => a.tables.length > 0);
+export default function IslandMap({
+  map,
+  selectedLocationId,
+  accentColor,
+  state,
+  onSelectLocation,
+}: IslandMapProps) {
+  const patternId = `topo-${useId().replace(/:/g, "")}`
+  const clipId = `island-${useId().replace(/:/g, "")}`
+
+  if (!map) {
     return (
-      <div className="p-4">
-        <div className="text-xs font-bold text-[var(--color-text-muted)] mb-2 uppercase tracking-wide">Locations</div>
-        <div className="grid grid-cols-2 gap-1.5">
-          {islandAreas.map(a => (
-            <button
-              key={a.id}
-              className={`text-left px-3 py-2 rounded-xl text-sm font-bold transition-all ${
-                a.id === selectedAreaId
-                  ? 'bg-[var(--color-accent)] text-white'
-                  : 'bg-[var(--color-panel)] text-[var(--color-text)] hover:bg-[var(--color-panel-hover)]'
-              }`}
-              onClick={() => onSelectArea(a.id)}
-            >
-              {a.primaryName}
-            </button>
-          ))}
+      <div className="grid aspect-[4/3] w-full place-items-center overflow-hidden rounded-xl border border-dashed border-[var(--color-border)] bg-[var(--color-panel)]/45 px-4 text-center">
+        <div className={state === "loading" ? "animate-pulse" : ""}>
+          <svg
+            className="mx-auto mb-2 h-7 w-7 text-[var(--color-text-muted)]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.7"
+            aria-hidden="true"
+          >
+            <path d="m9 18-6-3V5l6 3 6-3 6 3v10l-6-3-6 3Z" />
+            <path d="M9 8v10m6-13v10" />
+          </svg>
+          <span className="text-[10px] font-bold uppercase tracking-wide text-[var(--color-text-muted)]">
+            {state === "loading"
+              ? "Loading island map"
+              : "No island map loaded"}
+          </span>
         </div>
       </div>
-    );
+    )
   }
 
-  const { width, height, outline, nodes, edges } = mapData;
-
-  // Resolve each node to its area
-  const resolvedNodes = nodes.map(node => ({
-    ...node,
-    area: matchArea(areas, node.areaNamePattern),
-  }));
-
-  // Build edge paths
-  const edgePaths = edges.map(({ from, to }, i) => {
-    const fromNode = nodes.find(n => from.test(n.label) || areas.some(a => from.test(a.primaryName) && n.areaNamePattern.test(a.primaryName)));
-    const toNode = nodes.find(n => to.test(n.label) || areas.some(a => to.test(a.primaryName) && n.areaNamePattern.test(a.primaryName)));
-    if (!fromNode || !toNode) return null;
-    return (
-      <line
-        key={i}
-        x1={fromNode.x} y1={fromNode.y}
-        x2={toNode.x}   y2={toNode.y}
-        stroke="var(--color-border)"
-        strokeWidth="1.5"
-        strokeDasharray="4 3"
-      />
-    );
-  }).filter(Boolean);
-
-  // Island accent color
-  const islandColor = island === 'melemele' ? 'var(--color-melemele)'
-    : island === 'akala'   ? 'var(--color-akala)'
-    : island === 'ulaula'  ? 'var(--color-ulaula)'
-    : 'var(--color-poni)';
+  const nodeById = new Map(map.nodes.map((node) => [node.id, node]))
 
   return (
     <div className="relative w-full overflow-hidden">
       <svg
-        viewBox={`0 0 ${width} ${height}`}
-        className="w-full h-auto"
-        style={{ maxHeight: '260px' }}
+        viewBox={`0 0 ${map.width} ${map.height}`}
+        className="h-auto w-full"
+        style={{ maxHeight: "260px" }}
       >
-        {/* Island fill */}
         <polygon
-          points={outline}
+          points={map.outline}
           fill="var(--color-panel)"
           stroke="var(--color-border)"
           strokeWidth="1.5"
         />
-
-        {/* Subtle topographic grid lines */}
         <defs>
-          <pattern id="topo" width="20" height="20" patternUnits="userSpaceOnUse">
-            <path d="M0 10 Q5 8 10 10 Q15 12 20 10" fill="none" stroke="var(--color-border)" strokeWidth="0.4" opacity="0.5"/>
+          <pattern
+            id={patternId}
+            width="20"
+            height="20"
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d="M0 10 Q5 8 10 10 Q15 12 20 10"
+              fill="none"
+              stroke="var(--color-border)"
+              strokeWidth="0.4"
+              opacity="0.5"
+            />
           </pattern>
-          <clipPath id="island-clip">
-            <polygon points={outline}/>
+          <clipPath id={clipId}>
+            <polygon points={map.outline} />
           </clipPath>
         </defs>
-        <rect width={width} height={height} fill="url(#topo)" clipPath="url(#island-clip)" opacity="0.5"/>
+        <rect
+          width={map.width}
+          height={map.height}
+          fill={`url(#${patternId})`}
+          clipPath={`url(#${clipId})`}
+          opacity="0.5"
+        />
 
-        {/* Edge paths */}
-        {edgePaths}
+        {map.edges.map((edge) => {
+          const from = nodeById.get(edge.fromNodeId)
+          const to = nodeById.get(edge.toNodeId)
+          if (!from || !to) return null
+          return (
+            <line
+              key={`${edge.fromNodeId}-${edge.toNodeId}`}
+              x1={from.x}
+              y1={from.y}
+              x2={to.x}
+              y2={to.y}
+              stroke="var(--color-border)"
+              strokeWidth="1.5"
+              strokeDasharray="4 3"
+            />
+          )
+        })}
 
-        {/* Nodes */}
-        {resolvedNodes.map((node) => {
-          const area = node.area;
-          const isSelected = area?.id === selectedAreaId;
-          const hasEncounters = (area?.tables.length ?? 0) > 0;
-          const completion = area ? getAreaCompletion(area.id) : { caught: 0, total: 0 };
-          const nodeR = isSelected ? 10 : 8;
-
+        {map.nodes.map((node) => {
+          const isSelected = node.locationId === selectedLocationId
+          const radius = isSelected ? 10 : 8
           return (
             <g
-              key={node.label}
-              className="cursor-pointer"
-              onClick={() => area && onSelectArea(area.id)}
-              style={{ opacity: area ? 1 : 0.35 }}
+              key={node.id}
+              className={node.locationId ? "cursor-pointer" : ""}
+              onClick={() =>
+                node.locationId && onSelectLocation(node.locationId)
+              }
+              style={{ opacity: node.locationId ? 1 : 0.35 }}
+              role={node.locationId ? "button" : undefined}
+              tabIndex={node.locationId ? 0 : undefined}
+              onKeyDown={(event) => {
+                if (
+                  node.locationId &&
+                  (event.key === "Enter" || event.key === " ")
+                ) {
+                  event.preventDefault()
+                  onSelectLocation(node.locationId)
+                }
+              }}
             >
-              {/* Selection glow */}
               {isSelected && (
                 <circle
-                  cx={node.x} cy={node.y} r={nodeR + 4}
-                  fill={islandColor}
+                  cx={node.x}
+                  cy={node.y}
+                  r={radius + 4}
+                  fill={accentColor}
                   opacity="0.2"
                 />
               )}
-
-              {/* Node circle */}
               <circle
-                cx={node.x} cy={node.y} r={nodeR}
-                fill={isSelected ? islandColor : hasEncounters ? 'var(--color-surface)' : 'var(--color-panel)'}
-                stroke={isSelected ? islandColor : hasEncounters ? 'var(--color-border)' : 'var(--color-border)'}
+                cx={node.x}
+                cy={node.y}
+                r={radius}
+                fill={
+                  isSelected
+                    ? accentColor
+                    : node.hasEncounters
+                      ? "var(--color-surface)"
+                      : "var(--color-panel)"
+                }
+                stroke={isSelected ? accentColor : "var(--color-border)"}
                 strokeWidth={isSelected ? 2 : 1.5}
               />
-
-              {/* Completion arc ring */}
               <CompletionArc
-                cx={node.x} cy={node.y}
-                r={nodeR + 3}
-                caught={completion.caught}
-                total={completion.total}
-                color={islandColor}
+                cx={node.x}
+                cy={node.y}
+                radius={radius + 3}
+                owned={node.completion?.owned ?? 0}
+                total={node.completion?.total ?? 0}
+                color={accentColor}
               />
-
-              {/* Dot inside node */}
-              {hasEncounters && !isSelected && (
-                <circle cx={node.x} cy={node.y} r={2.5} fill={islandColor} opacity="0.8"/>
+              {node.hasEncounters && !isSelected && (
+                <circle
+                  cx={node.x}
+                  cy={node.y}
+                  r="2.5"
+                  fill={accentColor}
+                  opacity="0.8"
+                />
               )}
-
-              {/* Label */}
               <text
                 x={node.x}
-                y={node.y + nodeR + 12}
+                y={node.y + radius + 12}
                 textAnchor="middle"
                 fontSize="8"
                 fontFamily="var(--font-game)"
-                fontWeight={isSelected ? '800' : '600'}
-                fill={isSelected ? islandColor : 'var(--color-text-muted)'}
+                fontWeight={isSelected ? "800" : "600"}
+                fill={isSelected ? accentColor : "var(--color-text-muted)"}
               >
                 {node.label}
               </text>
             </g>
-          );
+          )
         })}
       </svg>
     </div>
-  );
+  )
 }

@@ -1,0 +1,57 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start LuxDex",
+      "type": "shell",
+      "command": "${workspaceFolder}\\docker\\run.ps1",
+      "args": ["-Start"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Stop LuxDex",
+      "type": "shell",
+      "command": "${workspaceFolder}\\docker\\run.ps1",
+      "args": ["-Stop"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Restart LuxDex",
+      "type": "shell",
+      "command": "${workspaceFolder}\\docker\\run.ps1",
+      "args": ["-Restart"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Rebuild LuxDex",
+      "type": "shell",
+      "command": "${workspaceFolder}\\docker\\run.ps1",
+      "args": ["-Rebuild"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Blowaway LuxDex",
+      "type": "shell",
+      "command": "${workspaceFolder}\\docker\\run.ps1",
+      "args": ["-Blowaway"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Backend local run",
+      "type": "shell",
+      "command": "${config:python.defaultInterpreterPath}",
+      "args": ["-m", "uvicorn", "app.main:app", "--reload", "--port", "52031"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    },
+    {
+      "label": "Backend tests",
+      "type": "shell",
+      "command": "${config:python.defaultInterpreterPath}",
+      "args": ["-m", "pytest", "-c", "build/pyproject.toml"],
+      "options": { "cwd": "${workspaceFolder}" },
+      "problemMatcher": []
+    }
+  ]
+}
+

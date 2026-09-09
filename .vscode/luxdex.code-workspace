@@ -1,0 +1,15 @@
+{
+  "folders": [
+    {
+      "name": "LuxDex",
+      "path": ".."
+    }
+  ],
+  "settings": {
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venvs/app/Scripts/python.exe",
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": ["-c", "build/pyproject.toml"],
+    "typescript.tsdk": "web/node_modules/typescript/lib"
+  }
+}
+

@@ -1,0 +1,17 @@
+**
+!web/
+!web/index.html
+!web/package.json
+!web/pnpm-lock.yaml
+!web/tsconfig.json
+!web/vite.config.ts
+!web/src/
+!web/src/**
+!web/public/
+!web/public/**
+!docker/
+!docker/web/
+!docker/web/nginx.conf
+web/node_modules/
+web/dist/
+web/.vite/

@@ -1,114 +1,122 @@
-import type { Encounter } from '../data/types';
-import type { TrackStatus } from '../data/types';
-import { getSpriteUrl } from '../data/sprites';
+import type { PokemonCardModel, PokemonStatus } from "../types/presentation"
+import { formatSlots } from "../lib/format"
+import PokemonArtwork, { PokeBallIcon, SeenIcon } from "./PokemonArtwork"
 
-interface Props {
-  encounter: Encounter;
-  status: TrackStatus;
-  onAdvance: () => void;
-  onClick: () => void;
+interface PokeTileProps {
+  pokemon: PokemonCardModel
+  onSelect?: (pokemon: PokemonCardModel) => void
+  onStatusAction?: (pokemonId: string, status: PokemonStatus) => void
+  compact?: boolean
 }
+export default function PokeTile({
+  pokemon,
+  onSelect,
+  onStatusAction,
+  compact = false,
+}: PokeTileProps) {
+  const isOwned = pokemon.status === "owned"
+  const isSeen = pokemon.status === "seen"
+  const isUnseen = pokemon.status === "unseen"
+  const nextStatus: PokemonStatus = isUnseen ? "seen" : "owned"
+  const slotLabel = formatSlots(pokemon.sosSlots)
 
-// Small inline Poké Ball SVG for the Owned badge
-function PokeBall({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 20 20" fill="none">
-      <circle cx="10" cy="10" r="9" fill="#FBBF24" stroke="white" strokeWidth="1.5"/>
-      <path d="M1.5 10h17M10 1.5a8.5 8.5 0 0 1 0 17" stroke="white" strokeWidth="1.5"/>
-      <circle cx="10" cy="10" r="3" fill="white" stroke="white" strokeWidth="1"/>
-      <circle cx="10" cy="10" r="1.5" fill="#FBBF24"/>
-    </svg>
-  );
-}
-
-export default function PokeTile({ encounter, status, onAdvance, onClick }: Props) {
-  const spriteUrl = getSpriteUrl(encounter.pokemon.key);
-  const isOwned = status === 'caught';
-  const isSeen = status === 'seen';
-  const isUnseen = status === 'unseen';
-
-  // Sprite visual treatment per status
-  const spriteFilter = isUnseen
-    ? 'brightness(0) opacity(0.55)'
-    : isSeen
-    ? 'saturate(0) opacity(0.5)'
-    : 'none';
-
-  // Tile ring/border per status
   const tileRing = isOwned
-    ? 'ring-2 ring-[var(--color-owned)]'
+    ? "ring-2 ring-[var(--color-owned)]"
     : isSeen
-    ? 'ring-1 ring-[var(--color-seen)]'
-    : 'ring-1 ring-[var(--color-border)]';
-
-  const tileBg = isOwned
-    ? 'bg-[var(--color-owned-soft)]'
+      ? "ring-1 ring-[var(--color-seen)]"
+      : pokemon.isRare
+        ? "ring-2 ring-[var(--color-sos-rare)]"
+        : "ring-1 ring-[var(--color-border)]"
+  const tileBackground = isOwned
+    ? "bg-[var(--color-owned-soft)]"
     : isSeen
-    ? 'bg-[var(--color-seen-soft)]'
-    : 'bg-[var(--color-surface)]';
-
-  const actionLabel = isOwned ? null : isSeen ? 'Own' : 'Seen';
-  const actionColor = isSeen
-    ? 'bg-[var(--color-owned-soft)] text-[var(--color-owned)] hover:opacity-80'
-    : 'bg-[var(--color-seen-soft)] text-[var(--color-seen)] hover:opacity-80';
+      ? "bg-[var(--color-seen-soft)]"
+      : "bg-[var(--color-surface)]"
 
   return (
     <div
-      className={`relative flex flex-col items-center rounded-xl p-1.5 cursor-pointer select-none transition-all duration-150 shadow-sm hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 ${tileRing} ${tileBg}`}
-      onClick={onClick}
+      className={`relative flex select-none flex-col items-center rounded-xl p-1.5 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:shadow-lg ${tileRing} ${tileBackground} ${
+        onSelect ? "cursor-pointer" : ""
+      }`}
+      onClick={() => onSelect?.(pokemon)}
     >
-      {/* Owned badge — Poké Ball */}
-      {isOwned && (
-        <div className="absolute top-1 right-1 z-10">
-          <PokeBall className="w-4 h-4" />
-        </div>
+      {pokemon.isRare && (
+        <span className="absolute -right-1 -top-1 z-10 rounded-full bg-[var(--color-sos-rare)] px-1 py-0.5 text-[8px] font-black leading-none text-white">
+          RARE
+        </span>
       )}
-      {/* Seen badge — eye */}
+      {isOwned && (
+        <PokeBallIcon className="absolute right-1 top-1 z-10 h-4 w-4" />
+      )}
       {isSeen && (
-        <div className="absolute top-1 right-1 z-10 w-4 h-4 rounded-full bg-[var(--color-seen)] flex items-center justify-center">
-          <svg className="w-2.5 h-2.5 text-white" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-          </svg>
-        </div>
+        <span className="absolute right-1 top-1 z-10 grid h-4 w-4 place-items-center rounded-full bg-[var(--color-seen)]">
+          <SeenIcon className="h-2.5 w-2.5 text-white" />
+        </span>
       )}
 
-      {/* Sprite */}
-      <div className="w-14 h-14 flex items-center justify-center">
-        <img
-          src={spriteUrl}
-          alt={encounter.pokemon.displayName}
-          className="w-full h-full object-contain transition-all duration-200"
-          style={{ imageRendering: 'pixelated', filter: spriteFilter }}
-          onError={(e) => { (e.target as HTMLImageElement).style.opacity = '0'; }}
+      <div
+        className={
+          compact
+            ? "flex h-11 w-11 items-center justify-center"
+            : "flex h-14 w-14 items-center justify-center"
+        }
+      >
+        <PokemonArtwork
+          name={pokemon.name}
+          spriteAssetKey={pokemon.spriteAssetKey}
+          status={pokemon.status}
         />
       </div>
 
-      {/* Name — hidden while unseen */}
-      <div className="w-full text-center mt-0.5 px-0.5">
-        <div className={`text-[10px] font-bold leading-tight truncate ${isUnseen ? 'text-[var(--color-text-muted)]' : 'text-[var(--color-text)]'}`}>
-          {encounter.pokemon.displayName}
+      <div className="mt-0.5 w-full px-0.5 text-center">
+        <div
+          className={`truncate text-[10px] font-bold leading-tight ${
+            isUnseen
+              ? "text-[var(--color-text-muted)]"
+              : "text-[var(--color-text)]"
+          }`}
+        >
+          {pokemon.name}
         </div>
       </div>
 
-      {/* Rate */}
-      <div className="mt-0.5 px-1.5 py-0.5 rounded-full bg-[var(--color-panel)] text-[9px] font-semibold text-[var(--color-text-muted)]" style={{ fontFamily: 'var(--font-mono)' }}>
-        {encounter.rate}%
-      </div>
+      {pokemon.rate != null && (
+        <div className="mt-0.5 rounded-full bg-[var(--color-panel)] px-1.5 py-0.5 text-[9px] font-semibold text-[var(--color-text-muted)] [font-family:var(--font-mono)]">
+          {pokemon.rate}%
+        </div>
+      )}
 
-      {/* Quick action */}
-      {actionLabel && (
-        <button
-          className={`mt-1 w-full rounded-lg py-0.5 text-[9px] font-bold transition-opacity ${actionColor}`}
-          onClick={(e) => { e.stopPropagation(); onAdvance(); }}
+      {slotLabel && (
+        <div
+          className={`mt-0.5 text-[8px] font-semibold ${
+            pokemon.isRare
+              ? "text-[var(--color-sos-rare)]"
+              : "text-[var(--color-sos)]"
+          }`}
         >
-          {actionLabel === 'Own' ? '✓ Mark Owned' : '👁 Mark Seen'}
+          SOS {slotLabel}
+        </div>
+      )}
+
+      {onStatusAction && (
+        <button
+          className={`mt-1 w-full rounded-lg py-0.5 text-[9px] font-bold transition-opacity hover:opacity-80 ${
+            isOwned
+              ? "bg-[var(--color-owned-soft)] text-[var(--color-owned)]"
+              : isSeen
+                ? "bg-[var(--color-owned-soft)] text-[var(--color-owned)]"
+                : "bg-[var(--color-seen-soft)] text-[var(--color-seen)]"
+          }`}
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation()
+            onStatusAction(pokemon.id, nextStatus)
+          }}
+          disabled={isOwned}
+        >
+          {isOwned ? "✓ Owned" : isSeen ? "Mark Owned" : "Mark Seen"}
         </button>
       )}
-      {isOwned && (
-        <div className="mt-1 w-full rounded-lg py-0.5 text-[9px] font-bold text-center text-[var(--color-owned)] bg-[var(--color-owned-soft)]">
-          ✓ Owned
-        </div>
-      )}
     </div>
-  );
+  )
 }

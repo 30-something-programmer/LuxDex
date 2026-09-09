@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=80,<81"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "luxdex"
+dynamic = ["version"]
+description = "LuxDex backend application"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.116,<1",
+  "psycopg[binary]>=3.2,<4",
+  "uvicorn[standard]>=0.35,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "httpx>=0.28,<1",
+  "pytest>=8.4,<9",
+]
+
+[tool.setuptools]
+packages = []
+
+[tool.setuptools.dynamic]
+version = { file = ["VERSION"] }
+
+[tool.pytest.ini_options]
+testpaths = ["../tests/app"]
+pythonpath = [".."]
+

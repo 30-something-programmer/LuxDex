@@ -1,0 +1,74 @@
+name: luxdex
+
+services:
+  db:
+    build:
+      context: ..
+      dockerfile: docker/db/Dockerfile
+    image: luxdex-db:local
+    container_name: luxdex-db
+    environment:
+      POSTGRES_DB: luxdex
+      POSTGRES_USER: luxdex
+      POSTGRES_PASSWORD: ${LUXDEX_DB_PASSWORD:-luxdex-dev-only}
+    volumes:
+      - luxdex-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --username luxdex --dbname luxdex"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+    networks:
+      - internal
+
+  app:
+    build:
+      context: ..
+      dockerfile: docker/app/Dockerfile
+    image: luxdex-app:local
+    container_name: luxdex-app
+    environment:
+      DATABASE_URL: postgresql://luxdex:${LUXDEX_DB_PASSWORD:-luxdex-dev-only}@db:5432/luxdex
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "52031:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import json, urllib.request; response=json.load(urllib.request.urlopen('http://127.0.0.1:8000/health')); assert response['status'] == 'ok'"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+    networks:
+      - internal
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/web/Dockerfile
+    image: luxdex-web:local
+    container_name: luxdex-web
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - "52030:80"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--output-document=/dev/null", "http://127.0.0.1/"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
+    networks:
+      - internal
+
+volumes:
+  luxdex-db-data:
+    name: luxdex-db-data
+
+networks:
+  internal:
+    name: luxdex-internal
+    driver: bridge

@@ -1,5 +1,41 @@
-# ignore all hidden directories
-/.*
+# Python environments and caches
+.venvs/*
+!.venvs/.gitkeep
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
-# allow this file
-!.gitignore
+# Frontend dependencies and build output
+node_modules/
+web/node_modules/
+web/dist/
+web/.vite/
+*.tsbuildinfo
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+docker/.env
+
+# Development scratch space
+.dev/*
+!.dev/.gitkeep
+
+# Logs and transient runtime data
+*.log
+logs/
+*.pid
+db/.runtime/
+
+# IDE and operating-system files
+.idea/
+*.code-workspace.user
+.DS_Store
+Thumbs.db
+Desktop.ini

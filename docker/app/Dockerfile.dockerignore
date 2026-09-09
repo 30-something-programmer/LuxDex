@@ -1,0 +1,6 @@
+**
+!app/
+!app/**
+!build/
+!build/**
+

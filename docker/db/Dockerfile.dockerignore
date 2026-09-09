@@ -1,0 +1,12 @@
+**
+!db/
+!db/schema/
+!db/schema/**
+!db/data/
+!db/data/canonical/
+!db/data/canonical/**
+!docker/
+!docker/db/
+!docker/db/initdb/
+!docker/db/initdb/**
+
