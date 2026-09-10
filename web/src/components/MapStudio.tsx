@@ -366,7 +366,7 @@ export default function MapStudio({
         <h2 className="mb-3 text-lg font-black">MAP STUDIO</h2>
         <ul className="space-y-1">{tree}</ul>
       </aside>
-      <main className="flex min-w-0 flex-col p-4">
+      <main className="flex min-h-0 min-w-0 flex-col overflow-y-auto p-4">
         <div className="mb-3 flex flex-wrap items-center gap-2">
           <div className="mr-auto">
             <h3 className="font-black">
@@ -477,7 +477,7 @@ export default function MapStudio({
                 : selected?.node_type ?? "none"
           }
           aria-label={`${selected?.display_name ?? "Map Studio"} authoring canvas`}
-          className="min-h-0 flex-1 cursor-grab rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel)] active:cursor-grabbing"
+          className="min-h-[320px] w-full flex-1 cursor-grab rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel)] active:cursor-grabbing"
           onClick={(event) => {
             if (drawing && canEditPolygon) {
               pushHistory(points)
