@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS luxdex.pokemon_source_dataset (
         CHECK (data_commit_sha ~ '^[0-9a-f]{40}$'),
     CONSTRAINT pokemon_source_dataset_sprite_repository_not_blank
         CHECK (btrim(sprite_repository) <> ''),
-    CONSTRAINT pokemon_source_dataset_sprite_commit_sha_format
-        CHECK (sprite_commit_sha ~ '^[0-9a-f]{40}$'),
+    CONSTRAINT pokemon_source_dataset_sprite_commit_sha_not_blank
+        CHECK (btrim(sprite_commit_sha) <> ''),
     CONSTRAINT pokemon_source_dataset_data_license_path_not_blank
         CHECK (btrim(data_license_path) <> ''),
     CONSTRAINT pokemon_source_dataset_sprite_license_path_not_blank
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS luxdex.pokemon_source_file (
         UNIQUE (dataset_id, source_component, source_path),
     CONSTRAINT pokemon_source_file_source_order_positive CHECK (source_order > 0),
     CONSTRAINT pokemon_source_file_component_valid
-        CHECK (source_component IN ('pokeapi-data', 'pokeapi-sprites')),
+        CHECK (source_component IN ('pokeapi-data', 'pokeapi-sprites', 'local-sprite-vendor')),
     CONSTRAINT pokemon_source_file_role_valid
         CHECK (source_role IN ('data', 'license', 'manifest')),
     CONSTRAINT pokemon_source_file_path_not_blank CHECK (btrim(source_path) <> ''),
@@ -228,9 +228,9 @@ CREATE TABLE IF NOT EXISTS luxdex.pokemon_sprite_asset (
 );
 
 COMMENT ON TABLE luxdex.pokemon_source_dataset IS
-    'Pinned PokéAPI data and sprite donor revisions extending the shared source_dataset record.';
+    'Pinned PokéAPI taxonomy data plus a description of the locally vendored sprite art set, extending the shared source_dataset record.';
 COMMENT ON TABLE luxdex.pokemon_source_file IS
-    'Checksums for the minimal vendored donor files and generated sprite manifest used by one Pokémon import.';
+    'Checksums for the minimal vendored donor files and sprite-vendoring provenance note used by one Pokémon import.';
 COMMENT ON TABLE luxdex.pokemon_species IS
     'Canonical active National Pokédex species through Zeraora (#807), separate from version-specific Pokédex numbering.';
 COMMENT ON TABLE luxdex.pokemon_form IS
@@ -238,4 +238,4 @@ COMMENT ON TABLE luxdex.pokemon_form IS
 COMMENT ON TABLE luxdex.pokemon_pokedex_number IS
     'National, USUM Alola, and USUM island sub-dex memberships copied from pinned upstream relationships.';
 COMMENT ON TABLE luxdex.pokemon_sprite_asset IS
-    'An exact local Gen VII USUM front sprite mapping for a form; a missing row means no correct form-specific donor asset was found.';
+    'A locally vendored art mapping for a form; sprite_family distinguishes an exact form-specific asset from a species-default fallback used when no exact form art is vendored.';

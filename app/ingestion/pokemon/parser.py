@@ -31,11 +31,9 @@ from app.ingestion.pokemon.source_config import (
     DATA_REPOSITORY,
     REPOSITORY_ROOT,
     SOURCE_LOCK_PATH,
-    SPRITE_COMMIT_SHA,
+    SOURCE_ROOT,
     SPRITE_DESTINATION,
-    SPRITE_FAMILY,
     SPRITE_LICENSE_PATH,
-    SPRITE_REPOSITORY,
     TARGET_NATIONAL_MAX,
     TARGET_POKEDEXES,
 )
@@ -93,7 +91,7 @@ def _resolve_repository_path(relative_path: str) -> Path:
 
 def _verify_source_files(lock: dict[str, Any]) -> tuple[SourceFile, ...]:
     raw_files = _require_list(lock.get("files"), "files")
-    expected_paths = set(DATA_PATHS) | {SPRITE_LICENSE_PATH}
+    expected_paths = set(DATA_PATHS)
     actual_paths = {str(_require_mapping(row, "file").get("source_path")) for row in raw_files}
     if actual_paths != expected_paths or len(raw_files) != len(expected_paths):
         raise PokemonParseError("source lock does not contain exactly the required donor files")
@@ -162,9 +160,12 @@ def _verify_sprites(
         if dimensions != expected_dimensions:
             raise PokemonParseError(f"local sprite dimensions differ from lock: {local_path}")
         expected_filenames.add(filename)
+        sprite_family = str(row.get("sprite_family", ""))
+        if not sprite_family.strip():
+            raise PokemonParseError(f"sprite lock row is missing sprite_family: {form_key}")
         sprites[form_key] = SpriteAsset(
             form_key=form_key,
-            sprite_family=SPRITE_FAMILY,
+            sprite_family=sprite_family,
             local_path=local_path,
             upstream_path=str(row["upstream_path"]),
             sha256=expected_sha,
@@ -228,12 +229,8 @@ def parse_pokemon_source(lock_path: Path = SOURCE_LOCK_PATH) -> ParsedPokemonDat
         raise PokemonParseError("unsupported source-lock format version")
     if data_source != {"repository": DATA_REPOSITORY, "commit_sha": DATA_COMMIT_SHA}:
         raise PokemonParseError("data source provenance differs from the pinned configuration")
-    if sprite_source != {
-        "repository": SPRITE_REPOSITORY,
-        "commit_sha": SPRITE_COMMIT_SHA,
-        "family": SPRITE_FAMILY,
-    }:
-        raise PokemonParseError("sprite source provenance differs from the pinned configuration")
+    if not str(sprite_source.get("repository", "")).strip():
+        raise PokemonParseError("sprite_source.repository must be present and non-blank")
     if lock.get("acquisition_date") != ACQUISITION_DATE:
         raise PokemonParseError("source acquisition date differs from the pinned configuration")
 
@@ -386,11 +383,7 @@ def parse_pokemon_source(lock_path: Path = SOURCE_LOCK_PATH) -> ParsedPokemonDat
         for file in source_files
         if file.source_component == "pokeapi-data" and file.source_role == "license"
     )
-    sprite_license = next(
-        file.destination_path
-        for file in source_files
-        if file.source_component == "pokeapi-sprites" and file.source_role == "license"
-    )
+    sprite_license = (SOURCE_ROOT / SPRITE_LICENSE_PATH).relative_to(REPOSITORY_ROOT).as_posix()
     metadata = PokemonSourceMetadata(
         source_name=SOURCE_NAME,
         manifest_filename=lock_path.name,
@@ -402,8 +395,8 @@ def parse_pokemon_source(lock_path: Path = SOURCE_LOCK_PATH) -> ParsedPokemonDat
         parser_version=PARSER_VERSION,
         data_repository=DATA_REPOSITORY,
         data_commit_sha=DATA_COMMIT_SHA,
-        sprite_repository=SPRITE_REPOSITORY,
-        sprite_commit_sha=SPRITE_COMMIT_SHA,
+        sprite_repository=str(sprite_source["repository"]),
+        sprite_commit_sha=str(sprite_source["commit_sha"]),
         acquisition_date=date.fromisoformat(ACQUISITION_DATE),
         data_license_path=data_license,
         sprite_license_path=sprite_license,

@@ -76,10 +76,10 @@ class PokemonIdentityDatabaseTests(unittest.TestCase):
         self.assertEqual(counts.regional_forms, 18)
         self.assertEqual(counts.national_dex_entries, 807)
         self.assertEqual(counts.alola_usum_dex_entries, 403)
-        self.assertEqual(counts.local_sprites, 1069)
-        self.assertEqual(counts.form_specific_sprites, 262)
-        self.assertEqual(counts.missing_sprite_mappings, 58)
-        self.assertEqual(counts.fallback_sprites_used, 0)
+        self.assertEqual(counts.local_sprites, 1127)
+        self.assertEqual(counts.form_specific_sprites, 320)
+        self.assertEqual(counts.missing_sprite_mappings, 0)
+        self.assertEqual(counts.fallback_sprites_used, 154)
 
         second = ensure_pokemon_dataset(self.test_database_url)
         self.assertEqual(second.status, "skipped")
@@ -117,8 +117,8 @@ class PokemonIdentityDatabaseTests(unittest.TestCase):
                 """
             ).fetchone()
             self.assertEqual(metadata[0], "8dfd1e309d4a1ca11f10b185412ed7dc8dd2b310")
-            self.assertEqual(metadata[1], "712e6d9f915a1d2bdfbe991d04eea75e3ad950e7")
-            self.assertEqual(metadata[2], 12)
+            self.assertEqual(metadata[1], "n/a-vendored-locally-not-a-git-commit")
+            self.assertEqual(metadata[2], 11)
 
             spot_checks = dict(
                 connection.execute(
@@ -162,7 +162,7 @@ class PokemonIdentityDatabaseTests(unittest.TestCase):
         self.assertEqual(spot_checks["type-null"][1], "Type: Null")
         self.assertEqual(spot_checks["mr-mime"][1], "Mr. Mime")
 
-    def test_pokemon_api_ordering_filter_and_missing_sprite(self) -> None:
+    def test_pokemon_api_ordering_filter_and_fallback_sprite(self) -> None:
         with patch.dict(os.environ, {"DATABASE_URL": self.test_database_url}):
             with TestClient(app) as client:
                 def all_pages(order: str) -> list[dict[str, object]]:
@@ -186,7 +186,7 @@ class PokemonIdentityDatabaseTests(unittest.TestCase):
                 generation_seven = client.get(
                     "/api/pokemon", params={"generation": 7, "limit": 100}
                 )
-                missing_sprite = client.get("/api/pokemon/meowstic:female")
+                fallback_sprite = client.get("/api/pokemon/meowstic:female")
 
         self.assertEqual(national[0]["species_key"], "bulbasaur")
         self.assertEqual(national[-1]["species_key"], "zeraora")
@@ -195,7 +195,13 @@ class PokemonIdentityDatabaseTests(unittest.TestCase):
         names = [str(item["display_name"]).casefold() for item in alphabetical]
         self.assertEqual(names, sorted(names))
         self.assertEqual(len(generation_seven.json()["items"]), 86)
-        self.assertIsNone(missing_sprite.json()["selected_form"]["sprite_path"])
+        # meowstic:female has no exact form art in the vendored source, so it
+        # falls back to its own copy of the species-default artwork rather than
+        # having no sprite at all.
+        self.assertEqual(
+            fallback_sprite.json()["selected_form"]["sprite_path"],
+            "/assets/pokemon/sprites/meowstic-female.png",
+        )
 
     def test_complete_identity_map_is_idempotent_and_preserves_source_rows(self) -> None:
         self.assertEqual(self.identity_first.status, "loaded")
@@ -212,7 +218,7 @@ class PokemonIdentityDatabaseTests(unittest.TestCase):
                 "explicit_form_alias": 60,
                 "manual_verified": 0,
                 "unresolved": 0,
-                "mapped_targets_without_local_sprite": 1,
+                "mapped_targets_without_local_sprite": 0,
             },
         )
         with psycopg.connect(self.test_database_url) as connection:
@@ -267,15 +273,7 @@ class PokemonIdentityDatabaseTests(unittest.TestCase):
         )
         self.assertEqual(diagnostics.json()["total_raw_identities"], 570)
         self.assertEqual(diagnostics.json()["unresolved_names"], [])
-        self.assertEqual(
-            diagnostics.json()["mapped_targets_without_local_sprite"],
-            [
-                {
-                    "source_pokemon_name": "Meowstic (Forme 1)",
-                    "canonical_key": "meowstic:female",
-                }
-            ],
-        )
+        self.assertEqual(diagnostics.json()["mapped_targets_without_local_sprite"], [])
 
     def test_failed_identity_replacement_rolls_back_previous_map(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:

@@ -3,7 +3,7 @@
   "resolver_version": "1.0.0",
   "source_versions": {
     "penumbra_sha256": "14d2d30bbd3abecc45a6fd3255e920bc620b9f8ea16d797f883419ae1aefb4f4",
-    "pokemon_master_sha256": "b42daa5381483fd8453db2a37109392fbe9cc252f5fb591302fdc663d8ba9d6c",
+    "pokemon_master_sha256": "3d5405db629ca88ae2e5d67c7021622b831d07618b41fc1825213931dca6daa8",
     "alias_file": "db/data/canonical/identity/penumbra-pokemon-aliases.csv",
     "alias_sha256": "21a164b1179746dcdf48b3ebcd12aa0a85542e94bf40b55b0b8c49b99a1eae6d"
   },
@@ -26,7 +26,7 @@
     "explicit_form_alias": 60,
     "manual_verified": 0,
     "unresolved": 0,
-    "mapped_targets_without_local_sprite": 1
+    "mapped_targets_without_local_sprite": 0
   },
   "form_patterns": [
     {
@@ -166,13 +166,7 @@
     }
   ],
   "unresolved": [],
-  "mapped_targets_without_local_sprite": [
-    {
-      "source_pokemon_name": "Meowstic (Forme 1)",
-      "form_key": "meowstic:female",
-      "note": "Penumbra form index 1 is the female form; the pinned USUM sprite donor has no exact local asset for this form."
-    }
-  ],
+  "mapped_targets_without_local_sprite": [],
   "identities": [
     {
       "source_pokemon_name": "Abomasnow",
@@ -3383,7 +3377,7 @@
       "mapping_method": "explicit_form_alias",
       "form_key": "meowstic:female",
       "display_name": "Female Meowstic",
-      "local_sprite_path": null,
+      "local_sprite_path": "/assets/pokemon/sprites/meowstic-female.png",
       "mapping_note": "Penumbra form index 1 is the female form; the pinned USUM sprite donor has no exact local asset for this form."
     },
     {

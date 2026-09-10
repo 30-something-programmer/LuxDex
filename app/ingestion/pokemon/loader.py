@@ -17,6 +17,7 @@ from app.ingestion.pokemon.models import (
     PokemonRegressionCounts,
 )
 from app.ingestion.pokemon.parser import PARSER_VERSION, SOURCE_NAME, parse_pokemon_source
+from app.ingestion.pokemon.source_config import SPRITE_FALLBACK_FAMILY
 from app.ingestion.pokemon.validator import validate_pokemon_dataset
 
 LOGGER = logging.getLogger(__name__)
@@ -499,6 +500,16 @@ def fetch_persisted_pokemon_counts(
             WHERE species.dataset_id = %s AND NOT form.is_default
             """
         )
+        fallback_sprites_used = scalar(
+            """
+            SELECT count(*)
+            FROM luxdex.pokemon_sprite_asset AS sprite
+            JOIN luxdex.pokemon_form AS form ON form.id = sprite.form_id
+            JOIN luxdex.pokemon_species AS species ON species.id = form.species_id
+            WHERE species.dataset_id = %s AND sprite.sprite_family = %s
+            """,
+            (dataset_id, SPRITE_FALLBACK_FAMILY),
+        )
         dex_counts = {
             dex_key: dex_count(dex_key)
             for dex_key in (
@@ -529,7 +540,7 @@ def fetch_persisted_pokemon_counts(
         local_sprites=local_sprites,
         form_specific_sprites=form_specific_sprites,
         missing_sprite_mappings=forms - local_sprites,
-        fallback_sprites_used=0,
+        fallback_sprites_used=fallback_sprites_used,
         manifest_byte_count=int(metadata["byte_count"]),
         manifest_line_count=int(metadata["line_count"]),
         manifest_sha256=str(metadata["sha256"]),

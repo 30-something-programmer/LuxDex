@@ -6,6 +6,7 @@ from collections import Counter
 from dataclasses import dataclass
 
 from app.ingestion.pokemon.models import ParsedPokemonDataset, PokemonRegressionCounts
+from app.ingestion.pokemon.source_config import SPRITE_FALLBACK_FAMILY
 
 
 @dataclass(frozen=True, slots=True)
@@ -198,7 +199,10 @@ def calculate_pokemon_regression_counts(
         local_sprites=sum(form.sprite is not None for form in forms),
         form_specific_sprites=sum(not form.is_default and form.sprite is not None for form in forms),
         missing_sprite_mappings=len(dataset.missing_sprites),
-        fallback_sprites_used=0,
+        fallback_sprites_used=sum(
+            form.sprite is not None and form.sprite.sprite_family == SPRITE_FALLBACK_FAMILY
+            for form in forms
+        ),
         manifest_byte_count=dataset.metadata.manifest_byte_count,
         manifest_line_count=dataset.metadata.manifest_line_count,
         manifest_sha256=dataset.metadata.manifest_sha256,

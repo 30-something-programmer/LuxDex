@@ -1,4 +1,10 @@
-"""Acquire the minimal pinned PokéAPI donors and localise USUM sprites."""
+"""Acquire the minimal pinned PokéAPI taxonomy data.
+
+Sprite art is handled separately: it is vendored locally by a maintainer rather
+than acquired from a live git donor. See
+db/data/source/pokemon/local-sprite-vendor/PROVENANCE.md and
+app/ingestion/pokemon/vendor_local_sprites.py.
+"""
 
 from __future__ import annotations
 
@@ -10,7 +16,6 @@ import shutil
 import struct
 import subprocess
 import tempfile
-from collections import Counter
 from pathlib import Path
 from typing import Any, Sequence
 
@@ -21,15 +26,8 @@ from app.ingestion.pokemon.source_config import (
     DATA_REPOSITORY,
     REPOSITORY_ROOT,
     SOURCE_LOCK_PATH,
-    SPRITE_COMMIT_SHA,
-    SPRITE_DESTINATION,
-    SPRITE_DIRECTORY,
-    SPRITE_FAMILY,
-    SPRITE_LICENSE_PATH,
-    SPRITE_REPOSITORY,
     TARGET_NATIONAL_MAX,
     data_destination,
-    sprite_license_destination,
 )
 
 
@@ -156,90 +154,12 @@ def _file_record(
     }
 
 
-def _build_lock(data_stage: Path, sprite_stage: Path) -> dict[str, Any]:
-    target_forms = select_target_forms(data_stage)
-    pokemon_form_counts = Counter(int(form["pokemon_id"]) for form, _, _ in target_forms)
-    sprite_tree = set(
-        _run(
-            [
-                "git",
-                "ls-tree",
-                "-r",
-                "--name-only",
-                SPRITE_COMMIT_SHA,
-                "--",
-                SPRITE_DIRECTORY,
-            ],
-            cwd=sprite_stage,
-        ).splitlines()
-    )
+def _build_data_lock(data_stage: Path) -> dict[str, Any]:
+    """Build the taxonomy-data half of the lock (data_source + files).
 
-    sprite_rows: list[dict[str, Any]] = []
-    missing_rows: list[dict[str, Any]] = []
-    checkout_paths = [SPRITE_LICENSE_PATH]
-    for form, pokemon, species in target_forms:
-        pokemon_id = int(pokemon["id"])
-        form_identifier = form["form_identifier"]
-        is_default = pokemon["is_default"] == "1" and form["is_default"] == "1"
-        numeric_path = f"{SPRITE_DIRECTORY}/{pokemon_id}.png"
-        suffixed_path = (
-            f"{SPRITE_DIRECTORY}/{pokemon_id}-{form_identifier}.png"
-            if form_identifier
-            else None
-        )
-        if is_default:
-            candidates = [numeric_path, suffixed_path]
-        elif pokemon_form_counts[pokemon_id] > 1:
-            candidates = [suffixed_path]
-        else:
-            candidates = [numeric_path, suffixed_path]
-        upstream_path = next(
-            (candidate for candidate in candidates if candidate and candidate in sprite_tree),
-            None,
-        )
-        form_key = build_form_key(form, pokemon, species)
-        if upstream_path is None:
-            missing_rows.append(
-                {
-                    "form_key": form_key,
-                    "reason": "no exact form sprite in the pinned USUM front-default family",
-                    "checked_paths": [candidate for candidate in candidates if candidate],
-                }
-            )
-            continue
-        checkout_paths.append(upstream_path)
-        local_filename = f"{form_key.replace(':', '-')}.png"
-        sprite_rows.append(
-            {
-                "form_key": form_key,
-                "upstream_path": upstream_path,
-                "local_path": f"/assets/pokemon/sprites/{local_filename}",
-            }
-        )
-
-    sparse_file = sprite_stage / ".git" / "info" / "sparse-checkout"
-    sparse_file.write_text(
-        "".join(f"/{path}\n" for path in sorted(set(checkout_paths))),
-        encoding="utf-8",
-    )
-    _run(["git", "read-tree", "-mu", "HEAD"], cwd=sprite_stage)
-
-    local_paths: set[str] = set()
-    for row in sprite_rows:
-        source = sprite_stage / row["upstream_path"]
-        width, height = _png_dimensions(source)
-        row.update(
-            {
-                "sha256": _sha256(source),
-                "byte_count": source.stat().st_size,
-                "width": width,
-                "height": height,
-            }
-        )
-        if row["local_path"] in local_paths:
-            raise PokemonAcquisitionError(f"duplicate local sprite path {row['local_path']}")
-        local_paths.add(row["local_path"])
-
+    The sprite half (sprite_source/sprites/missing_sprites) is owned by
+    vendor_local_sprites.py and is left untouched here.
+    """
     files = [
         _file_record(
             data_stage,
@@ -250,66 +170,44 @@ def _build_lock(data_stage: Path, sprite_stage: Path) -> dict[str, Any]:
         )
         for path in DATA_PATHS
     ]
-    files.append(
-        _file_record(
-            sprite_stage,
-            "pokeapi-sprites",
-            "license",
-            SPRITE_LICENSE_PATH,
-            sprite_license_destination(),
-        )
-    )
     return {
         "format_version": 1,
         "acquisition_date": ACQUISITION_DATE,
         "data_source": {"repository": DATA_REPOSITORY, "commit_sha": DATA_COMMIT_SHA},
-        "sprite_source": {
-            "repository": SPRITE_REPOSITORY,
-            "commit_sha": SPRITE_COMMIT_SHA,
-            "family": SPRITE_FAMILY,
-        },
         "files": files,
-        "sprites": sprite_rows,
-        "missing_sprites": missing_rows,
     }
 
 
-def _publish(lock: dict[str, Any], data_stage: Path, sprite_stage: Path) -> None:
+def _publish_data(lock: dict[str, Any], data_stage: Path) -> None:
     for row in lock["files"]:
-        if row["source_component"] == "pokeapi-data":
-            source = data_stage / row["source_path"]
-        else:
-            source = sprite_stage / row["source_path"]
+        source = data_stage / row["source_path"]
         destination = REPOSITORY_ROOT / row["destination_path"]
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, destination)
 
-    SPRITE_DESTINATION.mkdir(parents=True, exist_ok=True)
-    expected_filenames = {Path(row["local_path"]).name for row in lock["sprites"]}
-    unexpected = sorted(
-        path.name
-        for path in SPRITE_DESTINATION.glob("*.png")
-        if path.name not in expected_filenames
-    )
-    if unexpected:
-        raise PokemonAcquisitionError(
-            "unexpected existing local sprite files; refusing to remove them: "
-            + ", ".join(unexpected[:20])
-        )
-    for row in lock["sprites"]:
-        source = sprite_stage / row["upstream_path"]
-        destination = SPRITE_DESTINATION / Path(row["local_path"]).name
-        shutil.copyfile(source, destination)
+
+def _read_existing_lock() -> dict[str, Any] | None:
+    if not SOURCE_LOCK_PATH.exists():
+        return None
+    return json.loads(SOURCE_LOCK_PATH.read_text(encoding="utf-8"))
 
 
 def acquire(create_lock: bool = False) -> dict[str, Any]:
     with tempfile.TemporaryDirectory(prefix="luxdex-pokemon-") as temporary_directory:
         temporary_root = Path(temporary_directory)
         data_stage = temporary_root / "pokeapi"
-        sprite_stage = temporary_root / "sprites"
         _checkout_sparse(DATA_REPOSITORY, DATA_COMMIT_SHA, DATA_PATHS, data_stage)
-        _checkout_sparse(SPRITE_REPOSITORY, SPRITE_COMMIT_SHA, (), sprite_stage)
-        candidate_lock = _build_lock(data_stage, sprite_stage)
+        candidate_data_lock = _build_data_lock(data_stage)
+        existing_lock = _read_existing_lock()
+        sprite_section = {
+            key: (existing_lock or {}).get(key, default)
+            for key, default in (
+                ("sprite_source", {}),
+                ("sprites", []),
+                ("missing_sprites", []),
+            )
+        }
+        candidate_lock = {**candidate_data_lock, **sprite_section}
 
         if create_lock:
             SOURCE_LOCK_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -318,23 +216,25 @@ def acquire(create_lock: bool = False) -> dict[str, Any]:
                 encoding="utf-8",
             )
         else:
-            if not SOURCE_LOCK_PATH.exists():
+            if existing_lock is None:
                 raise PokemonAcquisitionError(
                     f"source lock is missing: {SOURCE_LOCK_PATH}; a deliberate maintainer update is required"
                 )
-            expected_lock = json.loads(SOURCE_LOCK_PATH.read_text(encoding="utf-8"))
-            if candidate_lock != expected_lock:
+            expected_data_lock = {
+                key: existing_lock[key]
+                for key in ("format_version", "acquisition_date", "data_source", "files")
+            }
+            if candidate_data_lock != expected_data_lock:
                 raise PokemonAcquisitionError(
-                    "pinned donor content differs from source-lock.json; refusing to publish"
+                    "pinned taxonomy donor content differs from source-lock.json; refusing to publish"
                 )
 
-        _publish(candidate_lock, data_stage, sprite_stage)
+        _publish_data(candidate_lock, data_stage)
         return {
             "data_commit_sha": DATA_COMMIT_SHA,
-            "sprite_commit_sha": SPRITE_COMMIT_SHA,
             "source_files": len(candidate_lock["files"]),
-            "local_sprites": len(candidate_lock["sprites"]),
-            "missing_sprites": len(candidate_lock["missing_sprites"]),
+            "local_sprites": len(candidate_lock.get("sprites", [])),
+            "missing_sprites": len(candidate_lock.get("missing_sprites", [])),
         }
 
 

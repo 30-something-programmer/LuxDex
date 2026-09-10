@@ -33,6 +33,10 @@ logs/
 *.pid
 db/.runtime/
 
+# Locally vendored sprite art (unlicensed third-party source; see
+# db/data/source/pokemon/local-sprite-vendor/PROVENANCE.md). Not committed.
+/web/public/assets/pokemon/sprites/*.png
+
 # IDE and operating-system files
 .idea/
 *.code-workspace.user

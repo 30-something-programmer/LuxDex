@@ -11,8 +11,6 @@ SPRITE_DESTINATION = REPOSITORY_ROOT / "web" / "public" / "assets" / "pokemon" /
 
 DATA_REPOSITORY = "https://github.com/PokeAPI/pokeapi.git"
 DATA_COMMIT_SHA = "8dfd1e309d4a1ca11f10b185412ed7dc8dd2b310"
-SPRITE_REPOSITORY = "https://github.com/PokeAPI/sprites.git"
-SPRITE_COMMIT_SHA = "712e6d9f915a1d2bdfbe991d04eea75e3ad950e7"
 ACQUISITION_DATE = "2026-09-09"
 
 DATA_PATHS = (
@@ -28,9 +26,16 @@ DATA_PATHS = (
     "data/v2/csv/pokedex_prose.csv",
     "data/v2/csv/pokemon_dex_numbers.csv",
 )
-SPRITE_LICENSE_PATH = "LICENCE.txt"
-SPRITE_DIRECTORY = "sprites/pokemon/versions/generation-vii/ultra-sun-ultra-moon"
-SPRITE_FAMILY = "generation-vii/ultra-sun-ultra-moon/front-default"
+
+# Sprite art is no longer acquired from a live pinned git donor. It is vendored locally
+# (copied onto disk by a maintainer, outside of version control - see
+# db/data/source/pokemon/local-sprite-vendor/PROVENANCE.md) and referenced here only by
+# description; there is no repository/commit to check out.
+SPRITE_REPOSITORY = "local-vendor"
+SPRITE_COMMIT_SHA = "n/a-vendored-locally-not-a-git-commit"
+SPRITE_LICENSE_PATH = "local-sprite-vendor/PROVENANCE.md"
+SPRITE_FAMILY = "vendored-local/hd-box-art"
+SPRITE_FALLBACK_FAMILY = "vendored-local/hd-box-art-fallback"
 
 TARGET_NATIONAL_MAX = 807
 TARGET_POKEDEXES = {
@@ -48,5 +53,5 @@ def data_destination(relative_path: str) -> Path:
 
 
 def sprite_license_destination() -> Path:
-    return SOURCE_ROOT / "pokeapi-sprites" / SPRITE_COMMIT_SHA / SPRITE_LICENSE_PATH
+    return SOURCE_ROOT / SPRITE_LICENSE_PATH
 
