@@ -234,6 +234,21 @@ def parse_pokemon_source(lock_path: Path = SOURCE_LOCK_PATH) -> ParsedPokemonDat
     if lock.get("acquisition_date") != ACQUISITION_DATE:
         raise PokemonParseError("source acquisition date differs from the pinned configuration")
 
+    # The taxonomy replacement decision (loader.py) must depend only on the
+    # taxonomy-relevant portion of the lock, not on sprites: sprite art changes
+    # far more often than taxonomy, and a taxonomy "replace" tears down and
+    # recreates every pokemon_species/pokemon_form row, which is incompatible
+    # with pokemon_collection_state's foreign key once real collection data
+    # exists. See loader.py's ensure_pokemon_dataset/​_sync_sprite_assets.
+    taxonomy_manifest = {
+        "format_version": lock.get("format_version"),
+        "acquisition_date": lock.get("acquisition_date"),
+        "data_source": data_source,
+        "files": lock.get("files"),
+    }
+    taxonomy_manifest_text = json.dumps(taxonomy_manifest, sort_keys=True)
+    taxonomy_manifest_bytes = taxonomy_manifest_text.encode("utf-8")
+
     source_files = _verify_source_files(lock)
     sprites, missing_sprites = _verify_sprites(lock)
     file_paths = {
@@ -377,7 +392,6 @@ def parse_pokemon_source(lock_path: Path = SOURCE_LOCK_PATH) -> ParsedPokemonDat
             f"missing={sorted(form_keys - locked_keys)[:10]}, extra={sorted(locked_keys - form_keys)[:10]}"
         )
 
-    manifest_text = raw_manifest.decode("utf-8")
     data_license = next(
         file.destination_path
         for file in source_files
@@ -388,10 +402,12 @@ def parse_pokemon_source(lock_path: Path = SOURCE_LOCK_PATH) -> ParsedPokemonDat
         source_name=SOURCE_NAME,
         manifest_filename=lock_path.name,
         manifest_path=lock_path.resolve(),
-        manifest_sha256=hashlib.sha256(raw_manifest).hexdigest(),
-        manifest_byte_count=len(raw_manifest),
-        manifest_line_count=len(manifest_text.splitlines()),
-        manifest_nonblank_line_count=sum(bool(line.strip()) for line in manifest_text.splitlines()),
+        manifest_sha256=hashlib.sha256(taxonomy_manifest_bytes).hexdigest(),
+        manifest_byte_count=len(taxonomy_manifest_bytes),
+        manifest_line_count=len(taxonomy_manifest_text.splitlines()),
+        manifest_nonblank_line_count=sum(
+            bool(line.strip()) for line in taxonomy_manifest_text.splitlines()
+        ),
         parser_version=PARSER_VERSION,
         data_repository=DATA_REPOSITORY,
         data_commit_sha=DATA_COMMIT_SHA,

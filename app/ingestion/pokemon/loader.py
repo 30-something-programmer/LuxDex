@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import hashlib
 import logging
 from typing import Any
 
@@ -28,34 +27,14 @@ def _log_event(event: str, **fields: Any) -> None:
 
 
 def ensure_pokemon_dataset(database_url: str | None = None) -> PokemonLoadResult:
-    from app.ingestion.pokemon.source_config import SOURCE_LOCK_PATH
-
-    raw_manifest = SOURCE_LOCK_PATH.read_bytes()
-    manifest_sha = hashlib.sha256(raw_manifest).hexdigest()
-    _log_event(
-        "pokemon_source_opened",
-        path=SOURCE_LOCK_PATH,
-        sha256=manifest_sha,
-        byte_count=len(raw_manifest),
-    )
-
-    with connect_database(database_url) as connection:
-        existing = _find_dataset(connection)
-        if (
-            existing
-            and existing["sha256"] == manifest_sha
-            and existing["parser_version"] == PARSER_VERSION
-        ):
-            counts = fetch_persisted_pokemon_counts(connection, existing["id"])
-            _log_event(
-                "pokemon_dataset_skipped_unchanged",
-                dataset_id=existing["id"],
-                sha256=manifest_sha,
-                species=counts.species,
-                forms=counts.forms,
-            )
-            return PokemonLoadResult("skipped", existing["id"], counts)
-
+    # Sprite art changes far more often than taxonomy (species/forms/pokedex
+    # numbers), so the parsed manifest_sha256 only fingerprints the taxonomy
+    # portion of the lock (see parser.py). A taxonomy-unchanged run still
+    # reconciles pokemon_sprite_asset rows via _sync_sprite_assets below,
+    # without touching pokemon_species/pokemon_form - a full "replace" there
+    # would delete and recreate every form row, which pokemon_collection_state's
+    # foreign key (deliberately, to protect a profile's Seen/Owned history)
+    # refuses once any real collection data references those forms.
     _log_event("pokemon_parse_started", parser_version=PARSER_VERSION)
     dataset = parse_pokemon_source()
     _log_event(
@@ -81,6 +60,7 @@ def ensure_pokemon_dataset(database_url: str | None = None) -> PokemonLoadResult
                     and current["sha256"] == dataset.metadata.manifest_sha256
                     and current["parser_version"] == PARSER_VERSION
                 ):
+                    sprite_changes = _sync_sprite_assets(cursor, current["id"], dataset)
                     counts = fetch_persisted_pokemon_counts(connection, current["id"])
                     _log_event(
                         "pokemon_dataset_skipped_unchanged",
@@ -88,6 +68,7 @@ def ensure_pokemon_dataset(database_url: str | None = None) -> PokemonLoadResult
                         sha256=dataset.metadata.manifest_sha256,
                         species=counts.species,
                         forms=counts.forms,
+                        sprite_changes=sprite_changes,
                     )
                     return PokemonLoadResult("skipped", current["id"], counts)
 
@@ -130,6 +111,89 @@ def _find_dataset(connection: Connection) -> dict[str, Any] | None:
             (SOURCE_NAME,),
         )
         return cursor.fetchone()
+
+
+def _sync_sprite_assets(cursor: Any, dataset_id: int, dataset: ParsedPokemonDataset) -> dict[str, int]:
+    """Reconcile pokemon_sprite_asset with the parsed dataset for an unchanged
+    taxonomy, without touching pokemon_species/pokemon_form (see the note in
+    ensure_pokemon_dataset for why that matters)."""
+    cursor.execute(
+        """
+        SELECT form.id, form.form_key
+        FROM luxdex.pokemon_form AS form
+        JOIN luxdex.pokemon_species AS species ON species.id = form.species_id
+        WHERE species.dataset_id = %s
+        """,
+        (dataset_id,),
+    )
+    form_ids = {row["form_key"]: row["id"] for row in cursor.fetchall()}
+
+    expected: dict[int, tuple[Any, ...]] = {}
+    for species in dataset.species:
+        for form in species.forms:
+            if form.sprite is None:
+                continue
+            expected[form_ids[form.form_key]] = (
+                form.sprite.sprite_family,
+                form.sprite.local_path,
+                form.sprite.upstream_path,
+                form.sprite.sha256,
+                form.sprite.byte_count,
+                form.sprite.width,
+                form.sprite.height,
+            )
+
+    cursor.execute(
+        """
+        SELECT form_id, sprite_family, local_path, upstream_path, sha256, byte_count, width, height
+        FROM luxdex.pokemon_sprite_asset
+        WHERE form_id = ANY(%s)
+        """,
+        (list(form_ids.values()),),
+    )
+    existing = {
+        row["form_id"]: (
+            row["sprite_family"],
+            row["local_path"],
+            row["upstream_path"],
+            row["sha256"],
+            row["byte_count"],
+            row["width"],
+            row["height"],
+        )
+        for row in cursor.fetchall()
+    }
+
+    to_delete = [form_id for form_id in existing if form_id not in expected]
+    to_upsert = [
+        (form_id, *values) for form_id, values in expected.items() if existing.get(form_id) != values
+    ]
+
+    if to_delete:
+        cursor.execute(
+            "DELETE FROM luxdex.pokemon_sprite_asset WHERE form_id = ANY(%s)",
+            (to_delete,),
+        )
+    if to_upsert:
+        cursor.executemany(
+            """
+            INSERT INTO luxdex.pokemon_sprite_asset (
+                form_id, sprite_family, local_path, upstream_path, sha256, byte_count, width, height
+            )
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            ON CONFLICT (form_id) DO UPDATE SET
+                sprite_family = EXCLUDED.sprite_family,
+                local_path = EXCLUDED.local_path,
+                upstream_path = EXCLUDED.upstream_path,
+                sha256 = EXCLUDED.sha256,
+                byte_count = EXCLUDED.byte_count,
+                width = EXCLUDED.width,
+                height = EXCLUDED.height
+            """,
+            to_upsert,
+        )
+
+    return {"deleted": len(to_delete), "upserted": len(to_upsert)}
 
 
 def _insert_source(cursor: Any, dataset: ParsedPokemonDataset) -> int:

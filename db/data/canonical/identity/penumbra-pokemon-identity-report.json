@@ -3,7 +3,7 @@
   "resolver_version": "1.0.0",
   "source_versions": {
     "penumbra_sha256": "14d2d30bbd3abecc45a6fd3255e920bc620b9f8ea16d797f883419ae1aefb4f4",
-    "pokemon_master_sha256": "3d5405db629ca88ae2e5d67c7021622b831d07618b41fc1825213931dca6daa8",
+    "pokemon_master_sha256": "1627d26e3b609508ccab1a01139da3b27eeeaaba671e39ee191c39d2e7e56b4d",
     "alias_file": "db/data/canonical/identity/penumbra-pokemon-aliases.csv",
     "alias_sha256": "21a164b1179746dcdf48b3ebcd12aa0a85542e94bf40b55b0b8c49b99a1eae6d"
   },
