@@ -65,8 +65,23 @@ export default function MapStudio({
     null,
   )
   const [message, setMessage] = useState("Loading presentation data…")
+  const [view, setView] = useState({ x: 0, y: 0, width: 1000, height: 700 })
+  const [historySize, setHistorySize] = useState(0)
+  const historyRef = useRef<number[][][]>([])
   const canvasRef = useRef<SVGSVGElement>(null)
   const clipId = `studio-${useId().replace(/:/g, "")}`
+
+  const pushHistory = (snapshot: number[][]) => {
+    historyRef.current = [...historyRef.current, snapshot.map((point) => [...point])].slice(-50)
+    setHistorySize(historyRef.current.length)
+  }
+  const undo = () => {
+    if (historyRef.current.length === 0) return
+    const previous = historyRef.current[historyRef.current.length - 1]
+    historyRef.current = historyRef.current.slice(0, -1)
+    setHistorySize(historyRef.current.length)
+    setPoints(previous)
+  }
 
   const reload = () =>
     getMapStudio()
@@ -122,6 +137,9 @@ export default function MapStudio({
     setSelectedPoint(null)
     setDrawing(false)
     setHoveredOverviewKey(null)
+    setView({ x: 0, y: 0, width: 1000, height: 700 })
+    historyRef.current = []
+    setHistorySize(0)
   }, [selectedKey, selected?.geometry])
 
   const children = (parentKey: string | null) =>
@@ -138,12 +156,63 @@ export default function MapStudio({
         : "No authored world-map asset is configured."
   const canvasPoint = (clientX: number, clientY: number) => {
     const bounds = canvasRef.current!.getBoundingClientRect()
-    return [
-      Math.max(0, Math.min(1, (clientX - bounds.left) / bounds.width)),
-      Math.max(0, Math.min(1, (clientY - bounds.top) / bounds.height)),
-    ]
+    const fracX = (clientX - bounds.left) / bounds.width
+    const fracY = (clientY - bounds.top) / bounds.height
+    const vbX = view.x + fracX * view.width
+    const vbY = view.y + fracY * view.height
+    return [Math.max(0, Math.min(1, vbX / 1000)), Math.max(0, Math.min(1, vbY / 700))]
   }
   const pointString = svgPoints(points)
+
+  useEffect(() => {
+    const el = canvasRef.current
+    if (!el) return
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault()
+      const bounds = el.getBoundingClientRect()
+      const fracX = (event.clientX - bounds.left) / bounds.width
+      const fracY = (event.clientY - bounds.top) / bounds.height
+      setView((current) => {
+        const pointerX = current.x + fracX * current.width
+        const pointerY = current.y + fracY * current.height
+        const scale = event.deltaY > 0 ? 1.1 : 0.9
+        const newWidth = Math.min(3000, Math.max(50, current.width * scale))
+        const newHeight = newWidth * (700 / 1000)
+        return {
+          x: pointerX - fracX * newWidth,
+          y: pointerY - fracY * newHeight,
+          width: newWidth,
+          height: newHeight,
+        }
+      })
+    }
+    el.addEventListener("wheel", handleWheel, { passive: false })
+    return () => el.removeEventListener("wheel", handleWheel)
+  }, [trial])
+
+  const startPan = (event: React.PointerEvent<SVGSVGElement>) => {
+    if (event.button !== 2) return
+    event.preventDefault()
+    const bounds = canvasRef.current!.getBoundingClientRect()
+    const startClientX = event.clientX
+    const startClientY = event.clientY
+    const startView = view
+    const move = (moveEvent: PointerEvent) => {
+      const dxFrac = (moveEvent.clientX - startClientX) / bounds.width
+      const dyFrac = (moveEvent.clientY - startClientY) / bounds.height
+      setView({
+        ...startView,
+        x: startView.x - dxFrac * startView.width,
+        y: startView.y - dyFrac * startView.height,
+      })
+    }
+    const up = () => {
+      window.removeEventListener("pointermove", move)
+      window.removeEventListener("pointerup", up)
+    }
+    window.addEventListener("pointermove", move)
+    window.addEventListener("pointerup", up)
+  }
 
   const tree = useMemo(() => {
     const render = (node: StudioNodeResponse): React.ReactNode => (
@@ -319,6 +388,7 @@ export default function MapStudio({
             className="rounded-lg bg-[var(--color-panel)] px-3 py-2 text-xs font-bold disabled:opacity-35"
             disabled={!canEditPolygon}
             onClick={() => {
+              pushHistory(points)
               setPoints([])
               setDrawing(true)
             }}
@@ -337,13 +407,22 @@ export default function MapStudio({
             disabled={
               !canEditPolygon || selectedPoint == null || points.length <= 3
             }
-            onClick={() =>
+            onClick={() => {
+              pushHistory(points)
               setPoints((current) =>
                 current.filter((_, index) => index !== selectedPoint),
               )
-            }
+            }}
           >
             Remove point
+          </button>
+          <button
+            className="rounded-lg bg-[var(--color-panel)] px-3 py-2 text-xs font-bold disabled:opacity-35"
+            disabled={historySize === 0}
+            onClick={undo}
+            title={`Undo (${historySize} action${historySize === 1 ? "" : "s"} available)`}
+          >
+            Undo
           </button>
           <button
             className="rounded-lg border border-[var(--color-danger)] px-3 py-2 text-xs font-bold text-[var(--color-danger)]"
@@ -388,7 +467,7 @@ export default function MapStudio({
         )}
         <svg
           ref={canvasRef}
-          viewBox="0 0 1000 700"
+          viewBox={`${view.x} ${view.y} ${view.width} ${view.height}`}
           data-testid="studio-canvas"
           data-context={
             isIslandOverview
@@ -398,14 +477,18 @@ export default function MapStudio({
                 : selected?.node_type ?? "none"
           }
           aria-label={`${selected?.display_name ?? "Map Studio"} authoring canvas`}
-          className="min-h-0 flex-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel)]"
+          className="min-h-0 flex-1 cursor-grab rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel)] active:cursor-grabbing"
           onClick={(event) => {
-            if (drawing && canEditPolygon)
+            if (drawing && canEditPolygon) {
+              pushHistory(points)
               setPoints((current) => [
                 ...current,
                 canvasPoint(event.clientX, event.clientY),
               ])
+            }
           }}
+          onContextMenu={(event) => event.preventDefault()}
+          onPointerDown={startPan}
           onDragOver={(event) => event.preventDefault()}
           onDrop={(event) => {
             const key = event.dataTransfer.getData("text/canonical-key")
@@ -563,6 +646,7 @@ export default function MapStudio({
               onPointerDown={(event) => {
                 event.stopPropagation()
                 setSelectedPoint(index)
+                pushHistory(points)
                 const move = (moveEvent: PointerEvent) => {
                   const [nx, ny] = canvasPoint(
                     moveEvent.clientX,
