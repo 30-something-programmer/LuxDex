@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useId, useMemo, useRef, useState } from "react"
 import {
   deleteStudioGeometry,
   getMapStudio,
@@ -19,6 +19,38 @@ const emptyDocument: StudioDocumentResponse = {
   placements: [],
 }
 
+interface GeometryBounds {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+const geometryBounds = (
+  geometry: number[][] | null | undefined,
+): GeometryBounds => {
+  if (!geometry?.length) return { x: 0, y: 0, width: 1, height: 1 }
+  const xs = geometry.map(([x]) => x)
+  const ys = geometry.map(([, y]) => y)
+  const x = Math.min(...xs)
+  const y = Math.min(...ys)
+  return {
+    x,
+    y,
+    width: Math.max(Math.max(...xs) - x, Number.EPSILON),
+    height: Math.max(Math.max(...ys) - y, Number.EPSILON),
+  }
+}
+
+const pointsInBounds = (geometry: number[][], bounds: GeometryBounds) =>
+  geometry.map(([x, y]) => [
+    (x - bounds.x) / bounds.width,
+    (y - bounds.y) / bounds.height,
+  ])
+
+const svgPoints = (geometry: number[][], width = 1000, height = 700) =>
+  geometry.map(([x, y]) => `${x * width},${y * height}`).join(" ")
+
 export default function MapStudio({
   onCollectionChange,
   onDocumentChange,
@@ -29,8 +61,12 @@ export default function MapStudio({
   const [selectedPoint, setSelectedPoint] = useState<number | null>(null)
   const [drawing, setDrawing] = useState(false)
   const [trial, setTrial] = useState(false)
+  const [hoveredOverviewKey, setHoveredOverviewKey] = useState<string | null>(
+    null,
+  )
   const [message, setMessage] = useState("Loading presentation data…")
   const canvasRef = useRef<SVGSVGElement>(null)
+  const clipId = `studio-${useId().replace(/:/g, "")}`
 
   const reload = () =>
     getMapStudio()
@@ -49,10 +85,43 @@ export default function MapStudio({
   const parent =
     document.nodes.find((node) => node.node_key === selected?.parent_key) ??
     null
+  const island =
+    selected?.node_type === "island"
+      ? selected
+      : selected?.node_type === "location"
+        ? parent
+        : selected?.node_type === "zone"
+          ? (document.nodes.find(
+              (node) => node.node_key === parent?.parent_key,
+            ) ?? null)
+          : null
+  const mapAsset = island?.asset_path ?? null
+  const isIslandOverview = selected?.node_type === "island"
+  const canEditPolygon = (selected?.layer ?? 0) >= 3
+  const overviewRegions = isIslandOverview
+    ? document.nodes.filter(
+        (node) =>
+          node.parent_key === selected.node_key &&
+          node.node_type === "location" &&
+          node.geometry,
+      )
+    : []
+  const hoveredOverview = overviewRegions.find(
+    (node) => node.node_key === hoveredOverviewKey,
+  )
+  const cropBounds =
+    selected?.node_type === "zone" && parent?.geometry
+      ? geometryBounds(parent.geometry)
+      : null
+  const parentBoundary =
+    cropBounds && parent?.geometry
+      ? pointsInBounds(parent.geometry, cropBounds)
+      : null
   useEffect(() => {
     setPoints(selected?.geometry?.map((point) => [...point]) ?? [])
     setSelectedPoint(null)
     setDrawing(false)
+    setHoveredOverviewKey(null)
   }, [selectedKey, selected?.geometry])
 
   const children = (parentKey: string | null) =>
@@ -60,6 +129,13 @@ export default function MapStudio({
   const zonePokemon = document.pokemon.filter(
     (item) => item.zone_node_key === selectedKey,
   )
+  const contextHelp = isIslandOverview
+    ? "Island overview · move over a mapped location to highlight its complete boundary."
+    : selected?.node_type === "zone"
+      ? `Zoomed crop of ${parent?.display_name ?? "the parent location"} · zone coordinates remain relative to this boundary.`
+      : selected?.node_type === "location"
+        ? `Editing ${selected.display_name} within the full ${parent?.display_name ?? "island"} boundary.`
+        : "No authored world-map asset is configured."
   const canvasPoint = (clientX: number, clientY: number) => {
     const bounds = canvasRef.current!.getBoundingClientRect()
     return [
@@ -67,7 +143,7 @@ export default function MapStudio({
       Math.max(0, Math.min(1, (clientY - bounds.top) / bounds.height)),
     ]
   }
-  const pointString = points.map(([x, y]) => `${x * 1000},${y * 700}`).join(" ")
+  const pointString = svgPoints(points)
 
   const tree = useMemo(() => {
     const render = (node: StudioNodeResponse): React.ReactNode => (
@@ -110,23 +186,13 @@ export default function MapStudio({
     const trialParent = document.nodes.find(
       (node) => node.node_key === trialZone?.parent_key,
     )
-    const bounds = (geometry: number[][] | null | undefined) => {
-      const xs = geometry?.map(([x]) => x) ?? [0, 1]
-      const ys = geometry?.map(([, y]) => y) ?? [0, 1]
-      return {
-        x: Math.min(...xs),
-        y: Math.min(...ys),
-        width: Math.max(...xs) - Math.min(...xs),
-        height: Math.max(...ys) - Math.min(...ys),
-      }
-    }
-    const parentBounds = bounds(trialParent?.geometry)
+    const parentBounds = geometryBounds(trialParent?.geometry)
     const zoneInIsland =
       trialZone?.geometry?.map(([x, y]) => [
         parentBounds.x + x * parentBounds.width,
         parentBounds.y + y * parentBounds.height,
       ]) ?? []
-    const zoneBounds = bounds(zoneInIsland)
+    const zoneBounds = geometryBounds(zoneInIsland)
     return (
       <div className="flex h-full flex-col bg-[var(--color-bg)] p-4">
         <div className="mb-3 flex items-center justify-between">
@@ -241,9 +307,17 @@ export default function MapStudio({
               Parent boundary: {parent?.display_name ?? "none"} · normalised 0–1
               coordinates
             </p>
+            <p
+              data-testid="studio-context-help"
+              className="text-[10px] font-bold text-[var(--color-melemele)]"
+            >
+              {contextHelp}
+              {hoveredOverview && ` Hovering: ${hoveredOverview.display_name}`}
+            </p>
           </div>
           <button
-            className="rounded-lg bg-[var(--color-panel)] px-3 py-2 text-xs font-bold"
+            className="rounded-lg bg-[var(--color-panel)] px-3 py-2 text-xs font-bold disabled:opacity-35"
+            disabled={!canEditPolygon}
             onClick={() => {
               setPoints([])
               setDrawing(true)
@@ -252,14 +326,17 @@ export default function MapStudio({
             Create polygon
           </button>
           <button
-            className="rounded-lg bg-[var(--color-panel)] px-3 py-2 text-xs font-bold"
+            className="rounded-lg bg-[var(--color-panel)] px-3 py-2 text-xs font-bold disabled:opacity-35"
+            disabled={!canEditPolygon}
             onClick={() => setDrawing((value) => !value)}
           >
             {drawing ? "Finish adding" : "Add point"}
           </button>
           <button
             className="rounded-lg bg-[var(--color-panel)] px-3 py-2 text-xs font-bold"
-            disabled={selectedPoint == null || points.length <= 3}
+            disabled={
+              !canEditPolygon || selectedPoint == null || points.length <= 3
+            }
             onClick={() =>
               setPoints((current) =>
                 current.filter((_, index) => index !== selectedPoint),
@@ -270,7 +347,7 @@ export default function MapStudio({
           </button>
           <button
             className="rounded-lg border border-[var(--color-danger)] px-3 py-2 text-xs font-bold text-[var(--color-danger)]"
-            disabled={!selected || selected.layer < 3}
+            disabled={!canEditPolygon}
             onClick={() =>
               selected &&
               window.confirm(
@@ -283,7 +360,7 @@ export default function MapStudio({
           </button>
           <button
             className="rounded-lg bg-[var(--color-melemele)] px-4 py-2 text-xs font-black text-[#07150d]"
-            disabled={!selected || points.length < 3}
+            disabled={!canEditPolygon || points.length < 3}
             onClick={() =>
               selected &&
               saveStudioGeometry(selected.node_key, points).then(() => {
@@ -312,9 +389,18 @@ export default function MapStudio({
         <svg
           ref={canvasRef}
           viewBox="0 0 1000 700"
+          data-testid="studio-canvas"
+          data-context={
+            isIslandOverview
+              ? "island-overview"
+              : selected?.node_type === "zone"
+                ? "location-crop"
+                : selected?.node_type ?? "none"
+          }
+          aria-label={`${selected?.display_name ?? "Map Studio"} authoring canvas`}
           className="min-h-0 flex-1 rounded-2xl border border-[var(--color-border)] bg-[var(--color-panel)]"
           onClick={(event) => {
-            if (drawing)
+            if (drawing && canEditPolygon)
               setPoints((current) => [
                 ...current,
                 canvasPoint(event.clientX, event.clientY),
@@ -323,15 +409,48 @@ export default function MapStudio({
           onDragOver={(event) => event.preventDefault()}
           onDrop={(event) => {
             const key = event.dataTransfer.getData("text/canonical-key")
-            if (selected && key) {
+            if (selected?.node_type === "zone" && key) {
               const [x, y] = canvasPoint(event.clientX, event.clientY)
               saveStudioPlacement(selected.node_key, key, x, y).then(reload)
             }
           }}
         >
+          <defs>
+            {hoveredOverview?.geometry && (
+              <clipPath id={`${clipId}-overview`}>
+                <polygon points={svgPoints(hoveredOverview.geometry)} />
+              </clipPath>
+            )}
+            {parentBoundary && (
+              <clipPath id={`${clipId}-parent`}>
+                <polygon points={svgPoints(parentBoundary)} />
+              </clipPath>
+            )}
+          </defs>
+          {isIslandOverview && mapAsset && (
+            <image
+              href={mapAsset}
+              width="1000"
+              height="700"
+              preserveAspectRatio="none"
+              opacity=".58"
+              style={{ filter: "saturate(.7) brightness(.72)" }}
+            />
+          )}
+          {isIslandOverview && mapAsset && hoveredOverview?.geometry && (
+            <image
+              href={mapAsset}
+              width="1000"
+              height="700"
+              preserveAspectRatio="none"
+              clipPath={`url(#${clipId}-overview)`}
+              opacity="1"
+              style={{ filter: "saturate(1.1) brightness(1.08)" }}
+            />
+          )}
           {selected?.node_type === "location" && (
             <image
-              href="/assets/maps/melemele.png"
+              href={mapAsset ?? "/assets/maps/melemele.png"}
               width="1000"
               height="700"
               preserveAspectRatio="xMidYMid slice"
@@ -339,17 +458,90 @@ export default function MapStudio({
               style={{ filter: "saturate(.25) brightness(.55)" }}
             />
           )}
-          <rect
-            x="5"
-            y="5"
-            width="990"
-            height="690"
-            fill="none"
-            stroke="var(--color-text-muted)"
-            strokeDasharray="10 8"
-            opacity=".45"
-          />
-          {points.length >= 2 && (
+          {selected?.node_type === "zone" && mapAsset && cropBounds && (
+            <>
+              <image
+                data-testid="studio-cropped-map"
+                data-crop={`${cropBounds.x},${cropBounds.y},${cropBounds.width},${cropBounds.height}`}
+                href={mapAsset}
+                x={(-cropBounds.x / cropBounds.width) * 1000}
+                y={(-cropBounds.y / cropBounds.height) * 700}
+                width={1000 / cropBounds.width}
+                height={700 / cropBounds.height}
+                preserveAspectRatio="none"
+                opacity=".13"
+                style={{ filter: "saturate(.3) brightness(.45)" }}
+              />
+              <image
+                href={mapAsset}
+                x={(-cropBounds.x / cropBounds.width) * 1000}
+                y={(-cropBounds.y / cropBounds.height) * 700}
+                width={1000 / cropBounds.width}
+                height={700 / cropBounds.height}
+                preserveAspectRatio="none"
+                clipPath={`url(#${clipId}-parent)`}
+                opacity=".68"
+                style={{ filter: "saturate(.72) brightness(.72)" }}
+              />
+            </>
+          )}
+          {!isIslandOverview && (
+            <rect
+              x="5"
+              y="5"
+              width="990"
+              height="690"
+              fill="none"
+              stroke="var(--color-text-muted)"
+              strokeDasharray="10 8"
+              opacity=".45"
+            />
+          )}
+          {parentBoundary && (
+            <polygon
+              points={svgPoints(parentBoundary)}
+              fill="none"
+              stroke="var(--color-text-muted)"
+              strokeWidth="3"
+              strokeDasharray="9 7"
+              vectorEffect="non-scaling-stroke"
+              opacity=".8"
+            />
+          )}
+          {isIslandOverview &&
+            overviewRegions.map((node) => {
+              const isHovered = node.node_key === hoveredOverviewKey
+              return (
+                <polygon
+                  key={node.node_key}
+                  points={svgPoints(node.geometry!)}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Open ${node.display_name}`}
+                  className="cursor-pointer outline-none"
+                  fill="var(--color-melemele)"
+                  fillOpacity={isHovered ? ".24" : ".035"}
+                  stroke="var(--color-melemele)"
+                  strokeWidth={isHovered ? "5" : "1.5"}
+                  vectorEffect="non-scaling-stroke"
+                  onMouseEnter={() => setHoveredOverviewKey(node.node_key)}
+                  onMouseLeave={() => setHoveredOverviewKey(null)}
+                  onFocus={() => setHoveredOverviewKey(node.node_key)}
+                  onBlur={() => setHoveredOverviewKey(null)}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    setSelectedKey(node.node_key)
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault()
+                      setSelectedKey(node.node_key)
+                    }
+                  }}
+                />
+              )
+            })}
+          {canEditPolygon && points.length >= 2 && (
             <polygon
               points={pointString}
               fill="var(--color-melemele)"
@@ -358,8 +550,9 @@ export default function MapStudio({
               strokeWidth="4"
             />
           )}
-          {points.map(([x, y], index) => (
-            <circle
+          {canEditPolygon &&
+            points.map(([x, y], index) => (
+              <circle
               key={index}
               cx={x * 1000}
               cy={y * 700}
@@ -386,8 +579,8 @@ export default function MapStudio({
                 window.addEventListener("pointermove", move)
                 window.addEventListener("pointerup", up)
               }}
-            />
-          ))}
+              />
+            ))}
         </svg>
       </main>
       <aside className="overflow-y-auto border-l border-[var(--color-border)] bg-[var(--color-surface)] p-3">
